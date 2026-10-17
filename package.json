@@ -29,7 +29,8 @@
     "simulate": "vitest run tests/simulation.test.ts",
     "format": "prettier --write apps/game/src packages tests scripts *.json *.ts *.mjs docs README.md",
     "format:check": "prettier --check apps/game/src packages tests scripts *.json *.ts *.mjs docs README.md",
-    "assets:import": "node --experimental-strip-types scripts/import-original-assets.ts"
+    "assets:import": "node --experimental-strip-types scripts/import-original-assets.ts",
+    "assets:enhance": "node scripts/enhance-assets.mjs"
   },
   "dependencies": {
     "pixi.js": "8.22.0",

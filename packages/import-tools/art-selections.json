@@ -1,0 +1,47 @@
+{
+  "version": 1,
+  "base": "/original/enhanced/",
+  "decidedBy": "user",
+  "automaticAdoption": false,
+  "unlistedAssets": "individual-review-required",
+  "assets": {
+    "UI/SCRLBTN0.PCX": {
+      "status": "approved",
+      "file": "restoration/SCRLBTN0.png",
+      "milestone": "M1D-0B",
+      "decision": "Use the accepted M1D-0B plain parchment scroll."
+    },
+    "UI/SCRLBTN1.PCX": {
+      "status": "approved",
+      "file": "restoration/SCRLBTN1.png",
+      "milestone": "M1D-0B",
+      "decision": "Use the accepted M1D-0B purple-ribbon parchment scroll."
+    },
+    "UI/DTURN_BK.PCX": {
+      "status": "approved",
+      "file": "restoration/DTURN_BK.png",
+      "milestone": "M1D-0B",
+      "decision": "Use the accepted M1D-0B parchment panel and Birthright B."
+    },
+    "UI/GOLD03_A.PCX": {
+      "status": "approved",
+      "file": "restoration/GOLD03_A.png",
+      "milestone": "M1D-0B",
+      "decision": "Use the M1D-0B gold variant, explicitly accepted despite the earlier negative technical assessment."
+    },
+    "UI/LGLORDF2.PCX": {
+      "status": "approved",
+      "file": "portraits/LGLORDF2.png",
+      "milestone": "M1D-0",
+      "retainExisting": true,
+      "decision": "Retain the previously successful HD portrait unchanged."
+    },
+    "UI/LGLORDM1.PCX": {
+      "status": "approved",
+      "file": "portraits/LGLORDM1.png",
+      "milestone": "M1D-0",
+      "retainExisting": true,
+      "decision": "Retain the previously successful HD portrait unchanged."
+    }
+  }
+}

@@ -39,6 +39,8 @@ export function gameAssetsPlugin(root: string): Plugin {
         }
         const mime: Record<string, string> = {
           '.png': 'image/png',
+          '.svg': 'image/svg+xml',
+          '.css': 'text/css; charset=utf-8',
           '.wav': 'audio/wav',
           '.json': 'application/json',
           '.html': 'text/html; charset=utf-8',

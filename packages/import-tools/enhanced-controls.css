@@ -1,0 +1,95 @@
+/* Standalone artwork treatments. URLs are relative to the generated enhanced/ folder. */
+.br-hd-button {
+  box-sizing: border-box;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  padding: 3px 20px;
+  border: solid transparent;
+  border-width: 10px 16px;
+  border-image: url('buttons/SCRLBTN0.svg') 6 10 6 10 fill stretch;
+  background: none;
+  color: #392714;
+  font:
+    600 20px/1.1 Georgia,
+    'Times New Roman',
+    serif;
+  text-shadow: 0 1px #fff2ca88;
+  cursor: pointer;
+}
+.br-hd-button:hover {
+  filter: brightness(1.1);
+}
+.br-hd-button:focus-visible {
+  outline: 2px solid #d9b86c;
+  outline-offset: 4px;
+}
+.br-hd-button:active,
+.br-hd-button.is-pressed {
+  filter: brightness(0.86);
+}
+.br-hd-button:disabled {
+  filter: grayscale(0.7);
+  opacity: 0.5;
+  cursor: default;
+}
+.br-hd-button.wood {
+  border-width: 8px 10px;
+  border-image: url('buttons/MENBTN1A.svg') 4 5 4 5 fill stretch;
+  color: #f1dfb6;
+  text-shadow: 0 1px 2px #160e08;
+}
+.br-hd-button.wood:active,
+.br-hd-button.wood.is-pressed {
+  border-image-source: url('buttons/MENBTN1B.svg');
+}
+.br-hd-frame {
+  box-sizing: border-box;
+  border: 12px solid transparent;
+  border-image: var(--br-frame, url('frames/MARBLE01.svg')) 8 stretch;
+  background: #92938f url('materials/marble.svg') repeat;
+  background-size: 256px 256px;
+  color: #292b28;
+}
+.br-hd-council {
+  position: relative;
+  isolation: isolate;
+  box-sizing: border-box;
+  padding: 24px 52px 24px 24px;
+  color: #402c18;
+  background: #dec095 url('materials/parchment.svg') repeat;
+  background-size: 284px 212px;
+  overflow: hidden;
+}
+.br-hd-council::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 72px;
+  left: 8%;
+  width: 78%;
+  height: 260px;
+  opacity: 0.1;
+  background: url('icons/LOGO.svg') center / contain no-repeat;
+  pointer-events: none;
+}
+.br-hd-council::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: 28px;
+  border-left: 4px solid #8e402b;
+  background: #50351f url('ornaments/braid.svg') repeat-y;
+  background-size: 28px 56px;
+  pointer-events: none;
+}
+.br-hd-council > * {
+  position: relative;
+}
+.br-hd-weave {
+  background: #57391f url('materials/weave-tile.svg') repeat;
+  background-size: 90.509668px 90.509668px;
+}

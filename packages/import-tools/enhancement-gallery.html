@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Birthright HD · Artwork comparison</title>
+    <link rel="stylesheet" href="controls.css" />
+    <style>
+      :root {
+        color-scheme: dark;
+        font:
+          18px/1.55 'Segoe UI',
+          sans-serif;
+        color: #e9e2d3;
+        background: #191b1b;
+        --line: #44443d;
+        --muted: #b9b6a9;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+      }
+      main {
+        max-width: 1840px;
+        margin: auto;
+        padding: 44px 40px 80px;
+      }
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+      h1,
+      h2,
+      h3 {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-weight: 500;
+      }
+      h1 {
+        font-size: 38px;
+        line-height: 1.2;
+        margin: 8px 0 16px;
+        color: #f1deb6;
+      }
+      h2 {
+        font-size: 28px;
+      }
+      h3 {
+        font-size: 24px;
+      }
+      a {
+        color: #e5c58c;
+        text-underline-offset: 3px;
+      }
+      .eyebrow {
+        font-size: 13px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #b8a47d;
+      }
+      .intro {
+        max-width: 1050px;
+        color: #c9c6ba;
+      }
+      .intro p {
+        margin-bottom: 10px;
+      }
+      .meta {
+        font:
+          14px/1.5 'Segoe UI',
+          sans-serif;
+        color: var(--muted);
+      }
+      .showcase {
+        margin-top: 30px;
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        border: 1px solid #66553a;
+      }
+      .specimen {
+        min-height: 350px;
+        padding: 26px 56px 26px 26px;
+      }
+      .specimen h2 {
+        font-size: 28px;
+        margin: 4px 0 12px;
+      }
+      .specimen p {
+        font:
+          20px/1.5 Georgia,
+          serif;
+        margin: 10px 0;
+      }
+      .specimen .eyebrow {
+        color: #795e39;
+      }
+      .specimen .resource {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 14px 0;
+        font:
+          20px Georgia,
+          serif;
+      }
+      .specimen .resource img {
+        width: 46px;
+        height: 32px;
+      }
+      .tools-specimen {
+        padding: 24px 28px;
+        min-width: 0;
+      }
+      .tools-specimen h2 {
+        margin-bottom: 12px;
+        color: #f2e2c1;
+      }
+      .icon-line {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin: 8px 0 18px;
+      }
+      .icon-line img {
+        display: block;
+        height: 48px;
+        width: auto;
+      }
+      .state-line {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin: 12px 0;
+      }
+      .frame-line {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+      .frame-example {
+        padding: 9px 12px;
+        font:
+          18px/1.3 Georgia,
+          serif;
+      }
+      .showcase-note {
+        margin: 10px 0 32px;
+      }
+      .controls {
+        padding: 18px 0;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 14px 24px;
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+      }
+      label {
+        font-size: 14px;
+        color: #d6cdbb;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      select,
+      input {
+        font:
+          16px 'Segoe UI',
+          sans-serif;
+        color: #f0eadc;
+        background: #282b29;
+        border: 1px solid #5d6057;
+        border-radius: 3px;
+        padding: 10px 12px;
+        min-height: 42px;
+      }
+      input {
+        min-width: 260px;
+      }
+      label.check {
+        flex-direction: row;
+        align-items: center;
+        padding-bottom: 8px;
+      }
+      label.check input {
+        min-width: 0;
+        min-height: 0;
+      }
+      .count {
+        margin-left: auto;
+        align-self: center;
+        color: #c8bd9d;
+      }
+      .gallery {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+        margin-top: 24px;
+      }
+      article {
+        min-width: 0;
+        border: 1px solid var(--line);
+        background: #202321;
+        border-radius: 4px;
+        overflow: hidden;
+      }
+      article.wide {
+        grid-column: 1/-1;
+      }
+      article header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        gap: 14px;
+        padding: 22px 24px 14px;
+      }
+      article header .meta {
+        margin-top: 6px;
+      }
+      article code {
+        font:
+          13px/1.5 Consolas,
+          monospace;
+        overflow-wrap: anywhere;
+        color: #c4bb9e;
+      }
+      .badge {
+        white-space: nowrap;
+        border: 1px solid #776c42;
+        padding: 3px 8px;
+        border-radius: 3px;
+        font-size: 12px;
+        color: #d7c899;
+      }
+      .badge.review {
+        color: #efc69b;
+        border-color: #916745;
+      }
+      .comparisons {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        padding: 8px 20px 16px;
+      }
+      article.wide .comparisons {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+      article.wide .native {
+        grid-column: 1/-1;
+      }
+      .sample {
+        min-width: 0;
+      }
+      .sample-label {
+        font-size: 13px;
+        color: #c5c3b8;
+        margin-bottom: 7px;
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      .stage {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 118px;
+        overflow: auto;
+        padding: 18px;
+        background-color: #343936;
+        background-image:
+          linear-gradient(45deg, #ffffff04 25%, transparent 25%),
+          linear-gradient(-45deg, #ffffff04 25%, transparent 25%),
+          linear-gradient(45deg, transparent 75%, #ffffff04 75%),
+          linear-gradient(-45deg, transparent 75%, #ffffff04 75%);
+        background-size: 24px 24px;
+        background-position:
+          0 0,
+          0 12px,
+          12px -12px,
+          -12px 0;
+        border: 1px solid #454a43;
+      }
+      body[data-surface='parchment'] .stage {
+        background: #dec296 url('materials/parchment.svg') repeat;
+        background-size: 284px 212px;
+        border-color: #877653;
+      }
+      body[data-surface='dark'] .stage {
+        background: #141616;
+      }
+      .art {
+        flex: none;
+        display: block;
+        padding: 0;
+      }
+      .source-art {
+        background-repeat: no-repeat;
+        image-rendering: auto;
+      }
+      body.pixelated .source-art.enlarged {
+        image-rendering: pixelated;
+      }
+      .details {
+        padding: 0 24px 22px;
+      }
+      .method {
+        font-size: 16px;
+        margin-bottom: 9px;
+        color: #d3d0c3;
+      }
+      .limitation {
+        border-left: 2px solid #8e7049;
+        padding-left: 10px;
+        margin: 9px 0;
+        color: #c7bba5;
+        font-size: 14px;
+      }
+      .files {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 14px;
+        margin-top: 12px;
+      }
+      .empty {
+        grid-column: 1/-1;
+        padding: 36px;
+      }
+      .footer {
+        margin-top: 36px;
+        padding-top: 20px;
+        border-top: 1px solid var(--line);
+      }
+      .error {
+        color: #ffbdad;
+        padding: 30px 0;
+      }
+      .review-nav {
+        display: flex;
+        gap: 24px;
+        flex-wrap: wrap;
+        margin: 22px 0;
+        font-size: 16px;
+      }
+      body[data-review='true'] .showcase,
+      body[data-review='true'] .showcase-note {
+        display: none;
+      }
+      body[data-review='true'] .gallery {
+        grid-template-columns: minmax(0, 1fr);
+      }
+      body[data-review='true'] .comparisons {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .badge.rejected {
+        color: #f3aaa1;
+        border-color: #92574e;
+      }
+      .sample.rejected .sample-label {
+        color: #e9a399;
+      }
+      .sample.rejected .stage {
+        border-color: #82564b;
+      }
+      .restoration-art {
+        background-repeat: no-repeat;
+      }
+      .review-note {
+        margin: 14px 0 22px;
+        color: #c8b997;
+        font-size: 15px;
+      }
+      body[data-review='true'][data-surface='parchment'] .stage {
+        background: #c3a97e;
+      }
+      @media (max-width: 1300px) {
+        .gallery {
+          grid-template-columns: 1fr;
+        }
+        .showcase {
+          grid-template-columns: 340px 1fr;
+        }
+      }
+      @media (max-width: 900px) {
+        main {
+          padding: 24px 16px;
+        }
+        .showcase {
+          grid-template-columns: 1fr;
+        }
+        .comparisons {
+          grid-template-columns: 1fr;
+        }
+        body[data-review='true'] .comparisons {
+          grid-template-columns: 1fr;
+        }
+        article.wide .comparisons {
+          grid-template-columns: 1fr;
+        }
+        .count {
+          margin-left: 0;
+        }
+      }
+    </style>
+  </head>
+  <body data-surface="neutral">
+    <main>
+      <div class="eyebrow" id="milestone">Birthright · The Gorgon's Alliance · M1D-0B</div>
+      <h1 id="page-title">Restore the texture. Preserve the character.</h1>
+      <div class="intro">
+        <p id="intro-text">
+          Six material studies: enlarged original, rejected M1D-0 redraw and new raster restoration
+          at identical display dimensions.
+        </p>
+        <p class="meta" id="intro-note">
+          Five candidates await art review. The new gold trial is rejected: retain the original. No
+          candidate is approved for the game. Portrait enhancements and all original resources are
+          untouched.
+        </p>
+      </div>
+      <nav class="review-nav" aria-label="Review version">
+        <a href="index.html">M1D-0B · six restoration studies</a>
+        <a href="index.html?view=archive">M1D-0 · original 24-item review</a>
+      </nav>
+      <section class="showcase" aria-label="Enhanced materials and controls">
+        <div class="br-hd-council specimen">
+          <div class="eyebrow">Parchment specimen</div>
+          <h2>The domain council</h2>
+          <p>Readable type and crisp symbols against a restrained original-style material.</p>
+          <div class="resource"><img src="icons/GOLD03_A.svg" alt="Gold coins" /> 24 gold bars</div>
+          <div class="resource"><img src="icons/CROWNA_A.svg" alt="Crown" /> 18 regency</div>
+          <button class="br-hd-button" type="button">Continue</button>
+        </div>
+        <div class="br-hd-weave tools-specimen">
+          <div class="eyebrow">Scalable materials · 48 px action tiles</div>
+          <h2>Asset specimens</h2>
+          <div class="icon-line">
+            <img src="icons/DACTN-ledger.svg" alt="Ledger" />
+            <img src="icons/DACTN-province.svg" alt="Province network" />
+            <img src="icons/DACTN-army.svg" alt="Army" />
+            <img src="icons/DMAP-fort.svg" alt="Fort" />
+            <img src="icons/DMAP-town.svg" alt="Town" />
+            <img src="icons/DMAP-temple.svg" alt="Temple" />
+            <img src="icons/DMAP-source.svg" alt="Source" />
+            <img src="icons/DSHLD_IC.svg" alt="Quartered shield" />
+          </div>
+          <div class="state-line">
+            <button class="br-hd-button wood" type="button">Normal</button>
+            <button class="br-hd-button wood is-pressed" type="button" aria-pressed="true">
+              Pressed
+            </button>
+            <button class="br-hd-button wood" type="button" disabled>Disabled</button>
+            <button class="br-hd-button" type="button" style="width: 300px">
+              Wide scroll button
+            </button>
+          </div>
+          <div class="frame-line">
+            <div class="br-hd-frame frame-example" style="width: 210px">Fixed 12 px corners</div>
+            <div class="br-hd-frame frame-example" style="width: 440px">
+              Same corners, wider stone frame
+            </div>
+          </div>
+        </div>
+      </section>
+      <p class="meta showcase-note">
+        Sample text and state treatments demonstrate materials only. Purple/red scroll ribbons are
+        preserved visual variants; original interaction semantics are not inferred.
+      </p>
+      <div class="controls">
+        <label
+          >Find original ID or artwork<input
+            id="search"
+            type="search"
+            placeholder="Scroll, gold, parchment, leather…"
+        /></label>
+        <label
+          >Category<select id="category">
+            <option value="">All artwork</option>
+          </select></label
+        >
+        <label
+          >Preview background<select id="surface">
+            <option value="neutral">Neutral</option>
+            <option value="parchment">Parchment</option>
+            <option value="dark">Dark</option>
+          </select></label
+        >
+        <label class="check"
+          ><input id="nearest" type="checkbox" /> Nearest-neighbor original</label
+        >
+        <output class="count" id="count" aria-live="polite">Loading…</output>
+      </div>
+      <div id="gallery" class="gallery"></div>
+      <p class="meta footer">
+        <a href="restorations.json">Six restoration records</a> ·
+        <a href="restoration/prompts.json">Imagegen prompts</a> ·
+        <a href="mapping.json">Original M1D-0 mappings</a> ·
+        <a href="../catalog.html">All original resources</a>. AI-painted fine detail is an
+        interpretation, not recovered evidence. Original art remains the fallback.
+      </p>
+    </main>
+    <script type="module">
+      const archive = new URLSearchParams(location.search).get('view') === 'archive';
+      document.body.dataset.review = String(!archive);
+      const $ = (id) => document.getElementById(id);
+      const el = (tag, className, text) => {
+        const node = document.createElement(tag);
+        if (className) node.className = className;
+        if (text) node.textContent = text;
+        return node;
+      };
+      function original(asset, enlarged) {
+        const rect = asset.sourceRect ?? [0, 0, asset.sourceWidth, asset.sourceHeight];
+        const [x, y, w, h] = rect;
+        const width = enlarged ? asset.display.width : w;
+        const height = enlarged ? asset.display.height : h;
+        const node = el('div', 'art source-art' + (enlarged ? ' enlarged' : ''));
+        node.role = 'img';
+        node.setAttribute(
+          'aria-label',
+          (enlarged ? 'Enlarged original ' : 'Native original ') + asset.originalId,
+        );
+        Object.assign(node.style, {
+          width: width + 'px',
+          height: height + 'px',
+          backgroundImage: `url('../${asset.sourceFile}')`,
+          backgroundSize: `${(asset.sourceWidth * width) / w}px ${(asset.sourceHeight * height) / h}px`,
+          backgroundPosition: `${(-x * width) / w}px ${(-y * height) / h}px`,
+        });
+        return node;
+      }
+      function enhanced(asset) {
+        let node;
+        if (asset.treatment === 'frame') {
+          node = el('div', 'art br-hd-frame');
+          node.style.setProperty('--br-frame', `url('${asset.file}')`);
+        } else if (asset.treatment === 'council' || asset.treatment === 'weave') {
+          node = el('div', 'art ' + asset.cssClass);
+        } else if (asset.treatment === 'button' && !/SCRLBTN[12]/.test(asset.originalId)) {
+          node = el('div', 'art br-hd-button');
+          node.style.borderImageSource = `url('${asset.file}')`;
+          const [top, right, bottom, left] = asset.nineSlice;
+          node.style.borderImageSlice = `${top} ${right} ${bottom} ${left} fill`;
+          node.style.borderWidth = asset.nineSlice.map((n) => n * 2 + 'px').join(' ');
+          node.style.minHeight = '0';
+        } else {
+          node = el('img', 'art');
+          node.src = asset.file;
+          node.alt = 'Enhanced ' + asset.title;
+        }
+        node.style.width = asset.display.width + 'px';
+        node.style.height = asset.display.height + 'px';
+        node.dataset.enhanced = asset.originalId;
+        return node;
+      }
+      function sample(label, dimensions, art, native = false) {
+        const node = el('div', 'sample' + (native ? ' native' : ''));
+        const heading = el('div', 'sample-label', label);
+        heading.append(el('span', '', dimensions));
+        const stage = el('div', 'stage');
+        stage.append(art);
+        node.append(heading, stage);
+        return node;
+      }
+      function restorationArt(asset) {
+        const art = el('div', 'art restoration-art');
+        const trial = asset.restoration;
+        const [x, y, w, h] = trial.sourceRect ?? [
+          0,
+          0,
+          trial.nativeSize.width,
+          trial.nativeSize.height,
+        ];
+        Object.assign(art.style, {
+          width: asset.display.width + 'px',
+          height: asset.display.height + 'px',
+          backgroundImage: `url('${trial.file}')`,
+          backgroundSize: `${(trial.nativeSize.width * asset.display.width) / w}px ${(trial.nativeSize.height * asset.display.height) / h}px`,
+          backgroundPosition: `${(-x * asset.display.width) / w}px ${(-y * asset.display.height) / h}px`,
+        });
+        art.setAttribute('role', 'img');
+        art.setAttribute('aria-label', 'Raster restoration trial for ' + asset.title);
+        art.dataset.restoration = asset.originalId;
+        return art;
+      }
+      function reviewCard(key, asset) {
+        const node = el('article');
+        node.dataset.asset = key;
+        const heading = el('header');
+        const name = el('div');
+        name.append(el('h3', '', asset.title), el('code', '', key));
+        const rejected = asset.restoration.status === 'rejected';
+        heading.append(
+          name,
+          el(
+            'span',
+            'badge ' + (rejected ? 'rejected' : 'review'),
+            rejected ? 'Retain original' : 'Awaiting art review',
+          ),
+        );
+        const size = asset.display.width + ' × ' + asset.display.height;
+        const comparisons = el('div', 'comparisons');
+        const old = sample('M1D-0 · rejected', size, enhanced(asset));
+        old.classList.add('rejected');
+        const trial = sample(
+          rejected ? 'M1D-0B · rejected trial' : 'M1D-0B · restoration candidate',
+          size,
+          restorationArt(asset),
+        );
+        if (rejected) trial.classList.add('rejected');
+        comparisons.append(sample('Original · enlarged', size, original(asset, true)), old, trial);
+        const details = el('div', 'details');
+        details.append(
+          el('p', 'method', asset.restoration.assessment),
+          el('p', 'limitation', 'Previous redraw rejected: ' + asset.previousReason),
+          el('p', 'meta', asset.restoration.method + ' ' + asset.restoration.limitation),
+        );
+        const files = el('div', 'files');
+        for (const [label, href] of [
+          ['Original / fallback', '../' + asset.sourceFile],
+          ['Previous M1D-0 master', asset.file],
+          ['New raster master', asset.restoration.file],
+        ]) {
+          const link = el('a', '', label);
+          link.href = href;
+          link.target = '_blank';
+          files.append(link);
+        }
+        details.append(files);
+        node.append(heading, comparisons, details);
+        return node;
+      }
+      function card(key, asset) {
+        const sourceWidth = asset.sourceRect?.[2] ?? asset.sourceWidth;
+        const sourceHeight = asset.sourceRect?.[3] ?? asset.sourceHeight;
+        const wide = asset.display.width > 260 || sourceWidth > 300 || sourceHeight > 450;
+        const node = el('article', wide ? 'wide' : '');
+        node.dataset.asset = key;
+        const header = el('header');
+        const name = el('div');
+        name.append(el('h3', '', asset.title), el('code', '', key));
+        header.append(
+          name,
+          el(
+            'span',
+            'badge' +
+              (asset.previousStatus === 'rejected'
+                ? ' rejected'
+                : asset.status === 'manual-review'
+                  ? ' review'
+                  : ''),
+            asset.previousStatus === 'rejected'
+              ? 'Rejected in M1D-0B'
+              : asset.status === 'manual-review'
+                ? 'Art review'
+                : 'Vector redraw',
+          ),
+        );
+        const comparisons = el('div', 'comparisons');
+        const size = asset.display.width + ' × ' + asset.display.height;
+        comparisons.append(
+          sample(
+            'Original · native',
+            sourceWidth + ' × ' + sourceHeight,
+            original(asset, false),
+            true,
+          ),
+          sample('Original · enlarged', size, original(asset, true)),
+          sample('Enhanced HD', size, enhanced(asset)),
+        );
+        const details = el('div', 'details');
+        if (asset.previousReason)
+          details.append(el('p', 'limitation', 'Rejected: ' + asset.previousReason));
+        details.append(el('p', 'method', asset.method));
+        if (asset.limitation || asset.limitations)
+          details.append(el('p', 'limitation', asset.limitation || asset.limitations));
+        if (asset.nineSlice)
+          details.append(
+            el(
+              'p',
+              'meta',
+              'Reusable nine-slice border: ' + asset.nineSlice.join(' / ') + ' source pixels.',
+            ),
+          );
+        const files = el('div', 'files');
+        const master = el('a', '', 'Open enhanced master');
+        master.href = asset.file;
+        master.target = '_blank';
+        const source = el('a', '', 'Open original');
+        source.href = '../' + asset.sourceFile;
+        source.target = '_blank';
+        files.append(master, source);
+        if (asset.components)
+          for (const component of asset.components) {
+            const link = el('a', '', component.name);
+            link.href = component.file;
+            link.target = '_blank';
+            files.append(link);
+          }
+        details.append(files);
+        node.append(header, comparisons, details);
+        return node;
+      }
+      try {
+        const [baseResponse, reviewResponse] = await Promise.all([
+          fetch('mapping.json'),
+          fetch('restorations.json'),
+        ]);
+        if (!baseResponse.ok || !reviewResponse.ok) throw Error('Cannot load review records');
+        const base = await baseResponse.json(),
+          review = await reviewResponse.json();
+        const mapping = archive ? base : review;
+        if (archive) {
+          $('milestone').textContent = "Birthright · The Gorgon's Alliance · M1D-0 archive";
+          $('page-title').textContent = 'Previous artwork studies';
+          $('intro-text').textContent =
+            'The original 24-item comparison is preserved for reference. Six failed redraws are explicitly rejected in M1D-0B.';
+          $('intro-note').textContent =
+            'Historical art review. Portrait masters are unchanged. Return to the six restoration studies for the current direction.';
+          for (const [id, asset] of Object.entries(review.assets))
+            if (base.assets[id]) {
+              base.assets[id].previousStatus = 'rejected';
+              base.assets[id].previousReason = asset.previousReason;
+            }
+        }
+        const entries = Object.entries(mapping.assets);
+        const categories = [...new Set(entries.map(([, a]) => a.category))].sort();
+        for (const name of categories) {
+          const option = el('option', '', name);
+          option.value = name;
+          $('category').append(option);
+        }
+        const cards = new Map(
+          entries.map(([key, asset]) => [key, archive ? card(key, asset) : reviewCard(key, asset)]),
+        );
+        function filter() {
+          const query = $('search').value.toLowerCase().trim();
+          const category = $('category').value;
+          const selected = entries.filter(
+            ([key, a]) =>
+              (!category || a.category === category) &&
+              (!query || `${key} ${a.title} ${a.category}`.toLowerCase().includes(query)),
+          );
+          $('gallery').replaceChildren(...selected.map(([key]) => cards.get(key)));
+          if (!selected.length) $('gallery').append(el('p', 'empty', 'No matching artwork.'));
+          $('count').textContent =
+            `${selected.length} / ${entries.length} ${archive ? 'previous studies' : 'restoration studies'}`;
+        }
+        $('search').addEventListener('input', filter);
+        $('category').addEventListener('change', filter);
+        $('surface').addEventListener(
+          'change',
+          (event) => (document.body.dataset.surface = event.target.value),
+        );
+        $('nearest').addEventListener('change', (event) =>
+          document.body.classList.toggle('pixelated', event.target.checked),
+        );
+        filter();
+        window.galleryReady = true;
+      } catch (error) {
+        $('gallery').append(
+          el(
+            'p',
+            'error',
+            error.message + '. Run node scripts/review-restorations.mjs from the project root.',
+          ),
+        );
+        $('count').textContent = 'Gallery unavailable';
+      }
+    </script>
+  </body>
+</html>
