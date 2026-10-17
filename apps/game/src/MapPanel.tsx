@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Campaign, Scenario } from '../../../packages/core';
 import { StrategicMap, type MapOverlay } from '../../../packages/rendering/strategic-map';
+import { WorldMap } from '../../../packages/rendering/world-map';
 import { Icon } from '../../../packages/ui/Icon';
+import { assetUrl, type OriginalAssets } from './original-assets';
 export function MapPanel({
   state,
   scenario,
@@ -9,6 +11,7 @@ export function MapPanel({
   overlay,
   labels,
   onSelect,
+  original,
 }: {
   state: Campaign;
   scenario: Scenario;
@@ -16,9 +19,10 @@ export function MapPanel({
   overlay: MapOverlay;
   labels: boolean;
   onSelect: (id: string) => void;
+  original?: OriginalAssets;
 }) {
   const host = useRef<HTMLDivElement>(null);
-  const renderer = useRef<StrategicMap | null>(null);
+  const renderer = useRef<StrategicMap | WorldMap | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [hover, setHover] = useState<string | null>(null);
@@ -26,19 +30,33 @@ export function MapPanel({
   select.current = onSelect;
   useEffect(() => {
     if (!host.current) return;
-    const map = new StrategicMap(host.current, scenario, {
+    setReady(false);
+    setError('');
+    const Renderer = scenario.map ? WorldMap : StrategicMap;
+    const map = new Renderer(host.current, scenario, {
       select: (id) => select.current(id),
       hover: setHover,
       ready: () => setReady(true),
       error: setError,
     });
+    if (map instanceof WorldMap && original)
+      map.setOriginalArt({
+        map: assetUrl(original, 'MAP/LGMAP.PCX'),
+        images: Object.fromEntries(
+          Object.entries(original.assets)
+            .filter(([id]) => id.startsWith('UI/'))
+            .map(([id]) => [id, assetUrl(original, id)!]),
+        ),
+        icons: original.mapIcons,
+        troopIcons: original.troopIcons,
+      });
     renderer.current = map;
     void map.init();
     return () => {
       map.destroy();
       renderer.current = null;
     };
-  }, [scenario]);
+  }, [scenario, original]);
   useEffect(() => {
     renderer.current?.update(state, { selected, overlay, labels });
   }, [state, selected, overlay, labels, ready]);
@@ -47,24 +65,35 @@ export function MapPanel({
   return (
     <div className="map-wrap">
       <div className="map-canvas" ref={host} data-testid="strategic-map" />
-      <div className="map-heading">
-        <span className="eyebrow">THE STRATEGIC REALM</span>
-        <h2>The Covenant Marches</h2>
-        <p>
-          Development scenario <span>·</span> Not canonical Anuire
-        </p>
-      </div>
-      <div className="map-legend">
-        <span>
-          <i style={{ background: '#537b88' }} /> Crownmere
-        </span>
-        <span>
-          <i style={{ background: '#73856a' }} /> Covenant
-        </span>
-        <span>
-          <i style={{ background: '#aa7460' }} /> Iron March
-        </span>
-      </div>
+      {!ready && !error && (
+        <div className="map-loading" role="status">
+          {original ? 'Restoring the original map…' : 'Preparing the strategic map…'}
+        </div>
+      )}
+      {!original && (
+        <div className="map-heading">
+          <span className="eyebrow">THE STRATEGIC REALM</span>
+          <h2>{scenario.map ? 'Anuire' : 'The Covenant Marches'}</h2>
+          <p>
+            {scenario.map
+              ? 'Experimental original template'
+              : 'Development scenario · Not canonical Anuire'}
+          </p>
+        </div>
+      )}
+      {!scenario.map && (
+        <div className="map-legend">
+          <span>
+            <i style={{ background: '#537b88' }} /> Crownmere
+          </span>
+          <span>
+            <i style={{ background: '#73856a' }} /> Covenant
+          </span>
+          <span>
+            <i style={{ background: '#aa7460' }} /> Iron March
+          </span>
+        </div>
+      )}
       {hoverDef && (
         <div className="map-tooltip">
           <strong>{hoverDef.name}</strong>
@@ -75,14 +104,21 @@ export function MapPanel({
         </div>
       )}
       <div className="map-tools">
-        <button aria-label="Zoom in" onClick={() => renderer.current?.zoom(1.25)}>
+        <button disabled={!ready} aria-label="Zoom in" onClick={() => renderer.current?.zoom(1.25)}>
           <Icon name="plus" />
         </button>
-        <button aria-label="Zoom out" onClick={() => renderer.current?.zoom(0.8)}>
+        <button disabled={!ready} aria-label="Zoom out" onClick={() => renderer.current?.zoom(0.8)}>
           <Icon name="minus" />
         </button>
-        <button aria-label="Fit map" onClick={() => renderer.current?.fit()}>
+        <button disabled={!ready} aria-label="Fit map" onClick={() => renderer.current?.fit()}>
           <Icon name="map" />
+        </button>
+        <button
+          aria-label="Focus selected province"
+          disabled={!ready}
+          onClick={() => renderer.current?.focus(selected)}
+        >
+          <Icon name="castle" />
         </button>
       </div>
       <div className="map-hint">

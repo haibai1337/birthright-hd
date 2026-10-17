@@ -28,6 +28,7 @@ interface Props {
   panel: Panel;
   select: (id: string) => void;
   issue: (cmd: Command) => void;
+  compact?: boolean;
 }
 function Order({
   command,
@@ -69,7 +70,15 @@ function Order({
     </button>
   );
 }
-export function Sidebar({ state, scenario, selected, panel, select, issue }: Props) {
+export function Sidebar({
+  state,
+  scenario,
+  selected,
+  panel,
+  select,
+  issue,
+  compact = false,
+}: Props) {
   const [armyId, setArmyId] = useState('');
   const [destination, setDestination] = useState('');
   const province = state.provinces.find((p) => p.id === selected);
@@ -77,7 +86,9 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
   const player = scenario.realms.find((r) => r.id === state.playerRealm);
   const owner = scenario.realms.find((r) => r.id === province?.owner);
   if (!province || !def || !player || !owner) return null;
-  const owned = province.owner === state.playerRealm;
+  const owned =
+    province.owner === state.playerRealm &&
+    (!province.occupiedBy || province.occupiedBy === state.playerRealm);
   const holdings = state.holdings.filter((h) => h.provinceId === selected);
   const armies = state.armies.filter((a) => a.realmId === state.playerRealm);
   const army =
@@ -114,22 +125,37 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
                 {def.terrain.charAt(0).toUpperCase() + def.terrain.slice(1)} <span>·</span>{' '}
                 {owned ? 'Your sovereign territory' : 'Foreign territory'}
               </p>
+              {province.occupiedBy && (
+                <p>
+                  Occupied by {scenario.realms.find((r) => r.id === province.occupiedBy)?.name}.
+                  Sovereignty: {owner.name}.
+                </p>
+              )}
+              {province.contested && <p>Province is contested.</p>}
             </div>
-            <label className="select-label" htmlFor="province-select">
-              Inspect province
-            </label>
-            <select id="province-select" value={selected} onChange={(e) => select(e.target.value)}>
-              {scenario.provinces.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ·{' '}
-                  {
-                    scenario.realms.find(
-                      (r) => r.id === state.provinces.find((s) => s.id === p.id)?.owner,
-                    )?.adjective
-                  }
-                </option>
-              ))}
-            </select>
+            {!compact && (
+              <>
+                <label className="select-label" htmlFor="province-select">
+                  Inspect province
+                </label>
+                <select
+                  id="province-select"
+                  value={selected}
+                  onChange={(e) => select(e.target.value)}
+                >
+                  {scenario.provinces.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name} ·{' '}
+                      {
+                        scenario.realms.find(
+                          (r) => r.id === state.provinces.find((s) => s.id === p.id)?.owner,
+                        )?.adjective
+                      }
+                    </option>
+                  ))}
+                </select>
+              </>
+            )}
             <div className="province-stats">
               <div>
                 <strong data-testid="province-level">
@@ -197,6 +223,45 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
                 </div>
               ))}
             </div>
+            {!!state.fortifications?.some((f) => f.provinceId === selected) && (
+              <div className="original-forts">
+                <h4>Fortifications</h4>
+                {state.fortifications
+                  .filter((f) => f.provinceId === selected)
+                  .map((f) => (
+                    <p key={f.id}>
+                      {f.kind} {f.level} · {scenario.realms.find((r) => r.id === f.realmId)?.name}
+                    </p>
+                  ))}
+              </div>
+            )}
+            {!!state.characters?.some((c) => c.provinceId === selected) && (
+              <details>
+                <summary>Character deployments</summary>
+                {state.characters
+                  .filter((c) => c.provinceId === selected)
+                  .map((c) => (
+                    <p key={c.id}>
+                      {scenario.regents?.find((r) => r.id === c.regentId)?.name ??
+                        `Original character ${c.typeCode}`}{' '}
+                      · {scenario.realms.find((r) => r.id === c.realmId)?.name}
+                    </p>
+                  ))}
+              </details>
+            )}
+            {def.movement && (
+              <details>
+                <summary>Directed movement links</summary>
+                {def.movement.map((edge) => (
+                  <p key={edge.to}>
+                    <button onClick={() => select(edge.to)}>
+                      {scenario.provinces.find((p) => p.id === edge.to)?.name}
+                    </button>{' '}
+                    · code {edge.code}
+                  </p>
+                ))}
+              </details>
+            )}
             {owned && (
               <>
                 <div className="section-label">
@@ -270,13 +335,15 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
             {!owned ? (
               <p>Select one of your provinces on the map to recruit.</p>
             ) : (
-              scenario.units.map((u) =>
-                order(
-                  { type: 'RecruitUnit', provinceId: selected, unitType: u.id },
-                  `${u.name} · ${u.upkeep} GB upkeep`,
-                  'sword',
-                ),
-              )
+              scenario.units
+                .filter((u) => u.recruitable !== false)
+                .map((u) =>
+                  order(
+                    { type: 'RecruitUnit', provinceId: selected, unitType: u.id },
+                    `${u.name} · ${u.upkeep} GB upkeep`,
+                    'sword',
+                  ),
+                )
             )}
             <div className="section-label">
               <span>YOUR ARMIES</span>
@@ -363,7 +430,7 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
               <p>A crown is never held alone.</p>
             </div>
             {scenario.realms
-              .filter((r) => r.id !== state.playerRealm)
+              .filter((r) => r.id !== state.playerRealm && r.controller !== 'passive')
               .map((r) => {
                 const treaty = relation(state, state.playerRealm, r.id);
                 return (
@@ -514,18 +581,25 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
               <span>YOUR OBJECTIVE</span>
             </div>
             <p>
-              Control {scenario.victory.provinces} provinces, or hold the greatest total province
-              level after {scenario.victory.turns} seasons.
+              {scenario.victory.metric === 'domain-power'
+                ? `Reach domain power ${scenario.victory.target}, or lead in domain power after ${scenario.victory.turns} seasons.`
+                : scenario.victory.metric === 'holding-levels'
+                  ? `Reach ${scenario.victory.target} holding levels, or lead after ${scenario.victory.turns} seasons.`
+                  : `Control ${scenario.victory.provinces} provinces, or hold the greatest total province level after ${scenario.victory.turns} seasons.`}
             </p>
             <p className="council-note">
               You hold {state.provinces.filter((p) => p.owner === state.playerRealm).length} of{' '}
-              {scenario.provinces.length} provinces. Losing your last province ends your reign.
+              {scenario.provinces.length} provinces.{' '}
+              {scenario.policy?.survival === 'domain-assets'
+                ? 'Your domain survives while it retains provinces, holdings, armies or fortifications.'
+                : 'Losing your last province ends your reign.'}
             </p>
           </>
         )}
       </div>
       <div className="sidebar-foot">
-        <i /> {state.ruleset.toLowerCase()} rules · synthetic campaign
+        <i /> {state.ruleset.toLowerCase()} rules ·{' '}
+        {scenario.fingerprint ? 'experimental Anuire template' : 'synthetic campaign'}
       </div>
     </aside>
   );

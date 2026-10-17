@@ -24,9 +24,15 @@
     "desktop:check": "node scripts/check-desktop.mjs",
     "release:check": "node scripts/check-release.mjs",
     "inventory": "node packages/import-tools/inventory.mjs",
+    "research:anuire": "node --experimental-strip-types packages/import-tools/reconstruct-anuire.ts",
+    "research:validate": "node --experimental-strip-types packages/import-tools/validate-anuire.ts",
+    "test:original": "node scripts/test-original.mjs",
     "simulate": "vitest run tests/simulation.test.ts",
     "format": "prettier --write apps/game/src packages tests scripts *.json *.ts *.mjs docs README.md",
-    "format:check": "prettier --check apps/game/src packages tests scripts *.json *.ts *.mjs docs README.md"
+    "format:check": "prettier --check apps/game/src packages tests scripts *.json *.ts *.mjs docs README.md",
+    "assets:import": "node --experimental-strip-types scripts/import-original-assets.ts",
+    "build:private": "node scripts/private-build.mjs",
+    "desktop:build:private": "node scripts/private-build.mjs --desktop"
   },
   "dependencies": {
     "pixi.js": "8.22.0",

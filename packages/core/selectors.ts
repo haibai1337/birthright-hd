@@ -1,5 +1,17 @@
 import type { Campaign, Scenario, Army, Report, TreatyKind } from './schema';
 import { RULESETS } from './rules';
+import { fortLevel, provinceController } from './domains';
+export function domainFocus(state: Campaign, realmId = state.playerRealm): string {
+  return (
+    state.provinces.find((p) => p.owner === realmId && p.fort > 0)?.id ??
+    state.provinces.find((p) => p.owner === realmId)?.id ??
+    state.holdings.find((h) => h.realmId === realmId)?.provinceId ??
+    state.armies.find((a) => a.realmId === realmId)?.provinceId ??
+    state.characters?.find((c) => c.realmId === realmId)?.provinceId ??
+    state.provinces[0]?.id ??
+    ''
+  );
+}
 export function relation(state: Campaign, a: string, b: string) {
   return state.treaties.find((t) => (t.a === a && t.b === b) || (t.a === b && t.b === a));
 }
@@ -38,7 +50,9 @@ export function domainPower(state: Campaign, scenario: Scenario, realmId: string
 }
 export function forecast(state: Campaign, scenario: Scenario, realmId: string): Report {
   const rules = RULESETS[state.ruleset];
-  const owned = state.provinces.filter((p) => p.owner === realmId);
+  const owned = state.provinces.filter(
+    (p) => p.owner === realmId && provinceController(p) === realmId,
+  );
   const taxes = owned.reduce((n, p) => {
     const range = rules.tax[p.tax][p.level] ?? [0, 0];
     return n + (range[0] + range[1]) / 2;
@@ -59,7 +73,10 @@ export function forecast(state: Campaign, scenario: Scenario, realmId: string): 
       0,
     );
   const maintenance =
-    owned.length * rules.provinceMaintenance + owned.filter((p) => p.fort > 0).length;
+    owned.length * rules.provinceMaintenance +
+    (state.fortifications
+      ? state.fortifications.filter((f) => f.realmId === realmId && f.level > 0).length
+      : owned.filter((p) => fortLevel(state, p) > 0).length);
   const military = state.armies
     .filter((a) => a.realmId === realmId)
     .reduce(

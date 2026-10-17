@@ -145,6 +145,16 @@ export class StrategicMap {
     this.world.scale.set(this.scale);
     this.render();
   }
+  focus(id: string) {
+    const p = this.scenario.provinces.find((p) => p.id === id);
+    if (!p) return;
+    this.zoom((this.minScale * 2.5) / this.scale);
+    this.world.position.set(
+      this.host.clientWidth / 2 - p.center[0] * this.scale,
+      this.host.clientHeight / 2 - p.center[1] * this.scale,
+    );
+    this.render();
+  }
   private location(e: PointerEvent | WheelEvent): [number, number] {
     const b = this.host.getBoundingClientRect();
     return [e.clientX - b.left, e.clientY - b.top];

@@ -2,6 +2,7 @@ node_modules/
 .npm-cache/
 /.python-tools
 dist/
+apps/game/dist-private/
 coverage/
 test-results/
 playwright-report/
@@ -11,5 +12,6 @@ reference/original/*
 !reference/original/README.md
 reference/extracted/
 reference/research-cache/
+reference/private-assets/
 apps/game/src-tauri/target/
 *.log

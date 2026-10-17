@@ -1,0 +1,177 @@
+{
+  "formatVersion": 1,
+  "sourceImage": "RPGBGA.BIN",
+  "primarySources": [
+    {
+      "id": "cd-template",
+      "location": "CD:RLMSTART.DAT",
+      "bytes": 90730,
+      "sha256": "34cdf204908be6fa43438f1341a9078d672865988a59f7a0f0eb596f1fe094e6",
+      "scope": "Original CD initialization template, not a claim of post-New-Game values"
+    },
+    {
+      "id": "cd-strings",
+      "location": "CD:STRDAT.DAT",
+      "bytes": 183678,
+      "sha256": "7e814b227f2888046b47c99ac15c1a775e89eda4fa362074a1461f20746e71e5",
+      "scope": "Original PC string catalog"
+    },
+    {
+      "id": "cd-exe-prefix",
+      "location": "CD:WINBR.EXE[0:1600000]",
+      "bytes": 1600000,
+      "sha256": "c32c69b5f367b4284846d61b8b4b518983f5a7f19c33695f6e08d933d71916d1",
+      "scope": "PE header and complete province-name section; explicitly a prefix, not a full executable"
+    },
+    {
+      "id": "cd-rules",
+      "location": "CD:RULES.TXT",
+      "bytes": 217350,
+      "sha256": "9757f81a666a222bd4e20c85e78c0fdb229859f9a15bcc25936f4e4e57885077",
+      "scope": "Original PC rule reference; private input only, no prose redistribution"
+    },
+    {
+      "id": "editor-strings",
+      "location": "PRIVATE:scenario-editor-SCENED.DAT",
+      "bytes": 183967,
+      "sha256": "c965abb387d3d0e94ae94cd1e65e42aedeb9a2ba26925139ac962265d7a074e8",
+      "scope": "Scenario Editor archive string catalog; not a campaign record container"
+    },
+    {
+      "id": "cd-map",
+      "location": "CD:RESFILES/MAP.RES",
+      "bytes": 3670868,
+      "sha256": "f5c3af87d6e99e3a0d62ea80033f553663660ffc7888d53cf68bffd147510d38",
+      "scope": "Private original resource archive; never bundled"
+    }
+  ],
+  "volume": "BIRTHV10",
+  "strings": 4567,
+  "stringGroups": 46,
+  "realms": 51,
+  "provinceOwningRealms": 32,
+  "templatePlayableFlags": 18,
+  "provinces": 206,
+  "characterRecords": 116,
+  "characterDefinitions": 116,
+  "uniqueAvatarFiles": 111,
+  "nonPlaceholderCharacterNames": 110,
+  "realmHeads": 51,
+  "holdings": 766,
+  "fortifications": 39,
+  "militaryUnits": 234,
+  "characterUnits": 63,
+  "unplacedTroops": 0,
+  "geometries": 206,
+  "centerMatches": 206,
+  "multiRingProvinces": 7,
+  "geometryArea": 143310,
+  "negativeRings": 0,
+  "directedMovementLinks": 1053,
+  "asymmetricMovementLinks": 3,
+  "rasterContacts": 544,
+  "guideRows": {
+    "provinces": 200,
+    "holdings": 604,
+    "regents": 63,
+    "detailedRegents": 62,
+    "coverage": {
+      "first": 358,
+      "last": 6320,
+      "gaps": []
+    }
+  },
+  "secondaryComparisons": {
+    "province": {
+      "match": 591,
+      "difference": 0,
+      "unmatched": 3
+    },
+    "holding": {
+      "match": 586,
+      "difference": 7,
+      "unmatched": 11
+    },
+    "regent": {
+      "match": 488,
+      "difference": 8,
+      "unmatched": 0
+    }
+  },
+  "provinceSchemaProjection": {
+    "accepted": 177,
+    "blocked": 29
+  },
+  "capacityIssues": 10,
+  "savesCompared": 7,
+  "editorStringDifferences": 31,
+  "tabletopRows": 14,
+  "tabletopDifferences": 1,
+  "confidence": {
+    "observedTemplateRecords": 1475,
+    "geometry": "EXACT_AT_ORIGINAL_HIT_MAP_RESOLUTION",
+    "inferredProvinceRecords": 0,
+    "certifiedPostInitializationCampaigns": 0
+  },
+  "fieldCoverage": {
+    "provinceNames": {
+      "verified": 206,
+      "missing": 0
+    },
+    "provinceOwnersAndLevels": {
+      "verified": 206,
+      "missing": 0
+    },
+    "provinceTerrainAndCenters": {
+      "verified": 206,
+      "missing": 0
+    },
+    "realmTemplateResources": {
+      "verified": 51,
+      "missing": 0
+    },
+    "regentBloodlinesAndClass": {
+      "verified": 116,
+      "missing": 0
+    },
+    "regentAvatarDefinitions": {
+      "verified": 116,
+      "missing": 0
+    },
+    "nonPlaceholderCharacterNames": {
+      "verified": 110,
+      "missing": 6
+    },
+    "holdingsOwnerLocationTypeLevel": {
+      "verified": 766,
+      "missing": 0
+    },
+    "fortificationRecords": {
+      "verified": 39,
+      "missing": 0
+    },
+    "troopOwnerTypeLocation": {
+      "verified": 297,
+      "missing": 0
+    },
+    "geometryAndCenterIdentity": {
+      "verified": 206,
+      "missing": 0
+    },
+    "stockPostNewGameState": {
+      "verified": 0,
+      "missing": "not yet certified"
+    },
+    "saveCharacterTail": {
+      "verified": 0,
+      "missing": "variable-length structures unresolved"
+    }
+  },
+  "playableAnuire": false,
+  "blockers": [
+    "M0 cannot represent original multi-ring province geometry, heavy-mountain/swamp terrain, and some source potentials without explicit schema/rule extensions.",
+    "M0 fort cap, symmetric relationships, landed-only elimination, and shared initial-resource defaults cannot faithfully instantiate the full PC world.",
+    "New-game regent selection and unit linking are confirmed in the modified source; exact stock selected-regent/difficulty initialization and resulting resources need a controlled before/after comparison.",
+    "Original save character-tail sections and diplomacy matrix axis/runtime flag behavior are not fully decoded."
+  ]
+}

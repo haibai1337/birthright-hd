@@ -7,8 +7,12 @@ import {
   type Campaign,
   type Command,
   type RulesetId,
+  type Scenario,
+  realmSelectable,
+  domainFocus,
 } from '../../../packages/core';
-import { developmentScenario as scenario } from '../../../packages/world-data';
+import { developmentScenario } from '../../../packages/world-data';
+import { loadAnuireScenario } from '../../../packages/world-data/anuire-scenario';
 import { type MapOverlay } from '../../../packages/rendering/strategic-map';
 import { Herald } from '../../../packages/ui/Herald';
 import { Icon } from '../../../packages/ui/Icon';
@@ -16,6 +20,15 @@ import { errors, logText, playerJournal, season, signed } from '../../../package
 import { MapPanel } from './MapPanel';
 import { Sidebar, type Panel } from './Sidebar';
 import { Modal } from './Modal';
+import { AnuirePreview } from './AnuirePreview';
+import { useOriginalAssets, assetUrl } from './original-assets';
+import { originalAudio } from './audio';
+import { ClassicCampaign, ClassicMainMenu, OriginalImage } from './ClassicChrome';
+import './classic.css';
+import {
+  validateAnuireResearch,
+  type AnuireResearch,
+} from '../../../packages/world-data/anuire-research';
 import {
   defaultSettings,
   downloadCampaign,
@@ -27,6 +40,11 @@ import {
 } from './storage';
 type Dialog = 'new' | 'load' | 'settings' | 'help' | 'menu' | null;
 export function App() {
+  const original = useOriginalAssets();
+  const [scenario, setScenario] = useState<Scenario>(developmentScenario);
+  const [newScenario, setNewScenario] = useState<Scenario>(developmentScenario);
+  const [localAnuire, setLocalAnuire] = useState<Scenario | null>(null);
+  const playableFile = useRef<HTMLInputElement>(null);
   const [state, setState] = useState<Campaign | null>(null);
   const [dialog, setDialog] = useState<Dialog>(null);
   const [selected, setSelected] = useState('p4');
@@ -39,10 +57,45 @@ export function App() {
   const [seed, setSeed] = useState('1997');
   const [ruleset, setRuleset] = useState<RulesetId>('ENHANCED');
   const file = useRef<HTMLInputElement>(null);
+  const researchFile = useRef<HTMLInputElement>(null);
+  const [research, setResearch] = useState<AnuireResearch | null>(null);
   const notice = (text: string, error = false) => {
     setMessage(text);
     setIsError(error);
   };
+  useEffect(() => {
+    originalAudio.configure(original, settings, state ? 'campaign' : 'menu');
+  }, [original, settings, state]);
+  useEffect(() => {
+    const interaction = (e: Event) => {
+      originalAudio.unlock();
+      if (e.type === 'pointerdown' && e.target instanceof Element && e.target.closest('button'))
+        originalAudio.effect('click');
+    };
+    window.addEventListener('pointerdown', interaction, true);
+    window.addEventListener('keydown', interaction, true);
+    return () => {
+      window.removeEventListener('pointerdown', interaction, true);
+      window.removeEventListener('keydown', interaction, true);
+      originalAudio.destroy();
+    };
+  }, []);
+  useEffect(() => {
+    if (!original) return;
+    document.documentElement.classList.add('original-presentation');
+    for (const [name, id] of Object.entries({
+      parchment: 'UI/DTURN_BK.PCX',
+      button: 'UI/SCRLBTN0.PCX',
+      buttonDown: 'UI/SCRLBTN1.PCX',
+      dialog: 'UI/MARBLE01.PCX',
+      toolbar: 'UI/DMAP_IC.PCX',
+    }))
+      document.documentElement.style.setProperty(
+        '--original-' + name,
+        `url("${assetUrl(original, id)}")`,
+      );
+    return () => document.documentElement.classList.remove('original-presentation');
+  }, [original]);
   useEffect(() => {
     try {
       setSettings(loadSettings());
@@ -74,10 +127,15 @@ export function App() {
     if (!state) return;
     const result = applyCommand(state, scenario, state.playerRealm, command);
     if (!result.ok) {
+      originalAudio.effect('error');
       notice(errors[result.error.code], true);
       return;
     }
     accept(result.state);
+    if (command.type === 'MoveArmy') {
+      const army = result.state.armies.find((a) => a.id === command.armyId);
+      if (army) setSelected(army.provinceId);
+    }
     if (command.type !== 'EndTurn') {
       const last = playerJournal(result.state).at(-1);
       if (last) notice(logText(last, scenario));
@@ -89,13 +147,10 @@ export function App() {
       notice('Enter a whole campaign seed from 0 to 4294967295.', true);
       return;
     }
-    const next = createCampaign(scenario, realmId, value, ruleset);
+    const next = createCampaign(newScenario, realmId, value, ruleset);
+    setScenario(newScenario);
     accept(next);
-    setSelected(
-      next.provinces.find((p) => p.owner === realmId && p.fort > 0)?.id ??
-        next.provinces.find((p) => p.owner === realmId)?.id ??
-        'p0',
-    );
+    setSelected(domainFocus(next));
     setPanel('province');
     setDialog(null);
   }
@@ -103,7 +158,7 @@ export function App() {
     try {
       const next = loadCampaign(scenario, automatic);
       setState(next);
-      setSelected(next.provinces.find((p) => p.owner === next.playerRealm)?.id ?? 'p0');
+      setSelected(domainFocus(next));
       setDialog(null);
       notice('Your campaign has been restored.');
     } catch (e) {
@@ -136,88 +191,127 @@ export function App() {
   const latest = state ? playerJournal(state).at(-1) : null;
   const petition = state?.pendingEvents.find((e) => e.realmId === state.playerRealm);
   return (
-    <div className={`app ${settings.largeText ? 'large-text' : ''}`}>
+    <div
+      className={`app ${settings.largeText ? 'large-text' : ''}`}
+      data-original-assets={original ? 'ready' : 'unavailable'}
+    >
       {!state ? (
-        <main className="main-menu">
-          <svg className="menu-map" viewBox="0 0 1400 940" aria-hidden="true">
-            {scenario.provinces.map((p) => (
-              <polygon
-                key={p.id}
-                points={p.polygon.map((q) => q.join(',')).join(' ')}
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-              />
-            ))}
-            {scenario.provinces.map((p) => (
-              <g key={p.id}>
-                <circle cx={p.center[0]} cy={p.center[1]} r="4" fill="currentColor" />
-                <text x={p.center[0]} y={p.center[1] + 22} textAnchor="middle" fill="currentColor">
-                  {p.name}
-                </text>
-              </g>
-            ))}
-          </svg>
-          <div className="menu-topline">
-            <span>AN OFFLINE REALM STRATEGY GAME</span>
-            <span>MILESTONE 0 · DEVELOPMENT BUILD</span>
-          </div>
-          <div className="menu-content">
-            <div className="menu-brand">
-              <div className="menu-ornament">✦</div>
-              <p className="eyebrow">THE GORGON’S ALLIANCE · A MODERN INTERPRETATION</p>
-              <h1>
-                BIRTHRIGHT<span>HD</span>
-              </h1>
-              <div className="brand-rule">
-                <i />
-                <Icon name="crown" size={25} />
-                <i />
-              </div>
-              <p className="menu-tagline">
-                The land is inherited.
-                <br />
-                <em>The crown is earned.</em>
-              </p>
-              <nav aria-label="Main menu">
-                <button className="primary" onClick={() => setDialog('new')}>
-                  New game <Icon name="arrow" />
-                </button>
-                <button onClick={() => setDialog('load')}>
-                  Load game <Icon name="scroll" />
-                </button>
-                <button onClick={() => setDialog('settings')}>
-                  Settings <Icon name="settings" />
-                </button>
-              </nav>
+        original ? (
+          <ClassicMainMenu
+            pack={original}
+            onAction={(action) => {
+              if (action === 'quit') setDialog('help');
+              else if (action === 'return' || action === 'save') return;
+              else setDialog(action);
+            }}
+          />
+        ) : (
+          <main className="main-menu">
+            <svg className="menu-map" viewBox="0 0 1400 940" aria-hidden="true">
+              {scenario.provinces.map((p) => (
+                <polygon
+                  key={p.id}
+                  points={p.polygon.map((q) => q.join(',')).join(' ')}
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
+              ))}
+              {scenario.provinces.map((p) => (
+                <g key={p.id}>
+                  <circle cx={p.center[0]} cy={p.center[1]} r="4" fill="currentColor" />
+                  <text
+                    x={p.center[0]}
+                    y={p.center[1] + 22}
+                    textAnchor="middle"
+                    fill="currentColor"
+                  >
+                    {p.name}
+                  </text>
+                </g>
+              ))}
+            </svg>
+            <div className="menu-topline">
+              <span>AN OFFLINE REALM STRATEGY GAME</span>
+              <span>M1B · EXPERIMENTAL STRATEGY</span>
             </div>
-            <div className="menu-campaign">
-              <Herald realm={scenario.realms[0]!} size={118} />
-              <span className="eyebrow">THE FIRST CHAPTER</span>
-              <h2>
-                The Crown
-                <br />& the Covenant
-              </h2>
-              <p>
-                Twelve provinces. Three bloodlines.
-                <br />A frontier waiting for its sovereign.
-              </p>
-              <div className="scenario-disclaimer">
-                SYNTHETIC DEVELOPMENT SCENARIO
-                <p>
-                  Original names and cartography for testing the realm engine. The authentic Anuire
-                  campaign is still being researched.
+            <div className="menu-content">
+              <div className="menu-brand">
+                <div className="menu-ornament">✦</div>
+                <p className="eyebrow">THE GORGON’S ALLIANCE · A MODERN INTERPRETATION</p>
+                <h1>
+                  BIRTHRIGHT<span>HD</span>
+                </h1>
+                <div className="brand-rule">
+                  <i />
+                  <Icon name="crown" size={25} />
+                  <i />
+                </div>
+                <p className="menu-tagline">
+                  The land is inherited.
+                  <br />
+                  <em>The crown is earned.</em>
                 </p>
+                <nav aria-label="Main menu">
+                  <button className="primary" onClick={() => setDialog('new')}>
+                    New game <Icon name="arrow" />
+                  </button>
+                  <button onClick={() => setDialog('load')}>
+                    Load game <Icon name="scroll" />
+                  </button>
+                  <button onClick={() => setDialog('settings')}>
+                    Settings <Icon name="settings" />
+                  </button>
+                </nav>
+              </div>
+              <div className="menu-campaign">
+                <Herald realm={scenario.realms[0]!} size={118} />
+                <span className="eyebrow">THE FIRST CHAPTER</span>
+                <h2>
+                  The Crown
+                  <br />& the Covenant
+                </h2>
+                <p>
+                  Twelve provinces. Three bloodlines.
+                  <br />A frontier waiting for its sovereign.
+                </p>
+                <div className="scenario-disclaimer">
+                  SYNTHETIC DEVELOPMENT SCENARIO
+                  <p>
+                    Original names and cartography for testing the realm engine. Load the
+                    experimental original Anuire template from New Game.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-          <footer className="menu-footer">
-            <span>Original-code prototype · No proprietary game assets</span>
-            <button onClick={() => setDialog('help')}>
-              About this campaign <Icon name="help" size={16} />
-            </button>
-          </footer>
-        </main>
+            <footer className="menu-footer">
+              <span>Original-code prototype · No proprietary game assets</span>
+              <button onClick={() => setDialog('help')}>
+                About this campaign <Icon name="help" size={16} />
+              </button>
+            </footer>
+          </main>
+        )
+      ) : original ? (
+        <ClassicCampaign
+          pack={original}
+          state={state}
+          scenario={scenario}
+          selected={selected}
+          panel={panel}
+          overlay={overlay}
+          settings={settings}
+          onSelect={setSelected}
+          onPanel={setPanel}
+          onOverlay={setOverlay}
+          issue={issue}
+          save={save}
+          open={setDialog}
+          mainMenu={() => {
+            setState(null);
+            setDialog(null);
+          }}
+        />
       ) : (
         <>
           <header className="topbar">
@@ -332,7 +426,7 @@ export function App() {
                   ))}
                 </div>
                 <span className="map-toolbar-note">
-                  12 PROVINCES <i>✦</i> 3 REALMS
+                  {scenario.provinces.length} PROVINCES <i>✦</i> {scenario.realms.length} DOMAINS
                 </span>
               </div>
               <MapPanel
@@ -373,9 +467,12 @@ export function App() {
               <i /> LOCAL CAMPAIGN <b>·</b> {settings.autosave ? 'AUTOSAVE ON' : 'AUTOSAVE OFF'}
             </span>
             <span>
-              Seed {state.seed} <b>·</b> {state.ruleset} <b>·</b> Provisional geography & rules
+              Seed {state.seed} <b>·</b> {state.ruleset} <b>·</b>{' '}
+              {scenario.fingerprint
+                ? 'Original template · experimental rules'
+                : 'Provisional geography & rules'}
             </span>
-            <span>M0 / 0.1.0</span>
+            <span>M1B / 0.1.0</span>
           </footer>
           {petition && (
             <div className="petition" role="region" aria-label="Council petition">
@@ -433,7 +530,23 @@ export function App() {
           </button>
         </div>
       )}
-      {dialog && (
+      {original && dialog === 'menu' && (
+        <ClassicMainMenu
+          pack={original}
+          inGame
+          onAction={(action) => {
+            if (action === 'return') setDialog(null);
+            else if (action === 'save') {
+              save();
+              setDialog(null);
+            } else if (action === 'quit') {
+              setState(null);
+              setDialog(null);
+            } else setDialog(action);
+          }}
+        />
+      )}
+      {dialog && !(original && dialog === 'menu') && (
         <Modal
           title={
             {
@@ -449,35 +562,99 @@ export function App() {
         >
           {dialog === 'new' && (
             <>
+              <label className="campaign-selector">
+                Campaign
+                <select
+                  value={newScenario.id}
+                  onChange={(e) => {
+                    const chosen =
+                      e.target.value === developmentScenario.id ? developmentScenario : localAnuire;
+                    if (!chosen) return;
+                    setNewScenario(chosen);
+                    if (!state) setScenario(chosen);
+                    setRealmId(chosen.realms.find((r) => realmSelectable(chosen, r.id))!.id);
+                  }}
+                >
+                  <option value={developmentScenario.id}>
+                    Covenant Marches · synthetic regression campaign
+                  </option>
+                  {localAnuire && <option value={localAnuire.id}>{localAnuire.name}</option>}
+                </select>
+              </label>
+              <button className="menu-action" onClick={() => playableFile.current?.click()}>
+                Load Anuire campaign data
+              </button>
               <div className="campaign-intro">
-                <span className="eyebrow">THE CROWN & THE COVENANT</span>
+                <span className="eyebrow">
+                  {newScenario.fingerprint
+                    ? 'ANUIRE · EXPERIMENTAL ORIGINAL TEMPLATE'
+                    : 'THE CROWN & THE COVENANT'}
+                </span>
                 <p>
-                  A synthetic, twelve-province campaign. Choose any regent; the other two will be
-                  controlled by the AI.
+                  {newScenario.fingerprint
+                    ? `${newScenario.provinces.length} original provinces. Choose an eligible regent; active territorial and holding domains use AI. Starting records are original; gameplay uses documented compatibility rules.`
+                    : 'A synthetic, twelve-province campaign. Choose any regent; the other two will be controlled by the AI.'}
                 </p>
               </div>
-              <div className="realm-choices">
-                {scenario.realms.map((r) => (
-                  <button
-                    key={r.id}
-                    className={`realm-choice ${realmId === r.id ? 'selected' : ''}`}
-                    aria-pressed={realmId === r.id}
-                    onClick={() => setRealmId(r.id)}
+              {newScenario.fingerprint && (
+                <label>
+                  Choose Anuire regent
+                  <select
+                    aria-label="Choose Anuire regent"
+                    value={realmId}
+                    onChange={(e) => setRealmId(e.target.value)}
                   >
-                    <Herald realm={r} size={62} />
-                    <h3>{r.name}</h3>
-                    <p>{r.regent.name}</p>
-                    <small>
-                      {r.regent.class} · Bloodline {r.regent.bloodline.strength}
-                    </small>
-                    <em>“{r.motto}”</em>
-                  </button>
-                ))}
+                    {newScenario.realms
+                      .filter((r) => realmSelectable(newScenario, r.id))
+                      .map((r) => (
+                        <option key={r.id} value={r.id}>
+                          {r.name} · {r.regent.name}
+                        </option>
+                      ))}
+                  </select>
+                </label>
+              )}
+              <div className="realm-choices">
+                {newScenario.realms
+                  .filter(
+                    (r) =>
+                      realmSelectable(newScenario, r.id) &&
+                      (!newScenario.fingerprint || r.id === realmId),
+                  )
+                  .map((r) => (
+                    <button
+                      key={r.id}
+                      className={`realm-choice ${realmId === r.id ? 'selected' : ''}`}
+                      aria-pressed={realmId === r.id}
+                      onClick={() => setRealmId(r.id)}
+                    >
+                      {original && original.portraits[String(r.regent.original?.avatarId)] ? (
+                        <OriginalImage
+                          pack={original}
+                          id={original.portraits[String(r.regent.original?.avatarId)]!}
+                          alt={r.regent.name}
+                          className="regent-portrait"
+                        />
+                      ) : (
+                        <Herald realm={r} size={62} />
+                      )}
+                      <h3>{r.name}</h3>
+                      <p>{r.regent.name}</p>
+                      <small>
+                        {r.regent.class} · Bloodline {r.regent.bloodline.strength}
+                      </small>
+                      <em>“{r.motto}”</em>
+                    </button>
+                  ))}
               </div>
               <div className="new-game-options">
                 <label>
                   Ruleset
-                  <select value={ruleset} onChange={(e) => setRuleset(e.target.value as RulesetId)}>
+                  <select
+                    aria-label="Ruleset"
+                    value={ruleset}
+                    onChange={(e) => setRuleset(e.target.value as RulesetId)}
+                  >
                     <option value="ENHANCED">Enhanced · persistent wars</option>
                     <option value="CLASSIC">Classic reconstruction · seasonal wars</option>
                   </select>
@@ -493,17 +670,43 @@ export function App() {
                 </label>
               </div>
               <p className="council-note">
-                Both profiles use provisional development and combat rules. Classic is an incomplete
-                reconstruction. Control 8 provinces or lead in province levels after 20 seasons.
+                {newScenario.fingerprint
+                  ? 'Original template selection flags apply. Both rule profiles are experimental. Reach domain power 600 or lead after 80 seasons; holding-only domains survive without provinces.'
+                  : 'Both profiles use provisional development and combat rules. Classic is an incomplete reconstruction. Control 8 provinces or lead in province levels after 20 seasons.'}
               </p>
+              {newScenario.fingerprint && (
+                <details className="compatibility-details">
+                  <summary>Experimental campaign policies</summary>
+                  <ul>
+                    {newScenario.compatibilityNotes?.map((note) => (
+                      <li key={note}>{note}</li>
+                    ))}
+                  </ul>
+                </details>
+              )}
               <button className="primary full" onClick={start}>
                 Begin your reign <Icon name="arrow" />
               </button>
+              <div className="research-choice">
+                <span className="eyebrow">ANUIRE · DEVELOPMENT PREVIEW</span>
+                <p>
+                  Inspect recovered original provinces and starting-template records. Load the
+                  private anuire.research.json produced by the extraction tool.
+                </p>
+                <button onClick={() => researchFile.current?.click()}>
+                  Open Anuire research preview
+                </button>
+              </div>
             </>
           )}
           {dialog === 'load' && (
             <>
               <p>Campaigns are stored in this browser on this device.</p>
+              {state && (
+                <button className="menu-action" onClick={() => downloadCampaign(state)}>
+                  Export campaign file
+                </button>
+              )}
               <button className="menu-action" onClick={() => load(false)}>
                 <Icon name="save" />
                 Load manual save
@@ -529,9 +732,7 @@ export function App() {
                     .then((text) => {
                       const next = deserializeCampaign(text, scenario);
                       setState(next);
-                      setSelected(
-                        next.provinces.find((p) => p.owner === next.playerRealm)?.id ?? 'p0',
-                      );
+                      setSelected(domainFocus(next));
                       setDialog(null);
                       notice('Campaign file imported.');
                     })
@@ -580,6 +781,89 @@ export function App() {
                   />
                 </label>
               ))}
+              <div className="audio-settings">
+                <h3>Original soundtrack</h3>
+                <p>
+                  {original
+                    ? 'Recovered original recordings. Playback starts after a click or key press.'
+                    : 'Original audio is unavailable. Run npm run assets:import locally.'}
+                </p>
+                {original?.music.campaignFallback && (
+                  <p className="audio-cue-note">
+                    Original realm cue 105 is missing from this disc image. Campaign playback uses
+                    recovered track 101 as an explicitly selected alternate.
+                  </p>
+                )}
+                <button onClick={() => originalAudio.unlock()} disabled={!original}>
+                  Enable music
+                </button>
+                <label className="setting">
+                  <span>Music volume</span>
+                  <input
+                    aria-label="Music volume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={settings.musicVolume}
+                    onChange={(e) =>
+                      changeSettings({ ...settings, musicVolume: Number(e.target.value) })
+                    }
+                  />
+                </label>
+                <label className="setting">
+                  <span>Effects volume</span>
+                  <input
+                    aria-label="Effects volume"
+                    type="range"
+                    min="0"
+                    max="1"
+                    step="0.01"
+                    value={settings.effectsVolume}
+                    onChange={(e) =>
+                      changeSettings({ ...settings, effectsVolume: Number(e.target.value) })
+                    }
+                  />
+                </label>
+                <label className="setting">
+                  <span>Mute all audio</span>
+                  <input
+                    type="checkbox"
+                    checked={settings.muted}
+                    onChange={(e) => changeSettings({ ...settings, muted: e.target.checked })}
+                  />
+                </label>
+                {original && (
+                  <label className="select-label">
+                    Campaign soundtrack
+                    <select
+                      aria-label="Campaign soundtrack"
+                      value={settings.campaignTrack}
+                      onChange={(e) =>
+                        changeSettings({ ...settings, campaignTrack: e.target.value })
+                      }
+                    >
+                      <option value="default">
+                        {original.music.campaignFallback
+                          ? 'Alternate original track 101 (realm 105 unavailable)'
+                          : 'Original realm cue 105'}
+                      </option>
+                      {Object.keys(original.assets)
+                        .filter((id) => /^MUSIC\//.test(id))
+                        .map((id) => (
+                          <option key={id} value={id}>
+                            {id.replace('MUSIC/', 'Original track ')}
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+                )}
+                {original && (
+                  <a href="/_private/catalog.html" target="_blank" rel="noreferrer">
+                    Browse private original asset catalog
+                  </a>
+                )}
+              </div>
             </>
           )}
           {dialog === 'menu' && (
@@ -647,9 +931,9 @@ export function App() {
                   proposals still cost resources.
                 </li>
                 <li>
-                  <strong>End the season.</strong> Two opponents take valid actions, then taxes,
-                  upkeep, regency, and seeded events resolve. Respond to petitions before giving
-                  further orders.
+                  <strong>End the season.</strong> Non-player domains take valid actions, then
+                  taxes, upkeep, regency, and seeded events resolve. Respond to petitions before
+                  giving further orders.
                 </li>
                 <li>
                   <strong>Preserve your reign.</strong> Save locally or export a campaign file from
@@ -664,14 +948,78 @@ export function App() {
                 Aegis is an original test spell available to wizard regents with a level 2 source.
               </p>
               <p>
-                The authentic Anuire dataset, trade-route construction, investiture, tactical
-                battles, and 3D adventures are deferred. No original graphics, audio, or proprietary
-                source code are bundled.
+                New game can load the complete experimental Anuire template or open its research
+                preview. Trade-route construction, investiture, tactical battles and 3D adventures
+                are deferred. Original art and audio load from the private local asset pack; clean
+                public builds exclude that pack. Shortcut keys: P provinces, M military, D
+                diplomacy, Ctrl+S save, F1 help and Escape to close a council window.
               </p>
             </div>
           )}
         </Modal>
       )}
+      <input
+        ref={playableFile}
+        hidden
+        type="file"
+        accept=".json,application/json"
+        data-testid="anuire-campaign-import"
+        onChange={(e) => {
+          const input = e.target.files?.[0];
+          e.target.value = '';
+          if (!input) return;
+          if (input.size > 32_000_000) {
+            notice('Campaign data exceeds the 32 MB limit.', true);
+            return;
+          }
+          void input
+            .text()
+            .then((text) => loadAnuireScenario(JSON.parse(text)))
+            .then((loaded) => {
+              setLocalAnuire(loaded);
+              setNewScenario(loaded);
+              if (!state) setScenario(loaded);
+              setRealmId(loaded.realms.find((r) => realmSelectable(loaded, r.id))!.id);
+              notice('Anuire template loaded. Choose your regent to begin.');
+            })
+            .catch((error: unknown) =>
+              notice(
+                `Anuire load failed: ${error instanceof Error ? error.message : 'invalid corpus'}`,
+                true,
+              ),
+            );
+        }}
+      />
+      <input
+        ref={researchFile}
+        hidden
+        type="file"
+        accept=".json,application/json"
+        data-testid="research-import"
+        onChange={(e) => {
+          const input = e.target.files?.[0];
+          e.target.value = '';
+          if (!input) return;
+          if (input.size > 32_000_000) {
+            notice('Research import exceeds the 32 MB limit.', true);
+            return;
+          }
+          void input
+            .text()
+            .then((text) => {
+              const imported = validateAnuireResearch(JSON.parse(text));
+              setResearch(imported);
+              setDialog(null);
+            })
+            .catch((error: unknown) =>
+              notice(
+                `Research import failed: ${error instanceof Error ? error.message : 'invalid data'}`,
+                true,
+              ),
+            );
+        }}
+      />
+      {research && <AnuirePreview data={research} onClose={() => setResearch(null)} />}
     </div>
   );
 }

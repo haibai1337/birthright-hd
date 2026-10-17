@@ -18,7 +18,18 @@ export const provenanceSchema = z.object({
   source: z.string(),
   note: z.string(),
 });
-export const terrainSchema = z.enum(['plains', 'forest', 'hills', 'mountains', 'coast']);
+export const terrainSchema = z.enum([
+  'plains',
+  'forest',
+  'hills',
+  'mountains',
+  'heavy-mountains',
+  'swamp',
+  'coast',
+]);
+const originalFields = z.record(z.string(), z.unknown()).optional();
+const pointSchema = z.tuple([z.number().finite(), z.number().finite()]);
+export const selectionModeSchema = z.enum(['CLASSIC', 'UNRESTRICTED']);
 export const holdingTypeSchema = z.enum(['law', 'guild', 'temple', 'source']);
 export const taxSchema = z.enum(['light', 'moderate', 'severe']);
 export const treatyKindSchema = z.enum(['peace', 'pact', 'alliance', 'war']);
@@ -29,6 +40,9 @@ export const unitDefinitionSchema = z.object({
   upkeep: integer,
   power: integer.positive(),
   minLevel: integer,
+  recruitable: z.boolean().optional(),
+  mobility: z.enum(['foot', 'mounted']).optional(),
+  original: originalFields,
   provenance: provenanceSchema,
 });
 export const bloodlineSchema = z.object({
@@ -43,6 +57,7 @@ export const characterSchema = z.object({
   bloodline: bloodlineSchema,
   attributes: z.object({ command: integer, diplomacy: integer }),
   inventory: z.array(idSchema),
+  original: originalFields,
 });
 export const regionSchema = z.object({
   id: idSchema,
@@ -56,10 +71,13 @@ export const provinceDefinitionSchema = z.object({
   regionId: idSchema,
   terrain: terrainSchema,
   polygon: z.array(z.tuple([z.number().finite(), z.number().finite()])).min(3),
+  rings: z.array(z.array(pointSchema).min(3)).min(1).optional(),
+  movement: z.array(z.object({ to: idSchema, code: integer.max(255) })).optional(),
   center: z.tuple([z.number().finite(), z.number().finite()]),
   adjacent: z.array(idSchema),
-  maxLevel: integer.max(10),
-  magicPotential: integer.max(10),
+  maxLevel: integer.max(15),
+  magicPotential: integer.max(30),
+  original: originalFields,
   provenance: provenanceSchema,
 });
 export const realmDefinitionSchema = z.object({
@@ -70,6 +88,13 @@ export const realmDefinitionSchema = z.object({
   sigil: z.enum(['crown', 'stag', 'tower']),
   motto: z.string(),
   regent: characterSchema,
+  originalPlayable: z.boolean().optional(),
+  technicalPlayable: z.boolean().optional(),
+  domainType: z.enum(['territorial', 'holding', 'special', 'inactive']).optional(),
+  specialBehavior: z.enum(['standard', 'unresolved-original']).optional(),
+  controller: z.enum(['ai', 'passive']).optional(),
+  survival: z.enum(['territory', 'domain-assets', 'persistent']).optional(),
+  original: originalFields,
   provenance: provenanceSchema,
 });
 export const holdingSchema = z.object({
@@ -77,20 +102,25 @@ export const holdingSchema = z.object({
   provinceId: idSchema,
   realmId: idSchema,
   type: holdingTypeSchema,
-  level: integer.max(10),
+  level: integer.max(15),
+  sourceId: idSchema.optional(),
 });
 export const provinceStateSchema = z.object({
   id: idSchema,
   owner: idSchema,
-  level: integer.max(10),
+  level: integer.max(15),
   loyalty: integer.max(4),
   tax: taxSchema,
-  fort: integer.max(5),
+  fort: integer.max(15),
+  occupiedBy: idSchema.nullable().optional(),
+  contested: z.boolean().optional(),
+  sourceId: idSchema.optional(),
 });
 export const unitSchema = z.object({
   id: idSchema,
   type: idSchema,
   strength: integer.min(1).max(100),
+  sourceId: idSchema.optional(),
 });
 export const armySchema = z.object({
   id: idSchema,
@@ -137,12 +167,48 @@ export const eventDefinitionSchema = z.object({
   decision: z.boolean(),
   provenance: provenanceSchema,
 });
+export const fortificationSchema = z.object({
+  id: idSchema,
+  sourceId: idSchema.optional(),
+  provinceId: idSchema,
+  realmId: idSchema,
+  level: integer.max(15),
+  kind: z.enum(['castle', 'wizard-tower']),
+});
+export const characterDeploymentSchema = z.object({
+  id: idSchema,
+  sourceId: idSchema,
+  provinceId: idSchema,
+  realmId: idSchema,
+  regentId: idSchema.nullable(),
+  typeCode: integer,
+});
 export const scenarioSchema = z.object({
   id: idSchema,
   revision: z.literal(1),
   name: z.string(),
   description: z.string(),
   provenance: provenanceSchema,
+  fingerprint: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
+  map: z.object({ width: integer.positive(), height: integer.positive() }).optional(),
+  regents: z.array(characterSchema).optional(),
+  originalData: z.unknown().optional(),
+  compatibilityNotes: z.array(z.string()).optional(),
+  selection: z
+    .object({ mode: selectionModeSchema, overrides: z.record(idSchema, z.boolean()).optional() })
+    .optional(),
+  policy: z
+    .object({
+      directedBorders: z.boolean(),
+      survival: z.enum(['territory', 'domain-assets', 'persistent']),
+      maxFort: integer.max(15),
+      holdingCapacity: z.enum(['strict', 'preserve-template-excess']),
+      conquest: z.enum(['transfer', 'occupation']),
+    })
+    .optional(),
   regions: z.array(regionSchema).min(1),
   realms: z.array(realmDefinitionSchema).min(3),
   provinces: z.array(provinceDefinitionSchema).min(3),
@@ -157,8 +223,16 @@ export const scenarioSchema = z.object({
     tradeRoutes: z.array(tradeRouteSchema),
     treasury: integer,
     regency: integer,
+    domains: z.array(z.object({ id: idSchema, treasury: integer, regency: integer })).optional(),
+    fortifications: z.array(fortificationSchema).optional(),
+    characters: z.array(characterDeploymentSchema).optional(),
   }),
-  victory: z.object({ provinces: integer.positive(), turns: integer.positive() }),
+  victory: z.object({
+    provinces: integer.positive(),
+    turns: integer.positive(),
+    metric: z.enum(['province-count', 'domain-power', 'holding-levels']).optional(),
+    target: integer.positive().optional(),
+  }),
 });
 export const commandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('RecruitUnit'), provinceId: idSchema, unitType: idSchema }),
@@ -178,6 +252,7 @@ export const realmStateSchema = z.object({
   regency: integer,
   actions: integer.max(3),
   eliminated: z.boolean(),
+  controller: z.enum(['player', 'ai', 'passive']).optional(),
 });
 export const reportSchema = z.object({
   realmId: idSchema,
@@ -205,6 +280,11 @@ export const historySchema = z.object({
 export const campaignSchema = z.object({
   scenarioId: idSchema,
   scenarioRevision: z.literal(1),
+  scenarioFingerprint: z
+    .string()
+    .regex(/^[a-f0-9]{64}$/)
+    .optional(),
+  selectionMode: selectionModeSchema.optional(),
   ruleset: z.enum(['CLASSIC', 'ENHANCED']),
   seed: integer.max(4294967295),
   rng: integer.max(4294967295),
@@ -215,6 +295,8 @@ export const campaignSchema = z.object({
   provinces: z.array(provinceStateSchema),
   holdings: z.array(holdingSchema),
   armies: z.array(armySchema),
+  fortifications: z.array(fortificationSchema).optional(),
+  characters: z.array(characterDeploymentSchema).optional(),
   treaties: z.array(treatySchema),
   tradeRoutes: z.array(tradeRouteSchema),
   effects: z.array(effectSchema),

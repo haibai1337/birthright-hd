@@ -1,6 +1,7 @@
 import type { Army, Campaign, Scenario } from './schema';
 import { armyPower } from './selectors';
 import { RULESETS } from './rules';
+import { fortLevel } from './domains';
 export interface BattleRequest {
   attacker: Army;
   defenders: Army[];
@@ -31,7 +32,7 @@ export const autoResolve: BattleResolver = {
     const attackPower = armyPower(attacker, scenario);
     const defensePower =
       defenders.reduce((n, a) => n + armyPower(a, scenario), 0) +
-      (province?.fort ?? 0) * 3 +
+      (province ? fortLevel(state, province) : 0) * 3 +
       (province?.level ?? 0) +
       (RULESETS[state.ruleset].terrainDefense[terrain] ?? 0) +
       ward;

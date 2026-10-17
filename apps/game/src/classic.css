@@ -1,0 +1,684 @@
+/* Classic coordinates: 142 px council / 480 px canvas reference. Widescreen expands the map. */
+.original-presentation {
+  --gold: #573919;
+  --gold-light: #32230c;
+  --ink: #2c2114;
+  --parchment: #ccb48a;
+  --muted: #695331;
+  color: #241b10;
+  background: #30261b;
+}
+.original-presentation .app {
+  min-height: 480px;
+  color: #241b10;
+}
+.classic-main-menu {
+  position: relative;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  background: #7a744e var(--menu-map) center/cover no-repeat;
+  overflow: hidden;
+}
+.classic-main-menu:before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: #31270f33;
+  z-index: -1;
+}
+.classic-menu-shield {
+  position: relative;
+  height: min(96vh, 960px);
+  aspect-ratio: 420/480;
+  max-width: 98vw;
+  filter: drop-shadow(4px 7px 8px #0008);
+}
+.classic-menu-shield > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  object-fit: contain;
+}
+.classic-menu-shield nav {
+  position: absolute;
+  inset: 0;
+}
+.classic-menu-shield nav button {
+  position: absolute;
+  height: 5.35%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  box-shadow: none;
+  background: transparent;
+  color: #e5d18f;
+  font:
+    bold clamp(12px, 2.15vh, 26px)/1 Georgia,
+    serif;
+  text-shadow:
+    1px 2px #291506,
+    -1px -1px #3a2514;
+  white-space: nowrap;
+  letter-spacing: -0.3px;
+}
+.classic-menu-shield nav button:hover:enabled,
+.classic-menu-shield nav button:focus-visible {
+  background: #f9d16425;
+  color: #fff5c8;
+}
+.classic-menu-shield nav button:active:enabled {
+  transform: translateY(1px);
+  background: #1c0b0055;
+}
+.classic-menu-shield nav button:disabled {
+  opacity: 0.38;
+}
+.classic-build-label {
+  position: absolute;
+  bottom: 1px;
+  right: 12px;
+  font:
+    10px Arial,
+    sans-serif;
+  background: #21170cbb;
+  color: #f1d79b;
+  padding: 5px 8px;
+  margin: 0;
+  letter-spacing: 1px;
+}
+.in-game-menu {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  background-color: #0008;
+  background-image: none;
+}
+.classic-game {
+  --council-width: clamp(190px, 15vw, 284px);
+  height: 100%;
+  display: grid;
+  grid-template-columns: var(--council-width) minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) 66px;
+  background: #baa171;
+  color: #21180c;
+}
+.classic-council {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 12px 23px 10px 12px;
+  background: #c7af84 var(--original-parchment) right top/auto 100% no-repeat;
+  box-shadow: 2px 0 5px #0005;
+  z-index: 3;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.classic-realm-name {
+  font:
+    bold clamp(22px, 1.7vw, 32px)/1.1 Georgia,
+    serif;
+  color: #f7ebc1;
+  text-shadow:
+    2px 2px #1b1107,
+    -1px -1px #291b09;
+  padding: 0 0 8px;
+  border: 0;
+  justify-content: flex-start;
+  background: none;
+  text-align: left;
+}
+.classic-regent {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  margin: 0 0 10px;
+}
+.regent-portrait {
+  width: 64px;
+  height: 100px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  border: 3px ridge #a78c56;
+  background: #1c180f;
+}
+.classic-balances {
+  margin: 0;
+  font:
+    14px/1.4 Georgia,
+    serif;
+}
+.classic-balances > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 4px;
+}
+.classic-balances dt {
+  font-variant: small-caps;
+  font-weight: bold;
+}
+.classic-balances dd {
+  margin: 0;
+  font-weight: bold;
+}
+.classic-income {
+  font:
+    10px/1.4 Arial,
+    sans-serif;
+  margin: 4px 0 10px;
+  color: #47351f;
+}
+.classic-turn {
+  display: grid;
+  text-align: center;
+  background: #c4a06d66;
+  border-top: 1px solid #a68c59;
+  border-bottom: 1px solid #a68c59;
+  padding: 8px 0;
+  margin-bottom: 10px;
+  gap: 3px;
+}
+.classic-turn > span {
+  font:
+    11px Arial,
+    sans-serif;
+}
+.classic-turn > small {
+  font:
+    11px Arial,
+    sans-serif;
+}
+.classic-actions {
+  display: grid;
+  gap: 8px;
+  flex: 1;
+  align-content: start;
+}
+.classic-actions button {
+  justify-content: flex-start;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+  gap: 8px;
+  min-height: 48px;
+  font-size: 14px;
+  color: #211707;
+}
+.classic-actions button[aria-pressed='true'] {
+  background: #f9e8ae55;
+  outline: 1px solid #80653588;
+}
+.classic-actions button:hover {
+  background: #f4dc9d66;
+}
+.original-action-icon {
+  display: block;
+  flex-shrink: 0;
+  width: 44px;
+  height: 42px;
+  image-rendering: pixelated;
+  background-repeat: no-repeat;
+}
+.classic-end-season {
+  border: 3px ridge #a88751;
+  background: var(--original-button) center/100% 100%;
+  color: #39230f;
+  font-weight: bold;
+  min-height: 36px;
+  margin-top: 12px;
+  text-shadow: 0 1px #e4d0a0;
+}
+.classic-side-links {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+.classic-side-links button {
+  font-size: 11px;
+  border-color: #856b45;
+  padding: 5px;
+  background: #dec69c99;
+  color: #382411;
+}
+.classic-map-area {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  background: #7f7a67;
+}
+.classic-map-area > .map-wrap {
+  position: absolute;
+  inset: 0;
+  background: #7e7b66;
+}
+.classic-game-menu {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  z-index: 4;
+  display: flex;
+  background: #ccb98bbd;
+  border: 2px ridge #c4a460;
+  color: #392711;
+  padding: 3px 8px;
+  font:
+    bold 12px Georgia,
+    serif;
+}
+.classic-game-menu img {
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
+}
+.classic-map-overlay-bar {
+  position: absolute;
+  bottom: 38px;
+  left: 8px;
+  display: flex;
+  gap: 2px;
+  z-index: 3;
+  background: #b59d75cc;
+  border: 2px ridge #d4ba8b;
+}
+.classic-map-overlay-bar button {
+  padding: 5px 10px;
+  color: #2a1a0b;
+  text-transform: capitalize;
+  border: 1px solid #8e784e;
+  background: #ddcaa099;
+  font-size: 12px;
+}
+.classic-map-overlay-bar button[aria-pressed='true'] {
+  background: #523550;
+  color: #f8e3b7;
+}
+.classic-map-readout {
+  position: absolute;
+  bottom: 5px;
+  left: 30%;
+  right: 8px;
+  z-index: 3;
+  text-align: center;
+  border: 3px ridge #af8f65;
+  background: linear-gradient(#7d3a94, #351046);
+  color: #f8e8bb;
+  font:
+    bold 12px/1.4 Georgia,
+    serif;
+  padding: 4px 7px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.classic-toolbar {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  border-top: 4px ridge #b59b67;
+  background: #c5ae85 var(--original-parchment) left bottom/352px 480px;
+  z-index: 4;
+  padding: 5px 12px;
+  color: #35220e;
+}
+.classic-toolbar button {
+  min-height: 40px;
+  font:
+    bold 12px Georgia,
+    serif;
+  padding: 5px 12px;
+  border: 3px ridge #b9a070;
+  background: var(--original-button) center/100% 100%;
+  color: #35220e;
+  text-shadow: 0 1px #d9c39a;
+}
+.classic-toolbar label {
+  display: flex;
+  flex-direction: column;
+  font:
+    10px Arial,
+    sans-serif;
+  gap: 3px;
+  margin: 0 5px;
+}
+.classic-toolbar select {
+  width: 170px;
+  min-height: 27px;
+  background: #e0d0a9;
+  border: 1px solid #6d5833;
+  color: #281d0d;
+  padding: 2px 6px;
+  font:
+    12px Georgia,
+    serif;
+}
+.classic-profile {
+  margin-left: auto;
+  text-align: right;
+  font:
+    11px Arial,
+    sans-serif;
+}
+.classic-profile small {
+  display: block;
+  font-size: 10px;
+  margin-top: 5px;
+}
+.classic-inspector {
+  position: absolute;
+  right: 76px;
+  top: 58px;
+  bottom: 88px;
+  width: 350px;
+  max-width: calc(100% - 110px);
+  border: 5px ridge #b79b66;
+  background: #d8c6a0 var(--original-dialog) center/200px 405px;
+  z-index: 5;
+  box-shadow: 4px 7px 16px #0007;
+  display: flex;
+  flex-direction: column;
+}
+.classic-inspector > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 32px;
+  padding: 3px 10px;
+  color: #eeddb3;
+  background: linear-gradient(#67476b, #3c244b);
+  border-bottom: 3px ridge #a88c60;
+  text-transform: capitalize;
+}
+.classic-inspector > header button {
+  width: 26px;
+  height: 25px;
+  min-height: 0;
+  background: #b49a64;
+  color: #21140a;
+  border: 2px ridge #dfc495;
+  font-size: 20px;
+}
+.classic-inspector .sidebar {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  border: 0;
+  box-shadow: none;
+  background: #dfcda4cc;
+  color: #352611;
+}
+.classic-inspector .sidebar-scroll {
+  padding: 16px 18px;
+}
+.classic-inspector .sidebar .province-title {
+  padding-top: 0;
+}
+.classic-inspector .sidebar h2 {
+  font-size: 26px;
+}
+.original-presentation .modal {
+  border: 6px ridge #b69b68;
+  background: #dbc8a0 var(--original-dialog) center/300px auto;
+  color: #30220e;
+  box-shadow: 5px 8px 20px #0009;
+  max-height: 92vh;
+}
+.original-presentation .modal-header {
+  background: linear-gradient(#6c4777, #352143);
+  color: #f3dfae;
+  border-bottom: 4px ridge #bea070;
+  padding: 12px 20px;
+}
+.original-presentation .modal-header h2 {
+  font-size: 23px;
+}
+.original-presentation .modal-header button {
+  color: #f3e2b6;
+  border-color: #c1a26d;
+}
+.original-presentation .modal .menu-action,
+.original-presentation .modal .primary,
+.original-presentation .order {
+  border: 3px ridge #ac925e;
+  background: var(--original-button) center/100% 100%;
+  color: #3c2912;
+  text-shadow: 0 1px #efdfb1;
+}
+.original-presentation .order {
+  margin: 7px 0;
+}
+.original-presentation .order small {
+  color: #523d25;
+}
+.original-presentation input,
+.original-presentation select {
+  color: #30220e;
+  background-color: #e8d8b5;
+  border-color: #8f7447;
+}
+.original-presentation .toast {
+  background: #e0cfa4;
+  border: 4px ridge #b1965d;
+  color: #31200f;
+}
+.original-presentation .petition {
+  background: #dec89c;
+  color: #30210e;
+  border: 5px ridge #ad945f;
+}
+.original-presentation .petition button {
+  color: #30210e;
+  border-color: #836a40;
+  background: #c5ac78;
+}
+.original-presentation .map-heading,
+.original-presentation .map-hint,
+.classic-map-area .map-legend {
+  display: none;
+}
+.classic-map-area .map-tools {
+  bottom: 92px;
+  right: 10px;
+  background: #d0b686cc;
+  border: 2px ridge #b69c69;
+}
+.classic-map-area .map-tools button {
+  color: #35220e;
+  border-color: #a28b5b;
+}
+.classic-map-area .map-tooltip {
+  left: 10px;
+  bottom: 90px;
+  background: #e3d0a9e8;
+  color: #30210e;
+  border: 3px ridge #b59b68;
+}
+.classic-map-area .map-tooltip span {
+  color: #584027;
+}
+.audio-settings h3 {
+  margin-top: 20px;
+}
+.map-loading {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  padding: 12px 18px;
+  background: #ddc99e;
+  border: 4px ridge #ac905b;
+  color: #33200d;
+  z-index: 6;
+}
+.audio-settings a {
+  color: #52335b;
+}
+.audio-cue-note {
+  font-size: 12px;
+  padding: 8px;
+  border: 1px solid #9b7f4d;
+  background: #f0dcaf66;
+}
+@media (min-height: 1000px) {
+  .classic-actions {
+    gap: 18px;
+  }
+  .classic-actions button {
+    font-size: 17px;
+  }
+  .regent-portrait {
+    width: 96px;
+    height: 150px;
+  }
+  .classic-regent {
+    font-size: 15px;
+  }
+  .classic-turn {
+    margin: 15px 0;
+  }
+  .classic-balances {
+    font-size: 17px;
+  }
+  .classic-inspector {
+    width: 390px;
+    top: 100px;
+    bottom: 120px;
+  }
+  .classic-game {
+    grid-template-rows: minmax(0, 1fr) 76px;
+  }
+}
+@media (max-width: 1000px) {
+  .classic-game {
+    --council-width: 175px;
+    grid-template-rows: minmax(0, 1fr) 58px;
+  }
+  .classic-toolbar {
+    gap: 3px;
+    padding: 3px;
+  }
+  .classic-toolbar button {
+    padding: 4px;
+    font-size: 10px;
+  }
+  .classic-toolbar select {
+    width: 120px;
+  }
+  .classic-profile {
+    display: none;
+  }
+  .classic-regent > span {
+    display: none;
+  }
+  .classic-inspector {
+    right: 55px;
+    max-width: calc(100% - 70px);
+    bottom: 85px;
+  }
+  .classic-council {
+    padding-left: 7px;
+  }
+  .classic-actions {
+    gap: 4px;
+  }
+  .classic-actions button {
+    font-size: 12px;
+  }
+}
+@media (max-height: 650px) {
+  .classic-game {
+    --council-width: 142px;
+    grid-template-rows: minmax(0, 1fr) 48px;
+  }
+  .classic-council {
+    padding: 3px 19px 3px 5px;
+  }
+  .classic-regent {
+    margin: 0;
+    gap: 3px;
+  }
+  .regent-portrait {
+    width: 32px;
+    height: 50px;
+  }
+  .classic-regent > span {
+    font-size: 9px;
+  }
+  .classic-realm-name {
+    font-size: 18px;
+    padding-bottom: 3px;
+  }
+  .classic-balances {
+    font-size: 10px;
+  }
+  .classic-income {
+    display: none;
+  }
+  .classic-turn {
+    padding: 3px 0;
+    margin: 3px 0;
+    gap: 1px;
+  }
+  .classic-turn strong {
+    font-size: 10px;
+  }
+  .classic-turn > small,
+  .classic-turn > span {
+    font-size: 9px;
+  }
+  .classic-actions {
+    gap: 2px;
+  }
+  .classic-actions button {
+    min-height: 38px;
+    font-size: 10px;
+    gap: 3px;
+  }
+  .original-action-icon {
+    transform: scale(0.75);
+    margin: -6px;
+  }
+  .classic-end-season {
+    min-height: 25px;
+    font-size: 10px;
+    margin-top: 3px;
+  }
+  .classic-side-links {
+    gap: 1px;
+    margin-top: 3px;
+  }
+  .classic-side-links button {
+    padding: 2px;
+    font-size: 9px;
+  }
+  .classic-inspector {
+    top: 45px;
+    bottom: 70px;
+    right: 48px;
+  }
+  .classic-toolbar label {
+    font-size: 9px;
+  }
+  .classic-toolbar select {
+    min-height: 22px;
+  }
+  .classic-menu-shield nav button {
+    font-size: 12px;
+  }
+  .classic-map-overlay-bar button {
+    padding: 3px 5px;
+    font-size: 10px;
+  }
+  .classic-map-readout {
+    font-size: 10px;
+  }
+  .classic-toolbar button {
+    min-height: 30px;
+  }
+}

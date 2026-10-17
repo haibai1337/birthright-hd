@@ -19,6 +19,8 @@ import { forecast, relation, sourcePotential, treatyAcceptance } from './selecto
 import { autoResolve, type BattleResolver } from './combat';
 import { planNextAI } from './ai';
 import { compareIds } from './order';
+import { domainSurvives, provinceController, realmSelectable, fortLevel } from './domains';
+import { domainPower } from './selectors';
 
 export type CommandResult =
   { ok: true; state: Campaign } | { ok: false; state: Campaign; error: RuleError };
@@ -30,13 +32,17 @@ export function createCampaign(
   playerRealm: string,
   seed = 1997,
   ruleset: RulesetId = 'ENHANCED',
+  selectionMode: 'CLASSIC' | 'UNRESTRICTED' = scenario.selection?.mode ?? 'CLASSIC',
 ): Campaign {
   if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295)
     throw new Error('Seed must be a uint32');
   if (!scenario.realms.some((r) => r.id === playerRealm)) throw new Error('Unknown player realm');
+  if (!realmSelectable(scenario, playerRealm, selectionMode))
+    throw new Error('This domain is not available in the configured faction selection mode.');
   const state: Campaign = {
     scenarioId: scenario.id,
     scenarioRevision: scenario.revision,
+    ...(scenario.fingerprint ? { scenarioFingerprint: scenario.fingerprint, selectionMode } : {}),
     ruleset,
     seed,
     rng: seed,
@@ -45,10 +51,15 @@ export function createCampaign(
     nextId: 1,
     realms: scenario.realms.map((r) => ({
       id: r.id,
-      treasury: scenario.initial.treasury,
-      regency: scenario.initial.regency,
+      treasury:
+        scenario.initial.domains?.find((d) => d.id === r.id)?.treasury ?? scenario.initial.treasury,
+      regency:
+        scenario.initial.domains?.find((d) => d.id === r.id)?.regency ?? scenario.initial.regency,
       actions: RULESETS[ruleset].actions,
       eliminated: false,
+      ...(r.controller
+        ? { controller: r.id === playerRealm ? ('player' as const) : r.controller }
+        : {}),
     })),
     ...structuredClone({
       provinces: scenario.initial.provinces,
@@ -56,6 +67,10 @@ export function createCampaign(
       armies: scenario.initial.armies,
       treaties: scenario.initial.treaties,
       tradeRoutes: scenario.initial.tradeRoutes,
+      ...(scenario.initial.fortifications
+        ? { fortifications: scenario.initial.fortifications }
+        : {}),
+      ...(scenario.initial.characters ? { characters: scenario.initial.characters } : {}),
     }),
     effects: [],
     reports: [],
@@ -74,31 +89,42 @@ function adjustLoyalty(state: Campaign, provinceId: string, delta: number) {
 }
 function checkOutcome(state: Campaign, scenario: Scenario) {
   for (const r of state.realms) {
-    if (!r.eliminated && !state.provinces.some((p) => p.owner === r.id)) {
+    if (!r.eliminated && !domainSurvives(state, scenario, r.id)) {
       r.eliminated = true;
       state.armies = state.armies.filter((a) => a.realmId !== r.id);
       state.holdings = state.holdings.filter((h) => h.realmId !== r.id);
       state.tradeRoutes = state.tradeRoutes.filter((t) => t.realmId !== r.id);
       state.effects = state.effects.filter((e) => e.realmId !== r.id);
       state.pendingEvents = state.pendingEvents.filter((e) => e.realmId !== r.id);
+      if (state.fortifications)
+        state.fortifications = state.fortifications.filter((f) => f.realmId !== r.id);
+      if (state.characters) state.characters = state.characters.filter((c) => c.realmId !== r.id);
       log(state, 'realm.eliminated', r.id);
     }
   }
   if (state.realms.find((r) => r.id === state.playerRealm)?.eliminated) state.outcome = 'defeat';
   else if (
-    state.provinces.filter((p) => p.owner === state.playerRealm).length >=
-    scenario.victory.provinces
+    scenario.victory.metric && scenario.victory.metric !== 'province-count'
+      ? victoryScore(state, scenario, state.playerRealm) >= (scenario.victory.target ?? Infinity)
+      : state.provinces.filter((p) => p.owner === state.playerRealm).length >=
+        scenario.victory.provinces
   )
     state.outcome = 'victory';
   else if (state.turn > scenario.victory.turns) {
     const scores = state.realms
       .map((r) => ({
         id: r.id,
-        score: state.provinces.filter((p) => p.owner === r.id).reduce((n, p) => n + p.level, 0),
+        score: victoryScore(state, scenario, r.id),
       }))
       .sort((a, b) => b.score - a.score || compareIds(a.id, b.id));
     state.outcome = scores[0]?.id === state.playerRealm ? 'victory' : 'defeat';
   }
+}
+export function victoryScore(state: Campaign, scenario: Scenario, id: string) {
+  if (scenario.victory.metric === 'domain-power') return domainPower(state, scenario, id);
+  if (scenario.victory.metric === 'holding-levels')
+    return state.holdings.filter((h) => h.realmId === id).reduce((n, h) => n + h.level, 0);
+  return state.provinces.filter((p) => p.owner === id).reduce((n, p) => n + p.level, 0);
 }
 function execute(
   state: Campaign,
@@ -161,7 +187,27 @@ function execute(
     }
     case 'Fortify': {
       const p = state.provinces.find((p) => p.id === cmd.provinceId);
-      if (p) p.fort++;
+      if (p) {
+        p.fort++;
+        if (state.fortifications) {
+          const fort = state.fortifications.find(
+            (f) =>
+              f.provinceId === p.id &&
+              f.realmId === actor &&
+              f.kind === 'castle' &&
+              f.level === p.fort - 1,
+          );
+          if (fort) fort.level = p.fort;
+          else
+            state.fortifications.push({
+              id: `fort-${state.nextId++}`,
+              provinceId: p.id,
+              realmId: actor,
+              kind: 'castle',
+              level: p.fort,
+            });
+        }
+      }
       log(state, 'province.fortified', actor, { province: cmd.provinceId });
       break;
     }
@@ -198,7 +244,8 @@ function execute(
           relation(state, actor, a.realmId)?.kind === 'war',
       );
       if (
-        (p.owner !== actor && relation(state, actor, p.owner)?.kind === 'war') ||
+        (provinceController(p) !== actor &&
+          relation(state, actor, provinceController(p))?.kind === 'war') ||
         defenders.length > 0
       ) {
         const result = battle.resolve({
@@ -225,10 +272,24 @@ function execute(
         state.armies = state.armies.filter((a) => a.units.length > 0);
         if (result.attackerWins && state.armies.some((a) => a.id === army.id)) {
           army.provinceId = p.id;
-          if (p.owner !== actor && relation(state, actor, p.owner)?.kind === 'war') {
-            p.owner = actor;
+          if (
+            provinceController(p) !== actor &&
+            relation(state, actor, provinceController(p))?.kind === 'war'
+          ) {
+            if (scenario.policy?.conquest === 'occupation') {
+              p.occupiedBy = actor === p.owner ? null : actor;
+              p.contested = actor !== p.owner;
+            } else p.owner = actor;
             p.loyalty = 1;
-            p.fort = Math.max(0, p.fort - 1);
+            if (state.fortifications) {
+              for (const f of state.fortifications.filter(
+                (f) => f.provinceId === p.id && f.kind === 'castle',
+              )) {
+                f.realmId = actor;
+                f.level = Math.max(0, f.level - 1);
+              }
+              p.fort = fortLevel(state, p);
+            } else p.fort = Math.max(0, p.fort - 1);
           }
         }
         log(state, result.attackerWins ? 'battle.won' : 'battle.lost', actor, {
@@ -270,11 +331,11 @@ function execute(
 function settleEconomy(state: Campaign, scenario: Scenario) {
   const rules = RULESETS[state.ruleset];
   for (const realm of [...state.realms].sort((a, b) => compareIds(a.id, b.id))) {
-    if (realm.eliminated) continue;
+    if (realm.eliminated || realm.controller === 'passive') continue;
     const report = forecast(state, scenario, realm.id);
     report.taxes = 0;
     for (const p of state.provinces
-      .filter((p) => p.owner === realm.id)
+      .filter((p) => p.owner === realm.id && provinceController(p) === realm.id)
       .sort((a, b) => compareIds(a.id, b.id))) {
       const range = rules.tax[p.tax][p.level] ?? [0, 0];
       const tax = randomInt(state, range[0], range[1]);
@@ -305,14 +366,15 @@ function settleEconomy(state: Campaign, scenario: Scenario) {
     state.reports.push(report);
     log(state, 'economy.collected', realm.id, { net: report.net, regency: report.regency });
   }
-  state.reports = state.reports.slice(-60);
+  state.reports = state.reports.slice(-Math.max(60, state.realms.length * 4));
 }
 function generateEvents(state: Campaign, scenario: Scenario) {
   for (const realm of [...state.realms].sort((a, b) => compareIds(a.id, b.id))) {
-    if (realm.eliminated) continue;
+    if (realm.eliminated || realm.controller === 'passive') continue;
     const owned = state.provinces
       .filter((p) => p.owner === realm.id)
       .sort((a, b) => compareIds(a.id, b.id));
+    if (!owned.length) continue;
     const province = owned[randomInt(state, 0, owned.length - 1)];
     if (!province) continue;
     const sum = scenario.events.reduce((n, e) => n + e.weight, 0);
@@ -360,7 +422,7 @@ export function applyCommand(
       log(next, 'event.resolved', actor, { province: event.provinceId, choice: 'decline' });
     }
     for (const ai of [...next.realms]
-      .filter((r) => r.id !== actor)
+      .filter((r) => r.id !== actor && r.controller !== 'passive')
       .sort((a, b) => compareIds(a.id, b.id))) {
       let steps = 0;
       while (!ai.eliminated && next.outcome === 'ongoing' && steps++ < 8) {

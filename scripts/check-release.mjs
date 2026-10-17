@@ -13,7 +13,7 @@ await visit(root);
 const forbidden = files.filter(
   (file) =>
     /\.(pdf|exe|bin|cue|dat|res|scn|sav|wad|ava|inv|nfo)$/i.test(file) ||
-    /reference|original|readme/i.test(path.relative(root, file)),
+    /reference|original|readme|_private|PRIVATE_BUILD/i.test(path.relative(root, file)),
 );
 if (forbidden.length)
   throw new Error(`Unexpected private/reference content: ${forbidden.join(', ')}`);

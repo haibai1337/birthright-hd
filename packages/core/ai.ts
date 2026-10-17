@@ -2,6 +2,7 @@ import type { Campaign, Command, Scenario } from './schema';
 import { armyPower, forecast, relation, treatyAcceptance } from './selectors';
 import { validateCommand } from './validation';
 import { compareIds } from './order';
+import { provinceController } from './domains';
 export interface AIPlan {
   command: Command;
   reason:
@@ -10,14 +11,15 @@ export interface AIPlan {
 export function planNextAI(state: Campaign, scenario: Scenario, actor: string): AIPlan | null {
   const candidates: AIPlan[] = [];
   const realm = state.realms.find((r) => r.id === actor);
-  if (!realm || realm.eliminated) return null;
+  if (!realm || realm.eliminated || realm.controller === 'passive') return null;
+  if (realm.actions === 0 && !state.pendingEvents.some((e) => e.realmId === actor)) return null;
   if (state.pendingEvents.some((e) => e.realmId === actor))
     candidates.push({
       command: { type: 'ResolveEvent', choice: realm.treasury >= 4 ? 'relief' : 'decline' },
       reason: 'relief',
     });
   const owned = state.provinces
-    .filter((p) => p.owner === actor)
+    .filter((p) => p.owner === actor && provinceController(p) === actor)
     .sort((a, b) => compareIds(a.id, b.id));
   const armies = state.armies
     .filter((a) => a.realmId === actor)
@@ -27,7 +29,10 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
     for (const next of [...(here?.adjacent ?? [])].sort()) {
       const province = state.provinces.find((p) => p.id === next);
       if (!province) continue;
-      if (province.owner !== actor && relation(state, actor, province.owner)?.kind === 'war') {
+      if (
+        provinceController(province) !== actor &&
+        relation(state, actor, provinceController(province))?.kind === 'war'
+      ) {
         const defense =
           state.armies
             .filter((a) => a.provinceId === next && a.realmId !== actor)
@@ -41,7 +46,7 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
             reason: 'invade',
           });
       }
-      if (province.owner === actor) {
+      if (provinceController(province) === actor) {
         const threatened = scenario.provinces
           .find((p) => p.id === next)
           ?.adjacent.some((id) =>
@@ -75,19 +80,26 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
     );
     for (const p of border)
       candidates.push({
-        command: { type: 'RecruitUnit', provinceId: p.id, unitType: 'infantry' },
+        command: {
+          type: 'RecruitUnit',
+          provinceId: p.id,
+          unitType:
+            scenario.units.find((u) => u.id === 'infantry' && u.recruitable !== false)?.id ??
+            scenario.units.find((u) => u.recruitable !== false)?.id ??
+            'infantry',
+        },
         reason: 'recruit',
       });
   }
   if (state.turn % 3 === 0)
     for (const other of state.realms
-      .filter((r) => r.id !== actor && !r.eliminated)
+      .filter((r) => r.id !== actor && !r.eliminated && r.controller !== 'passive')
       .sort((a, b) => compareIds(a.id, b.id))) {
       const current = relation(state, actor, other.id);
       const kind =
         current?.kind === 'war'
           ? 'peace'
-          : current?.kind === 'peace'
+          : (current?.kind ?? 'peace') === 'peace'
             ? 'pact'
             : current?.kind === 'pact'
               ? 'alliance'

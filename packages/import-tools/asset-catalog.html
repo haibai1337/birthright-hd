@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+  <meta charset="utf-8" />
+  <title>Birthright private original asset catalog</title>
+  <style>
+    body {
+      background: #25221c;
+      color: #ecd6ac;
+      font: 15px system-ui;
+      margin: 24px;
+    }
+    input,
+    select,
+    button {
+      padding: 10px;
+      background: #e4d4ad;
+      color: #2b2114;
+      border: 1px solid #947846;
+    }
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 16px;
+    }
+    article {
+      border: 1px solid #79694e;
+      padding: 12px;
+      overflow-wrap: anywhere;
+    }
+    article img {
+      display: block;
+      max-width: 100%;
+      height: 140px;
+      object-fit: contain;
+      image-rendering: pixelated;
+      background: repeating-conic-gradient(#444 0 25%, #333 0 50%) 0/16px 16px;
+      margin: 12px 0;
+    }
+    audio {
+      width: 100%;
+    }
+    small {
+      display: block;
+      margin-top: 8px;
+    }
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin: 14px 0;
+    }
+    button:disabled {
+      opacity: 0.4;
+    }
+    details {
+      font-size: 11px;
+    }
+    pre {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+    a {
+      color: #ecd6ac;
+    }
+  </style>
+  <h1>Birthright • Private original asset catalog</h1>
+  <p>
+    Original names, archive offsets, dimensions, palettes and hashes. Images link to native-size
+    PNGs. No game assets are uploaded.
+  </p>
+  <input id="query" aria-label="Filter assets" placeholder="MAINPANL, portrait, music…" />
+  <select id="category" aria-label="Category">
+    <option value="">All categories</option>
+  </select>
+  <nav>
+    <button id="previous">Previous</button><span id="count" role="status"></span
+    ><button id="next">Next</button>
+  </nav>
+  <main></main>
+  <script type="module">
+    const data = await (await fetch('manifest.json')).json(),
+      query = document.querySelector('#query'),
+      category = document.querySelector('#category'),
+      main = document.querySelector('main'),
+      previous = document.querySelector('#previous'),
+      next = document.querySelector('#next');
+    let page = 0,
+      timers = [];
+    for (const c of [...new Set(data.records.map((r) => r.category))])
+      category.add(new Option(c, c));
+    function show() {
+      for (const timer of timers) clearInterval(timer);
+      timers = [];
+      main.replaceChildren();
+      const found = data.records.filter(
+          (r) =>
+            (!category.value || r.category === category.value) &&
+            JSON.stringify(r).toLowerCase().includes(query.value.toLowerCase()),
+        ),
+        pages = Math.max(1, Math.ceil(found.length / 120));
+      page = Math.max(0, Math.min(page, pages - 1));
+      previous.disabled = page === 0;
+      next.disabled = page === pages - 1;
+      document.querySelector('#count').textContent =
+        `${found.length} matches • page ${page + 1}/${pages} • ${data.records.length} records`;
+      for (const record of found.slice(page * 120, (page + 1) * 120)) {
+        const article = document.createElement('article'),
+          title = document.createElement('strong');
+        title.textContent = record.id;
+        article.append(title);
+        if (record.file) {
+          if (record.audio) {
+            const audio = document.createElement('audio');
+            audio.controls = true;
+            audio.preload = 'none';
+            audio.src = record.file;
+            article.append(audio);
+          } else {
+            const link = document.createElement('a'),
+              img = document.createElement('img');
+            img.loading = 'lazy';
+            img.alt = record.id;
+            img.src = record.file;
+            link.href = record.file;
+            link.append(img);
+            article.append(link);
+            if (record.animation?.length > 1) {
+              const play = document.createElement('button');
+              play.textContent = 'Play animation';
+              let timer,
+                frame = 0;
+              play.onclick = () => {
+                if (timer) {
+                  clearInterval(timer);
+                  timer = undefined;
+                  play.textContent = 'Play animation';
+                  return;
+                }
+                timer = setInterval(
+                  () => {
+                    frame = (frame + 1) % record.animation.length;
+                    img.src = record.animation[frame];
+                  },
+                  Math.max(30, record.frameMs || 71),
+                );
+                timers.push(timer);
+                play.textContent = 'Pause animation';
+              };
+              article.append(play);
+            }
+          }
+        }
+        const summary = document.createElement('small');
+        summary.textContent = [
+          `${record.source} @ ${record.offset}`,
+          record.width ? `${record.width} × ${record.height}` : '',
+          record.palette || '',
+          record.frames ? `${record.frames} source frames` : '',
+          record.status,
+        ]
+          .filter(Boolean)
+          .join(' • ');
+        article.append(summary);
+        const details = document.createElement('details'),
+          caption = document.createElement('summary'),
+          json = document.createElement('pre');
+        caption.textContent = 'Source metadata';
+        json.textContent = JSON.stringify(record, null, 2);
+        details.append(caption, json);
+        article.append(details);
+        main.append(article);
+      }
+    }
+    query.oninput = category.onchange = () => {
+      page = 0;
+      show();
+    };
+    previous.onclick = () => {
+      page--;
+      show();
+      window.scrollTo(0, 0);
+    };
+    next.onclick = () => {
+      page++;
+      show();
+      window.scrollTo(0, 0);
+    };
+    show();
+  </script>
+</html>

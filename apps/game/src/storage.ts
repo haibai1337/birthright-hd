@@ -10,8 +10,20 @@ export interface Settings {
   labels: boolean;
   autosave: boolean;
   largeText: boolean;
+  musicVolume: number;
+  effectsVolume: number;
+  muted: boolean;
+  campaignTrack: string;
 }
-export const defaultSettings: Settings = { labels: true, autosave: true, largeText: false };
+export const defaultSettings: Settings = {
+  labels: true,
+  autosave: true,
+  largeText: false,
+  musicVolume: 0.45,
+  effectsVolume: 0.6,
+  muted: false,
+  campaignTrack: 'default',
+};
 export function loadSettings(): Settings {
   const raw = localStorage.getItem('birthright-hd.settings');
   if (!raw) return defaultSettings;
@@ -24,16 +36,43 @@ export function loadSettings(): Settings {
     typeof v.largeText !== 'boolean'
   )
     throw new Error('Invalid settings');
-  return { labels: v.labels, autosave: v.autosave, largeText: v.largeText };
+  const volume = (name: string, fallback: number) => {
+    const value = v[name];
+    return typeof value === 'number' && Number.isFinite(value)
+      ? Math.max(0, Math.min(1, value))
+      : fallback;
+  };
+  return {
+    labels: v.labels,
+    autosave: v.autosave,
+    largeText: v.largeText,
+    musicVolume: volume('musicVolume', 0.45),
+    effectsVolume: volume('effectsVolume', 0.6),
+    muted: typeof v.muted === 'boolean' ? v.muted : false,
+    campaignTrack:
+      typeof v.campaignTrack === 'string' && /^(?:default|MUSIC\/\d+\.WAV)$/.test(v.campaignTrack)
+        ? v.campaignTrack
+        : 'default',
+  };
 }
 export function persistSettings(settings: Settings) {
   localStorage.setItem('birthright-hd.settings', JSON.stringify(settings));
 }
 export function saveCampaign(state: Campaign, automatic = false) {
-  localStorage.setItem(automatic ? AUTO_KEY : SAVE_KEY, serializeCampaign(state));
+  localStorage.setItem(
+    slot(state.scenarioId, state.scenarioFingerprint, automatic),
+    serializeCampaign(state),
+  );
+}
+function slot(id: string, fingerprint: string | undefined, automatic: boolean) {
+  return fingerprint
+    ? `birthright-hd.${automatic ? 'auto' : 'save'}.${id}.${fingerprint}`
+    : automatic
+      ? AUTO_KEY
+      : SAVE_KEY;
 }
 export function loadCampaign(scenario: Scenario, automatic = false) {
-  const raw = localStorage.getItem(automatic ? AUTO_KEY : SAVE_KEY);
+  const raw = localStorage.getItem(slot(scenario.id, scenario.fingerprint, automatic));
   if (!raw) throw new Error('No saved campaign in this slot.');
   return deserializeCampaign(raw, scenario);
 }

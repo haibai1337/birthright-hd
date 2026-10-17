@@ -34,7 +34,31 @@ flowchart LR
 
 The player selects a regent and seed. `createCampaign` clones immutable scenario starting conditions into mutable campaign state. React dispatches typed commands to `applyCommand`. State changes trigger selectors, panels, and renderer projection updates, plus optional autosave. The core is the sole authority for resource changes and outcomes.
 
-## Turn resolution
+## M1B world and selection extensions
+
+The core remains the same command engine. Optional world-model extensions add multiple geometry rings, directed movement records/codes, swamp/heavy mountains, source baselines through 30, separate occupation/contested state, individual fortifications, character deployments, regent rosters and per-domain starting balances. M0 JSON remains unchanged; `world-data/index.ts` explicitly supplies its territorial survival/strict capacity/fort-five/transfer-conquest policy.
+
+`world-data/anuire-scenario.ts` is the local import boundary. It validates the research corpus, computes a content-based SHA-256 fingerprint with adapter-version scope, and constructs the entire scenario. Raw original data is immutable input to gameplay and remains in scenario metadata. Campaign state contains references and mutable runtime values, never a duplicate raw corpus. Definition rings retain all islands; the first polygon exists only for legacy renderers.
+
+Original selection flags (`originalPlayable`) are separate from technical support (`technicalPlayable`). `selection.mode` and optional per-domain overrides configure CLASSIC versus future UNRESTRICTED availability. `realmSelectable` applies those policies; it contains no original faction list. Unsupported special rulers and placeholders stay unselectable even in unrestricted mode until support is explicitly provided. The M1B UI exposes only original eligible defaults. Selection mode is independent of the CLASSIC/ENHANCED gameplay ruleset.
+
+Domain controllers can be AI or passive; the selected supported domain becomes player-controlled. Survival can require territory, any domain assets, or persistence. Holding-only domains survive and receive economic/AI processing without needing a province. Victory metrics can use province count, domain power or holding levels. `domainFocus` finds a province through ownership, holdings or deployments, so a future non-territorial player does not need a fabricated capital.
+
+The Anuire policy preserves original over-capacity holdings through explicit initial allowances. Commands still enforce actual improvement capacity. Castle aggregates are checked against individual controlled castles; wizard towers retain their own identities. Imported conquest creates occupation rather than transferring sovereignty. Raw original diplomacy matrices stay in research metadata; runtime negotiations are separate compatibility state.
+
+`rendering/world-map.ts` handles large mapped scenarios: cached geometry and bounds, even-odd hit testing, generated political colors, zoom/pan/focus, decluttered realm labels, province labels, directed link arrows, and separate state markers/overlays. Only changed province tints are rebuilt; selection/hover do not rebuild the map. `strategic-map.ts` continues rendering Covenant Marches. Both implement the MapPanel rendering interface and own no game state.
+
+Saves keep version 1 for compatible M0 fields and add optional scenario fingerprint, selection mode, controllers, fortifications and character deployments. Imports validate the fingerprint, references and generated ID sequence (including forts). Private scenarios need their local corpus reloaded before restoring a save. Clean Vite/Tauri builds exclude the corpus and original assets; M1C provides an explicit private build route for original presentation assets. Storage slots are partitioned by scenario/fingerprint while old M0 keys remain valid.
+
+## M1C presentation and local assets
+
+`ClassicChrome.tsx` provides the original left-council/map/bottom-toolbar arrangement and floating management windows while reusing all Sidebar command bindings. `WorldMap` optionally loads the original indexed-map PNG into the same coordinates as its province geometry. Sprite/label scaling remains presentation-only. Without the local pack, the existing procedural presentation remains available.
+
+`import-original-assets.ts` reads the supplied image through the existing disc/resource readers. Independent bitmap/FLC/palette/PNG/WAV utilities write a manifest and catalog into ignored `reference/private-assets`. Vite's local middleware serves only contained paths with HTTP range support. The clean build never copies these files; `BIRTHRIGHT_PRIVATE_BUILD=1` enables copying and writes a private-output marker. The release checker rejects private packs.
+
+`OriginalAudio` owns HTML media, interaction gating, crossfades, bounded overlapping effects and persistent settings. It does not call the engine or use its RNG. Original source selectability and future unrestricted domain support are unaffected. See the M1C reports for cue gaps and presentation differences.
+
+## Shared turn resolution
 
 M0 orders execute immediately while the player has up to three domain actions. Free tax-policy changes and event choices do not consume an action. EndTurn does the following in stable order:
 
@@ -42,7 +66,7 @@ M0 orders execute immediately while the player has up to three domain actions. F
 2. Visit active AI realms sorted by ID. Replan after each order, validate it, and execute within the same three-action budget. Record each decision/reason. Free event decisions are processed as part of this loop.
 3. Settle all active realms sorted by ID. Tax provinces sorted by ID using serialized Mulberry32 state and the original PC ranges. Collect guild/temple income and any externally defined routes. Pay province/fort and unit upkeep. Handle shortfalls with deterministic disbanding and loyalty consequences. Add class-dependent, bloodline-limited regency.
 4. Expire wars if the configured profile requires it. Increment the quarterly turn. Expire magical effects, reset army movement and action budgets.
-5. Check defeat, territorial victory, and end-of-campaign province-level scores. Tied scores use realm ID as an explicit deterministic tie-break.
+5. Check configured per-domain survival and victory metric. M0 retains territorial victory/province-level scores; Anuire uses domain assets and domain power. Tied scores use realm ID as an explicit deterministic tie-break.
 6. If ongoing, generate one weighted seeded event per active realm, with a stable province-selection order; record the new council.
 
 This is a documented modernization. The original reports/management/actions sequence collects resources before actions; M0 settles accounts at the transition after actions. No claim of exact original AI initiative or interleaved monthly action resolution is made.
@@ -51,7 +75,7 @@ This is a documented modernization. The original reports/management/actions sequ
 
 No `Math.random`, `Date`, asynchronous operations, or environment-dependent input exists in the engine. RNG state and initial seed are uint32 values in the campaign. Integer arithmetic governs money, regency, and casualties. IDs are validated as lowercase ASCII letters/digits/underscore/hyphen. Tie-breaking uses explicit code-unit comparisons, independent of system locale.
 
-The history stores accepted player and AI commands. Replay re-applies **player entries only**, regenerating AI decisions on EndTurn. This avoids double-applying AI commands. Journals and history remain in saves; journals/history can grow during extended sandbox use, whereas economic reports retain the last 60 realm entries. Scenario revisions and ruleset identity must remain fixed for a replay; rules changes require versioned migrations or new regression fixtures.
+The history stores accepted player and AI commands. Replay re-applies **player entries only**, regenerating AI decisions on EndTurn. This avoids double-applying AI commands. Journals and history remain in saves; journals/history can grow during extended play. Reports retain at least 60 entries or four times the domain count, preserving multiple seasons at Anuire scale. Scenario revision, fingerprint and ruleset must remain fixed for a replay; rules changes require versioned migrations or new regression fixtures.
 
 ## Offline platforms and future work
 

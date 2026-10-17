@@ -1,6 +1,31 @@
 # Implementation status and session report
 
-As of **2026-10-17**. The browser M0 vertical slice is implemented and tested. The Windows wrapper is configured and statically validated; a native executable remains **untested** because Cargo/Rust are absent.
+As of **2026-10-17**, M1B provides **Anuire — Experimental Original Template Campaign**, loaded from private local data. M1C adds an ignored original graphics/audio pack and a classic strategic interface. M0 remains the bundled regression scenario. The Windows wrapper is configured and statically validated; a native executable remains **untested** because Cargo/Rust are absent.
+
+## Current M1C status
+
+The local importer decodes all 9,501 asset records from 13 RES archives and nine loose music files. The working game uses the original Anuire terrain artwork, shield menu, character portraits and recovered UI materials. Its classic layout places the regent/resource/action council on the left, expands the map on widescreen displays and opens management windows over it. The same M1B commands and headless simulation remain authoritative.
+
+Original recordings play after user interaction, with scene changes, volume, mute and persistent preferences. Realm cue 105 and battle cue 102 are absent from the supplied image; campaign playback explicitly uses recovered original 101 as an alternate. Original font metrics, full heraldry assignment and exact dialog interiors remain incomplete. The target is 1920×1080, with 1366×768 gameplay and 640×480 comparison coverage; 2560×1440 acceptance was removed at the user's request.
+
+Clean and explicit private build paths are separate. Details and final verification are in [M1C_VISUAL_REPORT.md](M1C_VISUAL_REPORT.md), with linked asset, UI and audio reports. The sections below preserve the M1B/M0 verification history.
+
+## Current M1B status
+
+- All 206 provinces/geometries, 51 domain records, 116 regents, 766 holdings, 39 fortifications, 234 military units and 63 character deployments import without dropping source identities or changing initial ownership.
+- Eighteen original eligible default regents are selectable. With a territorial player, 31 territorial and 17 holding-only domains use AI; two unused/placeholder records remain passive.
+- Multi-ring selection/hover, focus/zoom/pan, generated political coloring, realm/province labels, directed link visualization, deployment markers, fortifications and four overlays work on the large map.
+- Shared development, recruitment, movement, negotiations, warfare, seasonal economy, events, domain survival and save/load operate at original-world scale. Original sovereignty, occupation and contested state are separate.
+- Raw original data/flags and template balances remain available. Unknown original rules use the explicit policies in [ANUIRE_PLAYABILITY_REPORT.md](ANUIRE_PLAYABILITY_REPORT.md). Diplomacy matrices and character state are not fabricated.
+- Five configurations (two realms, two seeds and both profiles) each completed ten seasons twice with identical state, validated references and exact save round-trips: 100 transitions. Final observed mean EndTurn 247.8 ms, p95 605.2 ms on this workspace.
+- Public suite: 79 passing tests. Private suite: 12 passing tests. Browser suite: all 8 tests passed, covering M0, research preview and playable Anuire, including all 206 selections and a detached island. TypeScript, lint, formatting, production build, release exclusion and Tauri configuration checks passed. See the playability report for screenshots and the final verification record.
+- CLASSIC/UNRESTRICTED faction availability is separate from Classic/Enhanced rules, with original flags, technical support and configurable overrides. Unrestricted UI/complete special-faction play is deferred.
+
+Play: `npm run dev`, then **New game → Load Anuire campaign data** and open `C:\birthright-hd\reference\extracted\anuire\anuire.research.json`. Load the same data after a restart before restoring an Anuire save. Details, provisional mechanics and next experiments are in the playability report.
+
+## Retained M0 baseline snapshot
+
+The sections below document the earlier M0 boundary and its verification. M1B supersedes its Anuire/occupation limitations; the synthetic JSON and its gameplay regression checks remain intact.
 
 ## Implemented and exercised
 
@@ -91,4 +116,4 @@ Shared browser release: `npm run build`, then `npm run preview`. Native bundle t
 
 `packages/core` owns gameplay; `world-data` owns the portable scenario; `rendering` owns Pixi; `ui` owns presentation strings/heraldry; `import-tools` owns private research adapters. `apps/game` wires the React frontend and Tauri wrapper. `tests` and `docs` supply regression and developer context.
 
-Next: verify the native build and commit Cargo.lock; validate original state/string formats and province geography; implement occupation/investiture, trade and canonical spells; expand Classic reconstruction and AI; conduct human balance playtests. See [ROADMAP.md](ROADMAP.md), [GAME_MECHANICS_REFERENCE.md](GAME_MECHANICS_REFERENCE.md), and [DATA_EXTRACTION_REPORT.md](DATA_EXTRACTION_REPORT.md).
+Current next work: certify post-New-Game initialization in an isolated VM; decode remaining original unit/diplomacy/character rules; extend occupation into investiture, trade and canonical spells; verify native persistence/file dialogs; playtest balance and AI. Template/string/geography extraction is complete for the examined corpus. See [ROADMAP.md](ROADMAP.md), [ANUIRE_PLAYABILITY_REPORT.md](ANUIRE_PLAYABILITY_REPORT.md), and [GAME_MECHANICS_REFERENCE.md](GAME_MECHANICS_REFERENCE.md).

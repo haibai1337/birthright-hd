@@ -4,6 +4,7 @@ export default tseslint.config(
   {
     ignores: [
       '**/dist/**',
+      '**/dist-private/**',
       '**/node_modules/**',
       '.npm-cache/**',
       '.python-tools/**',

@@ -6,3 +6,5 @@ export * from './persistence';
 export * from './rules';
 export * from './combat';
 export * from './ai';
+export * from './domains';
+export * from './geometry';
