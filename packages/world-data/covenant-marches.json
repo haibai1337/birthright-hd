@@ -1,0 +1,995 @@
+{
+  "id": "covenant-marches",
+  "revision": 1,
+  "name": "The Crown & the Covenant",
+  "description": "A synthetic frontier campaign in twelve provinces. Three rival regents, one contested border. All names, geography, and starting positions are provisional.",
+  "provenance": {
+    "status": "TEMPORARY_PLACEHOLDER",
+    "source": "Original development content, 2026-10-17",
+    "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+  },
+  "regions": [
+    {
+      "id": "covenant-marches",
+      "name": "The Covenant Marches",
+      "culture": "Synthetic development region",
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    }
+  ],
+  "realms": [
+    {
+      "id": "crownmere",
+      "name": "Crownmere",
+      "adjective": "Crownmere",
+      "color": "#537b88",
+      "sigil": "crown",
+      "motto": "By oath, a kingdom.",
+      "regent": {
+        "id": "elara",
+        "name": "Elara Vael",
+        "class": "warrior",
+        "bloodline": {
+          "derivation": "Dawn",
+          "strength": 32,
+          "abilities": []
+        },
+        "attributes": {
+          "command": 4,
+          "diplomacy": 3
+        },
+        "inventory": []
+      },
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "verdant",
+      "name": "The Verdant Covenant",
+      "adjective": "Verdant",
+      "color": "#73856a",
+      "sigil": "stag",
+      "motto": "The old roots endure.",
+      "regent": {
+        "id": "caelin",
+        "name": "Caelin of the Bough",
+        "class": "wizard",
+        "bloodline": {
+          "derivation": "Grove",
+          "strength": 30,
+          "abilities": []
+        },
+        "attributes": {
+          "command": 2,
+          "diplomacy": 4
+        },
+        "inventory": []
+      },
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "ironvale",
+      "name": "The Iron March",
+      "adjective": "Iron March",
+      "color": "#aa7460",
+      "sigil": "tower",
+      "motto": "Stone yields to no crown.",
+      "regent": {
+        "id": "orren",
+        "name": "Orren Blackthorn",
+        "class": "warrior",
+        "bloodline": {
+          "derivation": "Ember",
+          "strength": 34,
+          "abilities": []
+        },
+        "attributes": {
+          "command": 5,
+          "diplomacy": 1
+        },
+        "inventory": []
+      },
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    }
+  ],
+  "provinces": [
+    {
+      "id": "p0",
+      "name": "Westreach",
+      "regionId": "covenant-marches",
+      "terrain": "hills",
+      "polygon": [
+        [200, 140],
+        [430, 100],
+        [430, 360],
+        [140, 340]
+      ],
+      "center": [300, 235],
+      "adjacent": ["p1", "p4"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p1",
+      "name": "Greenhollow",
+      "regionId": "covenant-marches",
+      "terrain": "forest",
+      "polygon": [
+        [430, 100],
+        [680, 155],
+        [700, 330],
+        [430, 360]
+      ],
+      "center": [560, 236],
+      "adjacent": ["p0", "p2", "p5"],
+      "maxLevel": 6,
+      "magicPotential": 9,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p2",
+      "name": "Elderwood",
+      "regionId": "covenant-marches",
+      "terrain": "forest",
+      "polygon": [
+        [680, 155],
+        [920, 105],
+        [960, 375],
+        [700, 330]
+      ],
+      "center": [815, 241],
+      "adjacent": ["p1", "p3", "p6"],
+      "maxLevel": 6,
+      "magicPotential": 9,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p3",
+      "name": "Frostgate",
+      "regionId": "covenant-marches",
+      "terrain": "mountains",
+      "polygon": [
+        [920, 105],
+        [1190, 200],
+        [1230, 390],
+        [960, 375]
+      ],
+      "center": [1075, 268],
+      "adjacent": ["p2", "p7"],
+      "maxLevel": 6,
+      "magicPotential": 8,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p4",
+      "name": "Whiteharbor",
+      "regionId": "covenant-marches",
+      "terrain": "coast",
+      "polygon": [
+        [140, 340],
+        [430, 360],
+        [460, 550],
+        [200, 560]
+      ],
+      "center": [308, 453],
+      "adjacent": ["p0", "p5", "p8"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p5",
+      "name": "Willowmere",
+      "regionId": "covenant-marches",
+      "terrain": "plains",
+      "polygon": [
+        [430, 360],
+        [700, 330],
+        [720, 585],
+        [460, 550]
+      ],
+      "center": [578, 456],
+      "adjacent": ["p1", "p4", "p6", "p9"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p6",
+      "name": "Highfen",
+      "regionId": "covenant-marches",
+      "terrain": "hills",
+      "polygon": [
+        [700, 330],
+        [960, 375],
+        [970, 545],
+        [720, 585]
+      ],
+      "center": [838, 459],
+      "adjacent": ["p2", "p5", "p7", "p10"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p7",
+      "name": "Ironspire",
+      "regionId": "covenant-marches",
+      "terrain": "mountains",
+      "polygon": [
+        [960, 375],
+        [1230, 390],
+        [1190, 590],
+        [970, 545]
+      ],
+      "center": [1088, 475],
+      "adjacent": ["p3", "p6", "p11"],
+      "maxLevel": 6,
+      "magicPotential": 8,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p8",
+      "name": "Saltmeadow",
+      "regionId": "covenant-marches",
+      "terrain": "coast",
+      "polygon": [
+        [200, 560],
+        [460, 550],
+        [490, 810],
+        [310, 770]
+      ],
+      "center": [365, 673],
+      "adjacent": ["p4", "p9"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p9",
+      "name": "Dawnsfield",
+      "regionId": "covenant-marches",
+      "terrain": "plains",
+      "polygon": [
+        [460, 550],
+        [720, 585],
+        [745, 770],
+        [490, 810]
+      ],
+      "center": [604, 679],
+      "adjacent": ["p5", "p8", "p10"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p10",
+      "name": "Redwater",
+      "regionId": "covenant-marches",
+      "terrain": "plains",
+      "polygon": [
+        [720, 585],
+        [970, 545],
+        [980, 825],
+        [745, 770]
+      ],
+      "center": [854, 681],
+      "adjacent": ["p6", "p9", "p11"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    },
+    {
+      "id": "p11",
+      "name": "Ashen March",
+      "regionId": "covenant-marches",
+      "terrain": "hills",
+      "polygon": [
+        [970, 545],
+        [1190, 590],
+        [1120, 750],
+        [980, 825]
+      ],
+      "center": [1065, 678],
+      "adjacent": ["p7", "p10"],
+      "maxLevel": 6,
+      "magicPotential": 7,
+      "provenance": {
+        "status": "TEMPORARY_PLACEHOLDER",
+        "source": "Original development content, 2026-10-17",
+        "note": "Synthetic test world. Not Anuire, a canonical regent, or an original starting position."
+      }
+    }
+  ],
+  "units": [
+    {
+      "id": "infantry",
+      "name": "Infantry",
+      "cost": 2,
+      "upkeep": 1,
+      "power": 6,
+      "minLevel": 1,
+      "provenance": {
+        "status": "VERIFIED_ORIGINAL",
+        "source": "Supplied CD RULES.TXT, muster table, section 158",
+        "note": "Cost 2 GB, upkeep 1 GB, minimum province 1 verified; power 6 is enhanced."
+      }
+    },
+    {
+      "id": "archers",
+      "name": "Archers",
+      "cost": 2,
+      "upkeep": 1,
+      "power": 5,
+      "minLevel": 2,
+      "provenance": {
+        "status": "VERIFIED_ORIGINAL",
+        "source": "Supplied CD RULES.TXT, muster table, section 158",
+        "note": "Cost 2 GB, upkeep 1 GB, minimum province 2 verified; power 5 is enhanced."
+      }
+    },
+    {
+      "id": "cavalry",
+      "name": "Cavalry",
+      "cost": 4,
+      "upkeep": 2,
+      "power": 10,
+      "minLevel": 3,
+      "provenance": {
+        "status": "VERIFIED_ORIGINAL",
+        "source": "Supplied CD RULES.TXT, muster table, section 158",
+        "note": "Cost 4 GB, upkeep 2 GB, minimum province 3 verified; power 10 is enhanced."
+      }
+    }
+  ],
+  "spells": [
+    {
+      "id": "ward",
+      "name": "Warden’s Aegis",
+      "holding": "source",
+      "minLevel": 2,
+      "gold": 2,
+      "regency": 4,
+      "effect": "ward",
+      "duration": 2,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "harvest",
+      "weight": 3,
+      "gold": 3,
+      "loyalty": 0,
+      "decision": false,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    },
+    {
+      "id": "quiet",
+      "weight": 4,
+      "gold": 0,
+      "loyalty": 0,
+      "decision": false,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    },
+    {
+      "id": "petition",
+      "weight": 2,
+      "gold": 0,
+      "loyalty": 0,
+      "decision": true,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    },
+    {
+      "id": "unrest",
+      "weight": 1,
+      "gold": -1,
+      "loyalty": -1,
+      "decision": false,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    }
+  ],
+  "initial": {
+    "treasury": 24,
+    "regency": 20,
+    "provinces": [
+      {
+        "id": "p0",
+        "owner": "crownmere",
+        "level": 2,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p1",
+        "owner": "verdant",
+        "level": 3,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p2",
+        "owner": "verdant",
+        "level": 2,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p3",
+        "owner": "ironvale",
+        "level": 2,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p4",
+        "owner": "crownmere",
+        "level": 4,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 1
+      },
+      {
+        "id": "p5",
+        "owner": "verdant",
+        "level": 3,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p6",
+        "owner": "verdant",
+        "level": 2,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p7",
+        "owner": "ironvale",
+        "level": 4,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 1
+      },
+      {
+        "id": "p8",
+        "owner": "crownmere",
+        "level": 2,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p9",
+        "owner": "crownmere",
+        "level": 3,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p10",
+        "owner": "ironvale",
+        "level": 3,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      },
+      {
+        "id": "p11",
+        "owner": "ironvale",
+        "level": 2,
+        "loyalty": 3,
+        "tax": "moderate",
+        "fort": 0
+      }
+    ],
+    "holdings": [
+      {
+        "id": "h-0-law",
+        "provinceId": "p0",
+        "realmId": "crownmere",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-0-guild",
+        "provinceId": "p0",
+        "realmId": "crownmere",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-0-temple",
+        "provinceId": "p0",
+        "realmId": "crownmere",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-0-source",
+        "provinceId": "p0",
+        "realmId": "crownmere",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-1-law",
+        "provinceId": "p1",
+        "realmId": "verdant",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-1-guild",
+        "provinceId": "p1",
+        "realmId": "verdant",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-1-temple",
+        "provinceId": "p1",
+        "realmId": "verdant",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-1-source",
+        "provinceId": "p1",
+        "realmId": "verdant",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-2-law",
+        "provinceId": "p2",
+        "realmId": "verdant",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-2-guild",
+        "provinceId": "p2",
+        "realmId": "verdant",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-2-temple",
+        "provinceId": "p2",
+        "realmId": "verdant",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-2-source",
+        "provinceId": "p2",
+        "realmId": "verdant",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-3-law",
+        "provinceId": "p3",
+        "realmId": "ironvale",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-3-guild",
+        "provinceId": "p3",
+        "realmId": "ironvale",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-3-temple",
+        "provinceId": "p3",
+        "realmId": "ironvale",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-3-source",
+        "provinceId": "p3",
+        "realmId": "ironvale",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-4-law",
+        "provinceId": "p4",
+        "realmId": "crownmere",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-4-guild",
+        "provinceId": "p4",
+        "realmId": "crownmere",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-4-temple",
+        "provinceId": "p4",
+        "realmId": "crownmere",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-4-source",
+        "provinceId": "p4",
+        "realmId": "crownmere",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-5-law",
+        "provinceId": "p5",
+        "realmId": "verdant",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-5-guild",
+        "provinceId": "p5",
+        "realmId": "crownmere",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-5-temple",
+        "provinceId": "p5",
+        "realmId": "verdant",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-5-source",
+        "provinceId": "p5",
+        "realmId": "verdant",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-6-law",
+        "provinceId": "p6",
+        "realmId": "verdant",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-6-guild",
+        "provinceId": "p6",
+        "realmId": "verdant",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-6-temple",
+        "provinceId": "p6",
+        "realmId": "verdant",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-6-source",
+        "provinceId": "p6",
+        "realmId": "verdant",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-7-law",
+        "provinceId": "p7",
+        "realmId": "ironvale",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-7-guild",
+        "provinceId": "p7",
+        "realmId": "ironvale",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-7-temple",
+        "provinceId": "p7",
+        "realmId": "ironvale",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-7-source",
+        "provinceId": "p7",
+        "realmId": "ironvale",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-8-law",
+        "provinceId": "p8",
+        "realmId": "crownmere",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-8-guild",
+        "provinceId": "p8",
+        "realmId": "crownmere",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-8-temple",
+        "provinceId": "p8",
+        "realmId": "crownmere",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-8-source",
+        "provinceId": "p8",
+        "realmId": "crownmere",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-9-law",
+        "provinceId": "p9",
+        "realmId": "crownmere",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-9-guild",
+        "provinceId": "p9",
+        "realmId": "crownmere",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-9-temple",
+        "provinceId": "p9",
+        "realmId": "crownmere",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-9-source",
+        "provinceId": "p9",
+        "realmId": "crownmere",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-10-law",
+        "provinceId": "p10",
+        "realmId": "ironvale",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-10-guild",
+        "provinceId": "p10",
+        "realmId": "ironvale",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-10-temple",
+        "provinceId": "p10",
+        "realmId": "ironvale",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-10-source",
+        "provinceId": "p10",
+        "realmId": "ironvale",
+        "type": "source",
+        "level": 2
+      },
+      {
+        "id": "h-11-law",
+        "provinceId": "p11",
+        "realmId": "ironvale",
+        "type": "law",
+        "level": 2
+      },
+      {
+        "id": "h-11-guild",
+        "provinceId": "p11",
+        "realmId": "ironvale",
+        "type": "guild",
+        "level": 1
+      },
+      {
+        "id": "h-11-temple",
+        "provinceId": "p11",
+        "realmId": "ironvale",
+        "type": "temple",
+        "level": 1
+      },
+      {
+        "id": "h-11-source",
+        "provinceId": "p11",
+        "realmId": "ironvale",
+        "type": "source",
+        "level": 2
+      }
+    ],
+    "armies": [
+      {
+        "id": "initial-army-0",
+        "realmId": "crownmere",
+        "provinceId": "p9",
+        "moved": false,
+        "units": [
+          {
+            "id": "initial-unit-0-0",
+            "type": "infantry",
+            "strength": 100
+          },
+          {
+            "id": "initial-unit-0-1",
+            "type": "infantry",
+            "strength": 100
+          }
+        ]
+      },
+      {
+        "id": "initial-army-1",
+        "realmId": "verdant",
+        "provinceId": "p6",
+        "moved": false,
+        "units": [
+          {
+            "id": "initial-unit-1-0",
+            "type": "infantry",
+            "strength": 100
+          },
+          {
+            "id": "initial-unit-1-1",
+            "type": "infantry",
+            "strength": 100
+          }
+        ]
+      },
+      {
+        "id": "initial-army-2",
+        "realmId": "ironvale",
+        "provinceId": "p10",
+        "moved": false,
+        "units": [
+          {
+            "id": "initial-unit-2-0",
+            "type": "infantry",
+            "strength": 100
+          },
+          {
+            "id": "initial-unit-2-1",
+            "type": "infantry",
+            "strength": 100
+          }
+        ]
+      }
+    ],
+    "treaties": [
+      {
+        "a": "crownmere",
+        "b": "verdant",
+        "kind": "peace",
+        "opinion": 25,
+        "since": 1
+      },
+      {
+        "a": "crownmere",
+        "b": "ironvale",
+        "kind": "war",
+        "opinion": -25,
+        "since": 1
+      },
+      {
+        "a": "verdant",
+        "b": "ironvale",
+        "kind": "war",
+        "opinion": -20,
+        "since": 1
+      }
+    ],
+    "tradeRoutes": []
+  },
+  "victory": {
+    "provinces": 8,
+    "turns": 20
+  }
+}

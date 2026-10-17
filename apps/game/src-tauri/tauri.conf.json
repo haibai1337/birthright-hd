@@ -1,0 +1,17 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Birthright HD",
+  "version": "0.1.0",
+  "identifier": "local.birthright.hd",
+  "build": {
+    "beforeDevCommand": "npm --prefix ../.. run dev",
+    "beforeBuildCommand": "npm --prefix ../.. run build",
+    "devUrl": "http://127.0.0.1:5173",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [{ "title": "Birthright HD", "width": 1366, "height": 768, "minWidth": 1000, "minHeight": 700, "resizable": true }],
+    "security": { "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost blob: data:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'; connect-src ipc: http://ipc.localhost" }
+  },
+  "bundle": { "active": true, "targets": ["nsis"], "icon": ["icons/icon.ico"] }
+}

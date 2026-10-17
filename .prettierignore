@@ -1,0 +1,7 @@
+reference/
+node_modules/
+.npm-cache/
+.python-tools/
+**/dist/
+**/target/
+package-lock.json

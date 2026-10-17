@@ -1,0 +1,15 @@
+node_modules/
+.npm-cache/
+/.python-tools
+dist/
+coverage/
+test-results/
+playwright-report/
+*.local
+tmp/
+reference/original/*
+!reference/original/README.md
+reference/extracted/
+reference/research-cache/
+apps/game/src-tauri/target/
+*.log
