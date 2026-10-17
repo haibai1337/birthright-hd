@@ -12,9 +12,6 @@ test('loads the full local Anuire campaign, manages a domain, marches, negotiate
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/');
   await page.getByRole('button', { name: 'New game', exact: true }).click();
-  const chooser = page.waitForEvent('filechooser');
-  await page.getByRole('button', { name: 'Load Anuire campaign data', exact: true }).click();
-  await (await chooser).setFiles(input);
   const choice = page.getByLabel('Choose Anuire regent');
   await expect(choice.locator('option')).toHaveCount(18);
   await choice.selectOption('anuire-realm-27');
@@ -74,21 +71,6 @@ test('loads the full local Anuire campaign, manages a domain, marches, negotiate
   expect(errors).toEqual([]);
 });
 
-test('rejects malformed Anuire data while keeping the synthetic campaign available', async ({
-  page,
-}) => {
-  await page.goto('/');
-  await page.getByRole('button', { name: 'New game', exact: true }).click();
-  await page.getByTestId('anuire-campaign-import').setInputFiles({
-    name: 'invalid.json',
-    mimeType: 'application/json',
-    buffer: Buffer.from('{}'),
-  });
-  await expect(page.getByRole('alert')).toContainText('Anuire load failed');
-  await page.getByRole('button', { name: /Begin your reign/ }).click();
-  await expect(page.getByTestId('province-level')).toHaveText('4 / 6');
-});
-
 test('selects and hovers an original detached island through the canvas in a second realm', async ({
   page,
 }) => {
@@ -96,7 +78,6 @@ test('selects and hovers an original detached island through the canvas in a sec
   test.skip(!existsSync(input), 'Requires private Anuire data.');
   await page.goto('/');
   await page.getByRole('button', { name: 'New game', exact: true }).click();
-  await page.getByTestId('anuire-campaign-import').setInputFiles(input);
   await page.getByLabel('Choose Anuire regent').selectOption('anuire-realm-14');
   await page.getByLabel('Ruleset', { exact: true }).selectOption('CLASSIC');
   await page.getByRole('button', { name: /Begin your reign/ }).click();

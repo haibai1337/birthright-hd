@@ -1,3 +1,5 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # Data schema and persistence
 
 Runtime schemas are the executable specification in `packages/core/schema.ts`. `validateScenario` adds graph/reference/capacity checks beyond field validation. Scenario definitions and mutable campaign states are separate structures.

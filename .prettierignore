@@ -3,6 +3,5 @@ node_modules/
 .npm-cache/
 .python-tools/
 **/dist/
-**/dist-private/
 **/target/
 package-lock.json

@@ -477,9 +477,7 @@
   border-color: #836a40;
   background: #c5ac78;
 }
-.original-presentation .map-heading,
-.original-presentation .map-hint,
-.classic-map-area .map-legend {
+.original-presentation .map-hint {
   display: none;
 }
 .classic-map-area .map-tools {

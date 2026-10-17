@@ -1,3 +1,5 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # Data extraction report
 
 No untrusted game/editor/patch executable was executed. Read-only methods were streaming hashing, byte parsing, PDF rendering, ZIP inspection, and listing/reading members with the installed UnRAR tool.

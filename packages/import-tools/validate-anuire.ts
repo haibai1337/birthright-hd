@@ -1,12 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import {
-  validateAnuireResearch,
-  projectVerifiedProvinceDefinitions,
-} from '../world-data/anuire-research.ts';
+import { validateAnuireResearch } from '../world-data/anuire-research.ts';
 
 const input = process.argv[2] ?? 'reference/extracted/anuire/anuire.research.json';
 const data = validateAnuireResearch(JSON.parse(await readFile(input, 'utf8')));
-const projection = projectVerifiedProvinceDefinitions(data);
 console.log(
   JSON.stringify(
     {
@@ -16,9 +12,8 @@ console.log(
       regents: data.campaign.regents.length,
       holdings: data.campaign.holdings.length,
       geometries: data.map.geometries.length,
-      projection: { accepted: projection.converted.length, blocked: projection.blocked.length },
-      playable: false,
-      blockers: data.validation.readinessBlockers,
+      warnings: data.validation.warnings,
+      originalBehaviorUnresolved: data.validation.readinessBlockers,
     },
     null,
     2,

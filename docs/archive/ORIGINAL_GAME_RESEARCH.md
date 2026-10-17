@@ -1,3 +1,5 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # Original game research
 
 Research date: **2026-10-17**. Scope: supplied files and the five requested online references. This report distinguishes documentary evidence from observed file structures and untested behavior. No supplied executable was run.

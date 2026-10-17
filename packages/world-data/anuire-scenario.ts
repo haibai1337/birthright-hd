@@ -1,7 +1,7 @@
 import { validateAnuireResearch } from './anuire-research';
 import { validateScenario } from '../core/validation';
 import type { Scenario } from '../core/schema';
-import { developmentScenario } from './index';
+import defaults from './simulation-defaults.json';
 
 const provinceId = (n: number) => `anuire-province-${String(n).padStart(3, '0')}`;
 const realmId = (n: number) => `anuire-realm-${String(n).padStart(2, '0')}`;
@@ -114,7 +114,7 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
     level: f.level,
     kind: f.iconCode === 97 ? ('wizard-tower' as const) : ('castle' as const),
   }));
-  const unitTemplates = developmentScenario.units;
+  const unitTemplates = defaults.units as Scenario['units'];
   const nativeTypes: Record<number, string> = { 20: 'archers', 21: 'cavalry', 23: 'infantry' };
   const units: Scenario['units'] = [
     ...unitTemplates.map((u) => ({
@@ -233,7 +233,7 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
     }),
     units,
     spells: [],
-    events: developmentScenario.events,
+    events: defaults.events,
     initial: {
       provinces: c.provinces.map((p) => ({
         id: p.id,

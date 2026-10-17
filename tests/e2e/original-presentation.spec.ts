@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
-const available = existsSync('reference/private-assets/manifest.json');
+const available = existsSync('reference/assets/manifest.json');
 test('selection remains safe while original map artwork is still loading', async ({ page }) => {
   test.skip(!available, 'Requires private assets.');
   test.setTimeout(60000);
@@ -21,9 +21,6 @@ test('selection remains safe while original map artwork is still loading', async
       'ready',
     );
     await page.getByRole('button', { name: 'New game', exact: true }).click();
-    await page
-      .getByTestId('anuire-campaign-import')
-      .setInputFiles('reference/extracted/anuire/anuire.research.json');
     await page.getByRole('button', { name: /Begin your reign/ }).click();
     await expect(page.getByTestId('strategic-map').locator('canvas')).toBeVisible();
     await page.getByLabel('Inspect province', { exact: true }).selectOption('anuire-province-003');
@@ -42,16 +39,6 @@ test('selection remains safe while original map artwork is still loading', async
     release();
   }
 });
-test('the clean presentation remains playable when the private pack is absent', async ({
-  page,
-}) => {
-  await page.route('**/_private/**', (route) => route.fulfill({ status: 404, body: '' }));
-  await page.goto('/');
-  await page.getByRole('button', { name: 'New game', exact: true }).click();
-  await page.getByRole('button', { name: /Begin your reign/ }).click();
-  await expect(page.getByTestId('province-level')).toHaveText('4 / 6');
-  await expect(page.getByTestId('classic-layout')).toHaveCount(0);
-});
 test('every recovered music recording and representative effects decode in Chromium', async ({
   page,
 }) => {
@@ -59,7 +46,7 @@ test('every recovered music recording and representative effects decode in Chrom
   test.setTimeout(90000);
   await page.goto('/');
   const decoded = await page.evaluate(async () => {
-    const d = await (await fetch('/_private/manifest.json')).json(),
+    const d = await (await fetch('/original/manifest.json')).json(),
       context = new AudioContext(),
       results: { id: string; duration: number; expected: number | null }[] = [];
     try {
@@ -68,7 +55,7 @@ test('every recovered music recording and representative effects decode in Chrom
           r.category === 'music' ||
           ['WAVE/8010.WAV', 'WAVE/8015.WAV', 'WAVE/20322.WAV'].includes(r.id),
       )) {
-        const response = await fetch('/_private/' + r.file);
+        const response = await fetch('/original/' + r.file);
         if (!response.ok) throw new Error(r.id);
         const audio = await context.decodeAudioData(await response.arrayBuffer());
         results.push({ id: r.id, duration: audio.duration, expected: r.audio.duration });
@@ -148,9 +135,6 @@ for (const [width, height] of [
     );
     await page.screenshot({ path: `test-results/m1c-menu-${width}.png` });
     await page.getByRole('button', { name: 'New game', exact: true }).click();
-    await page
-      .getByTestId('anuire-campaign-import')
-      .setInputFiles('reference/extracted/anuire/anuire.research.json');
     await page.getByLabel('Choose Anuire regent').selectOption('anuire-realm-27');
     await page.getByRole('button', { name: /Begin your reign/ }).click();
     const map = page.getByTestId('strategic-map');

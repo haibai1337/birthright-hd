@@ -1,0 +1,93 @@
+{
+  "units": [
+    {
+      "id": "infantry",
+      "name": "Infantry",
+      "cost": 2,
+      "upkeep": 1,
+      "power": 6,
+      "minLevel": 1,
+      "provenance": {
+        "status": "VERIFIED_ORIGINAL",
+        "source": "Supplied CD RULES.TXT, muster table, section 158",
+        "note": "Cost 2 GB, upkeep 1 GB, minimum province 1 verified; power 6 is enhanced."
+      }
+    },
+    {
+      "id": "archers",
+      "name": "Archers",
+      "cost": 2,
+      "upkeep": 1,
+      "power": 5,
+      "minLevel": 2,
+      "provenance": {
+        "status": "VERIFIED_ORIGINAL",
+        "source": "Supplied CD RULES.TXT, muster table, section 158",
+        "note": "Cost 2 GB, upkeep 1 GB, minimum province 2 verified; power 5 is enhanced."
+      }
+    },
+    {
+      "id": "cavalry",
+      "name": "Cavalry",
+      "cost": 4,
+      "upkeep": 2,
+      "power": 10,
+      "minLevel": 3,
+      "provenance": {
+        "status": "VERIFIED_ORIGINAL",
+        "source": "Supplied CD RULES.TXT, muster table, section 158",
+        "note": "Cost 4 GB, upkeep 2 GB, minimum province 3 verified; power 10 is enhanced."
+      }
+    }
+  ],
+  "events": [
+    {
+      "id": "harvest",
+      "weight": 3,
+      "gold": 3,
+      "loyalty": 0,
+      "decision": false,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    },
+    {
+      "id": "quiet",
+      "weight": 4,
+      "gold": 0,
+      "loyalty": 0,
+      "decision": false,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    },
+    {
+      "id": "petition",
+      "weight": 2,
+      "gold": 0,
+      "loyalty": 0,
+      "decision": true,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    },
+    {
+      "id": "unrest",
+      "weight": 1,
+      "gold": -1,
+      "loyalty": -1,
+      "decision": false,
+      "provenance": {
+        "status": "ENHANCED_DESIGN",
+        "source": "M0 design",
+        "note": "Provisional deterministic balance; not reconstructed PC behavior."
+      }
+    }
+  ]
+}

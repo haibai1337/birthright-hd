@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { provenanceSchema, provinceDefinitionSchema } from '../core/schema.ts';
+import { provenanceSchema } from '../core/schema.ts';
 const number = z.number().int().nonnegative(),
   point = z.tuple([z.number().finite(), z.number().finite()]);
 const matrixSchema = z
@@ -136,73 +136,6 @@ export const anuireResearchSchema = z
   })
   .passthrough();
 export type AnuireResearch = z.infer<typeof anuireResearchSchema>;
-
-/** Safe partial projection; never fabricates unsupported original fields into a scenario. */
-export function projectVerifiedProvinceDefinitions(input: AnuireResearch) {
-  const converted: z.infer<typeof provinceDefinitionSchema>[] = [],
-    blocked: { id: string; reasons: string[] }[] = [];
-  const realms = new Set(input.campaign.realms.map((r) => r.index));
-  const terrain: Record<number, 'forest' | 'plains' | 'mountains' | 'hills'> = {
-    1: 'forest',
-    2: 'plains',
-    3: 'mountains',
-    6: 'hills',
-  };
-  for (const p of input.campaign.provinces) {
-    const geometry = input.map.geometries.find((g) => g.provinceIndex === p.index),
-      reasons: string[] = [];
-    if (!realms.has(p.realmIndex)) reasons.push('Unknown realm reference');
-    if (!terrain[p.terrainCode])
-      reasons.push(`Original terrain ${p.terrainCode} has no exact M0 representation`);
-    if (p.level + p.magic > 10)
-      reasons.push('Original civilization + source potential exceeds the M0 magical baseline cap');
-    if (!geometry || geometry.rings.length !== 1)
-      reasons.push('Original geometry requires multiple rings; M0 accepts one polygon');
-    if (
-      p.borders.some(
-        (b) =>
-          !input.campaign.provinces
-            .find((n) => n.index === b.provinceIndex)
-            ?.borders.some((e) => e.provinceIndex === p.index),
-      )
-    )
-      reasons.push('Original movement links are not symmetric');
-    if (reasons.length || !geometry) {
-      blocked.push({ id: p.id, reasons });
-      continue;
-    }
-    converted.push(
-      provinceDefinitionSchema.parse({
-        id: p.id,
-        name: p.name,
-        regionId: 'anuire',
-        terrain: terrain[p.terrainCode],
-        polygon: geometry.rings[0],
-        center: p.center,
-        adjacent: p.borders.map(
-          (b) => `anuire-province-${b.provinceIndex.toString().padStart(3, '0')}`,
-        ),
-        maxLevel: 10,
-        magicPotential: p.level + p.magic,
-        provenance: {
-          status: 'INFERRED',
-          source: `CD RLMSTART.DAT @${p.offset}; WINBR.EXE name pointer; MAP.RES/PROVMAP.PCX`,
-          note: 'Original name, terrain, center, links and cell-edge geometry. magicPotential is civilization + remaining source. maxLevel 10 is the M0 schema ceiling, not a verified original development limit. This partial projection is not a campaign.',
-        },
-      }),
-    );
-  }
-  return {
-    converted,
-    blocked,
-    playable: false as const,
-    policy: {
-      maxLevel: 10,
-      status: 'ENHANCED_DESIGN',
-      note: 'M0 compatibility ceiling only; not evidence of an original development limit. References to blocked provinces remain intact, so this is not a standalone scenario.',
-    },
-  };
-}
 
 export function validateAnuireResearch(input: unknown): AnuireResearch {
   const data = anuireResearchSchema.parse(input),

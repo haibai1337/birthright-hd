@@ -28,7 +28,6 @@ interface Props {
   panel: Panel;
   select: (id: string) => void;
   issue: (cmd: Command) => void;
-  compact?: boolean;
 }
 function Order({
   command,
@@ -70,15 +69,7 @@ function Order({
     </button>
   );
 }
-export function Sidebar({
-  state,
-  scenario,
-  selected,
-  panel,
-  select,
-  issue,
-  compact = false,
-}: Props) {
+export function Sidebar({ state, scenario, selected, panel, select, issue }: Props) {
   const [armyId, setArmyId] = useState('');
   const [destination, setDestination] = useState('');
   const province = state.provinces.find((p) => p.id === selected);
@@ -133,29 +124,7 @@ export function Sidebar({
               )}
               {province.contested && <p>Province is contested.</p>}
             </div>
-            {!compact && (
-              <>
-                <label className="select-label" htmlFor="province-select">
-                  Inspect province
-                </label>
-                <select
-                  id="province-select"
-                  value={selected}
-                  onChange={(e) => select(e.target.value)}
-                >
-                  {scenario.provinces.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ·{' '}
-                      {
-                        scenario.realms.find(
-                          (r) => r.id === state.provinces.find((s) => s.id === p.id)?.owner,
-                        )?.adjective
-                      }
-                    </option>
-                  ))}
-                </select>
-              </>
-            )}
+
             <div className="province-stats">
               <div>
                 <strong data-testid="province-level">

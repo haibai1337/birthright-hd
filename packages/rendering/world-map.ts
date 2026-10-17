@@ -2,7 +2,7 @@ import { Application, Assets, Container, Graphics, Sprite, Text, Texture } from 
 import type { Campaign, Scenario } from '../core/schema';
 import { insideProvince, insideRing, provinceRings } from '../core/geometry';
 import { sourcePotential } from '../core/selectors';
-import type { MapCallbacks, MapView } from './strategic-map';
+import type { MapCallbacks, MapView } from './types';
 import type { AnuireResearch } from '../world-data/anuire-research';
 interface OriginalMapArt {
   map?: string;

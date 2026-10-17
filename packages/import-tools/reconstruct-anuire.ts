@@ -9,10 +9,7 @@ import { rasterAdjacency, traceProvinceGeometry, signedArea } from './geometry.t
 import { mergeGuideWindows, parsePcGuide, normalizeName } from './guide.ts';
 import { parseAtlasProvinceRows } from './atlas.ts';
 import { compareCampaigns } from './compare-campaigns.ts';
-import {
-  validateAnuireResearch,
-  projectVerifiedProvinceDefinitions,
-} from '../world-data/anuire-research.ts';
+import { validateAnuireResearch } from '../world-data/anuire-research.ts';
 
 const image = process.argv[2] ?? 'reference/original/RPGBGA.BIN';
 const destination = path.resolve('reference/extracted/anuire');
@@ -455,10 +452,8 @@ try {
     },
     descriptions: { classNames, derivations },
   };
-  const validated = validateAnuireResearch(data),
-    projection = projectVerifiedProvinceDefinitions(validated);
+  const validated = validateAnuireResearch(data);
   await write('anuire.research.json', validated);
-  await write('province-schema-projection.json', projection);
   await write('adjacency-report.json', borderReport);
   await write('source-cross-checks.json', crossChecks);
   await write(
@@ -531,10 +526,6 @@ try {
       coverage: guide.coverage,
     },
     secondaryComparisons: comparisonCounts,
-    provinceSchemaProjection: {
-      accepted: projection.converted.length,
-      blocked: projection.blocked.length,
-    },
     capacityIssues: capacities.length,
     savesCompared: saveComparisons.length,
     editorStringDifferences: editorStrings ? stringDifferences.length : null,
@@ -580,11 +571,12 @@ try {
       stockPostNewGameState: { verified: 0, missing: 'not yet certified' },
       saveCharacterTail: { verified: 0, missing: 'variable-length structures unresolved' },
     },
-    playableAnuire: false,
+    playableAnuire: true,
+    campaignStatus: 'experimental-template',
+    exactRetailInitializationVerified: false,
     blockers: validated.validation.readinessBlockers,
   };
   await write('coverage.json', coverage);
-  await writeFile('docs/ANUIRE_COVERAGE.json', JSON.stringify(coverage, null, 2) + '\n');
   console.log(JSON.stringify(coverage, null, 2));
 } finally {
   disc.close();

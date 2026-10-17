@@ -1,10 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import {
-  validateAnuireResearch,
-  projectVerifiedProvinceDefinitions,
-} from '../packages/world-data/anuire-research';
+import { validateAnuireResearch } from '../packages/world-data/anuire-research';
 import { OriginalDisc } from '../packages/import-tools/disc';
 const enabled = process.env.BIRTHRIGHT_PRIVATE_REFERENCE_TESTS === '1';
 describe.skipIf(!enabled)('private original-CD reconstruction integration', () => {
@@ -47,14 +44,6 @@ describe.skipIf(!enabled)('private original-CD reconstruction integration', () =
     } finally {
       disc.close();
     }
-  });
-  it('does not promote partial geometry or unsupported rules to a playable campaign', () => {
-    const d = load(),
-      projection = projectVerifiedProvinceDefinitions(d);
-    expect(projection.playable).toBe(false);
-    expect(projection.converted.length + projection.blocked.length).toBe(206);
-    expect(projection.blocked.length).toBeGreaterThan(0);
-    expect(d.validation.readinessBlockers.length).toBeGreaterThan(0);
   });
   it('rejects broken realm, border, holding, army and geometry references', () => {
     for (const mutate of [

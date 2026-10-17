@@ -15,7 +15,7 @@ import {
   type Campaign,
   type Command,
 } from '../packages/core';
-import { developmentScenario as scenario } from '../packages/world-data';
+import { developmentScenario as scenario } from './fixtures/scenario';
 function initial(seed = 1997, player = 'crownmere') {
   return createCampaign(scenario, player, seed);
 }

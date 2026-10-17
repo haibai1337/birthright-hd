@@ -1,3 +1,5 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # Original asset inventory — M1C
 
 2026-10-17. Source: the user's `reference/original/RPGBGA.BIN`, SHA-256 `62b0049a550d046f22e6707ff831df67b456f5959306556ef3569f587b3f945d`. The image is opened read-only through the existing ISO9660 reader. No historical binaries are executed.

@@ -36,9 +36,9 @@ for (const entry of (await readdir(root, { withFileTypes: true })).sort((a, b) =
   });
 }
 await writeFile('reference/extracted/inventory.json', JSON.stringify(inventory, null, 2));
-await mkdir('docs', { recursive: true });
+await mkdir('reference/extracted', { recursive: true });
 await writeFile(
-  'docs/REFERENCE_INVENTORY.md',
+  'reference/extracted/reference-inventory.md',
   '# Supplied reference inventory\n\nRead-only SHA-256 inventory. Original content is private and ignored.\n\n| File | Bytes | SHA-256 | Format |\n|---|---:|---|---|\n' +
     inventory.map((x) => `| ${x.name} | ${x.bytes} | ${x.sha256} | ${x.format} |`).join('\n') +
     '\n',

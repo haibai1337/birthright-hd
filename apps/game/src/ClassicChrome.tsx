@@ -4,7 +4,7 @@ import { logText, playerJournal, season, signed } from '../../../packages/ui/str
 import { assetUrl, type OriginalAssets } from './original-assets';
 import { MapPanel } from './MapPanel';
 import { Sidebar, type Panel } from './Sidebar';
-import type { MapOverlay } from '../../../packages/rendering/strategic-map';
+import type { MapOverlay } from '../../../packages/rendering/types';
 import type { Settings } from './storage';
 
 export function OriginalImage({
@@ -80,7 +80,7 @@ export function ClassicMainMenu({
           ))}
         </nav>
       </div>
-      <p className="classic-build-label">BIRTHRIGHT HD · M1C · PRIVATE LOCAL ASSETS</p>
+      <p className="classic-build-label">BIRTHRIGHT HD · ANUIRE</p>
     </main>
   );
 }
@@ -116,7 +116,7 @@ export function ClassicCampaign({
   open,
   mainMenu,
 }: Props) {
-  const [inspecting, setInspecting] = useState(!scenario.map);
+  const [inspecting, setInspecting] = useState(false);
   const player = scenario.realms.find((r) => r.id === state.playerRealm)!,
     realm = state.realms.find((r) => r.id === player.id)!,
     income = forecast(state, scenario, player.id),
@@ -280,7 +280,6 @@ export function ClassicCampaign({
               panel={panel}
               select={select}
               issue={issue}
-              compact
             />
           </section>
         )}
@@ -317,11 +316,7 @@ export function ClassicCampaign({
         </button>
         <span className="classic-profile">
           {state.ruleset} · Seed {state.seed}
-          <small>
-            {scenario.map
-              ? 'Anuire · experimental template'
-              : 'Covenant Marches · development fixture'}
-          </small>
+          <small>Anuire · experimental template</small>
         </span>
       </footer>
       {petition && (

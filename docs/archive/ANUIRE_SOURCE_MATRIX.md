@@ -1,3 +1,5 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # Anuire reconstruction: source matrix
 
 Research performed 2026-10-17, continuing M0 commit `695e204`. The primary campaign evidence is the user's private CD. External sources supply format checks, independent PC observations, and explicitly separate tabletop comparisons. No historical game/editor/patch executable was launched.
@@ -24,7 +26,7 @@ Each private campaign record has a stable index-based ID, source offset, source 
 
 ## Cross-source results
 
-The guide parser recovered 200 province rows, 604 holding/fort rows, 63 domain regent summaries and 62 detailed character profiles. It compared 591 province field values with no differences, 586 holding rows with seven differences, and 488 character field values with eight differences. Three province names and 11 holding rows remain unmatched under exact normalized spelling. Counts are comparisons, not additional unique campaign records. [Machine-readable coverage](ANUIRE_COVERAGE.json) records the current run.
+The guide parser recovered 200 province rows, 604 holding/fort rows, 63 domain regent summaries and 62 detailed character profiles. It compared 591 province field values with no differences, 586 holding rows with seven differences, and 488 character field values with eight differences. Three province names and 11 holding rows remain unmatched under exact normalized spelling. Counts are comparisons, not additional unique campaign records. [Machine-readable coverage](../../reference/extracted/anuire/coverage.json) records the current run.
 
 Examples requiring explicit separation:
 

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Campaign, Scenario } from '../../../packages/core';
-import { StrategicMap, type MapOverlay } from '../../../packages/rendering/strategic-map';
+import type { MapOverlay } from '../../../packages/rendering/types';
 import { WorldMap } from '../../../packages/rendering/world-map';
 import { Icon } from '../../../packages/ui/Icon';
 import { assetUrl, type OriginalAssets } from './original-assets';
@@ -19,10 +19,10 @@ export function MapPanel({
   overlay: MapOverlay;
   labels: boolean;
   onSelect: (id: string) => void;
-  original?: OriginalAssets;
+  original: OriginalAssets;
 }) {
   const host = useRef<HTMLDivElement>(null);
-  const renderer = useRef<StrategicMap | WorldMap | null>(null);
+  const renderer = useRef<WorldMap | null>(null);
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [hover, setHover] = useState<string | null>(null);
@@ -32,24 +32,22 @@ export function MapPanel({
     if (!host.current) return;
     setReady(false);
     setError('');
-    const Renderer = scenario.map ? WorldMap : StrategicMap;
-    const map = new Renderer(host.current, scenario, {
+    const map = new WorldMap(host.current, scenario, {
       select: (id) => select.current(id),
       hover: setHover,
       ready: () => setReady(true),
       error: setError,
     });
-    if (map instanceof WorldMap && original)
-      map.setOriginalArt({
-        map: assetUrl(original, 'MAP/LGMAP.PCX'),
-        images: Object.fromEntries(
-          Object.entries(original.assets)
-            .filter(([id]) => id.startsWith('UI/'))
-            .map(([id]) => [id, assetUrl(original, id)!]),
-        ),
-        icons: original.mapIcons,
-        troopIcons: original.troopIcons,
-      });
+    map.setOriginalArt({
+      map: assetUrl(original, 'MAP/LGMAP.PCX'),
+      images: Object.fromEntries(
+        Object.entries(original.assets)
+          .filter(([id]) => id.startsWith('UI/'))
+          .map(([id]) => [id, assetUrl(original, id)!]),
+      ),
+      icons: original.mapIcons,
+      troopIcons: original.troopIcons,
+    });
     renderer.current = map;
     void map.init();
     return () => {
@@ -67,31 +65,7 @@ export function MapPanel({
       <div className="map-canvas" ref={host} data-testid="strategic-map" />
       {!ready && !error && (
         <div className="map-loading" role="status">
-          {original ? 'Restoring the original map…' : 'Preparing the strategic map…'}
-        </div>
-      )}
-      {!original && (
-        <div className="map-heading">
-          <span className="eyebrow">THE STRATEGIC REALM</span>
-          <h2>{scenario.map ? 'Anuire' : 'The Covenant Marches'}</h2>
-          <p>
-            {scenario.map
-              ? 'Experimental original template'
-              : 'Development scenario · Not canonical Anuire'}
-          </p>
-        </div>
-      )}
-      {!scenario.map && (
-        <div className="map-legend">
-          <span>
-            <i style={{ background: '#537b88' }} /> Crownmere
-          </span>
-          <span>
-            <i style={{ background: '#73856a' }} /> Covenant
-          </span>
-          <span>
-            <i style={{ background: '#aa7460' }} /> Iron March
-          </span>
+          Restoring the original map…
         </div>
       )}
       {hoverDef && (

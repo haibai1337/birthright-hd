@@ -5,8 +5,8 @@ describe.skipIf(process.env.BIRTHRIGHT_PRIVATE_REFERENCE_TESTS !== '1')(
   'private original asset import',
   () => {
     it('retains all source identities, decoded dimensions and browser-ready audio', () => {
-      const d = JSON.parse(readFileSync('reference/private-assets/manifest.json', 'utf8'));
-      const root = path.resolve('reference/private-assets');
+      const d = JSON.parse(readFileSync('reference/assets/manifest.json', 'utf8'));
+      const root = path.resolve('reference/assets');
       const files = new Set(
         readdirSync(root, { recursive: true, withFileTypes: true })
           .filter((e) => e.isFile())

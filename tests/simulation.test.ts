@@ -6,7 +6,7 @@ import {
   validateStateReferences,
   type Campaign,
 } from '../packages/core';
-import { developmentScenario as scenario } from '../packages/world-data';
+import { developmentScenario as scenario } from './fixtures/scenario';
 import { planNextAI } from '../packages/core/ai';
 function simulate(seed: number, player: string): Campaign {
   let s = createCampaign(scenario, player, seed);

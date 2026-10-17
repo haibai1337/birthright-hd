@@ -6,7 +6,7 @@ import {
   realmSelectable,
   validateScenario,
 } from '../packages/core';
-import { developmentScenario } from '../packages/world-data';
+import { developmentScenario } from './fixtures/scenario';
 it('separates original flags, technical support, configurable overrides and future unrestricted mode', () => {
   const s = structuredClone(developmentScenario),
     r = s.realms[0]!;

@@ -1,12 +1,14 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # M1A/M1B: Anuire reconstruction and experimental play
 
 ## Result and scope
 
 The original CD initialization template is now a validated, machine-readable research corpus: **206 provinces and geometries, 51 realm records, 116 regent records, 766 holdings, 39 fortifications, 234 military units and 63 character units**. There are 32 province-owning realms; the other realm records include holding domains and unused/off-map entries. All 297 active units have resolved deployment locations. Province names and geography are recovered from original files, without inventing missing provinces or boundaries.
 
-M1B now loads this corpus through **New game → Load Anuire campaign data** as **Anuire — Experimental Original Template Campaign**. All 206 provinces and all source holdings/fortifications/deployments import into the extended core model. The separate **Open Anuire research preview** remains a raw-record inspector. Covenant Marches remains the regression fixture. Exact stock initialization and original rules are not claimed; see the current [playability report](ANUIRE_PLAYABILITY_REPORT.md).
+M1B now loads this corpus through **New game → Load Anuire campaign data** as **Anuire — Experimental Original Template Campaign**. All 206 provinces and all source holdings/fortifications/deployments import into the extended core model. The separate **Open Anuire research preview** remains a raw-record inspector. Covenant Marches remains the regression fixture. Exact stock initialization and original rules are not claimed; see the current [playability report](../GAMEPLAY_SYSTEMS.md).
 
-See [source access and contradictions](ANUIRE_SOURCE_MATRIX.md), [generated coverage](ANUIRE_COVERAGE.json), and the earlier [reference inventory](REFERENCE_INVENTORY.md). These are M1A findings; earlier M0 extraction limitations are historical, not the current coverage.
+See [source access and contradictions](ANUIRE_SOURCE_MATRIX.md), [generated coverage](../../reference/extracted/anuire/coverage.json), and the earlier [reference inventory](REFERENCE_INVENTORY.md). These are M1A findings; earlier M0 extraction limitations are historical, not the current coverage.
 
 ## Reproduce the extraction
 
@@ -214,6 +216,6 @@ Public tests use synthetic binary/text/map fixtures; private CD tests are opt-in
 
 On 2026-10-17: `npm test` passed 76 public tests (five private tests skipped by default); `npm run test:original` passed all five private tests. All five Playwright tests passed, including three existing gameplay flows and two research-import flows. The two preview flows and 15 parser/schema tests were also rerun after final validation changes and passed. Type checking, ESLint, Prettier, production build, release exclusion and Tauri configuration checks passed. The Covenant Marches JSON and core simulation files have no changes from `695e204`.
 
-That paragraph and the legacy 177/29 projection describe the M1A snapshot. M1B extends the core while preserving the synthetic JSON and regression behavior; its adapter accepts all 206 geometries. It adds the previously omitted contested bit to extraction (province packed word @8, bit 23), without changing any original input. Current verification/performance is in [ANUIRE_PLAYABILITY_REPORT.md](ANUIRE_PLAYABILITY_REPORT.md); M1A research-preview readiness metadata is not the M1B runtime campaign policy.
+That paragraph and the legacy 177/29 projection describe the M1A snapshot. M1B extends the core while preserving the synthetic JSON and regression behavior; its adapter accepts all 206 geometries. It adds the previously omitted contested bit to extraction (province packed word @8, bit 23), without changing any original input. Current verification/performance is in [ANUIRE_PLAYABILITY_REPORT.md](../GAMEPLAY_SYSTEMS.md); M1A research-preview readiness metadata is not the M1B runtime campaign policy.
 
 Two consecutive extraction runs produced byte-identical `anuire.research.json` (SHA-256 `263a04aa7c10d4c050d74b70a56a62fe59a402cca43f2fd79e1250b9a25a66a1`). The original CD hash still matches the M0 inventory. The production bundle contains no private original files or campaign data. The build retains Vite's large-chunk advisory; Rust/Cargo remain unavailable, so a native Windows build was not performed. Screenshots of the full/focused preview were inspected locally and remain ignored under `test-results/`.

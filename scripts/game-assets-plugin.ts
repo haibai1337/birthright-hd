@@ -1,13 +1,15 @@
 import { createReadStream } from 'node:fs';
-import { cp, realpath, stat, writeFile } from 'node:fs/promises';
+import { cp, copyFile, realpath, stat } from 'node:fs/promises';
 import path from 'node:path';
 import type { Plugin, Connect } from 'vite';
 
-/** Only local dev/preview serves this ignored directory. Clean builds never copy it. */
-export function privateAssetsPlugin(root: string): Plugin {
+/** One original-asset route in development and the compiled browser/Tauri application. */
+export function gameAssetsPlugin(root: string): Plugin {
+  let building = false;
   let buildDirectory = path.resolve(root, 'apps/game/dist');
-  const prefix = '/_private/',
-    directory = path.resolve(root, 'reference/private-assets');
+  const prefix = '/original/',
+    directory = path.resolve(root, 'reference/assets'),
+    campaign = path.resolve(root, 'reference/extracted/anuire/anuire.research.json');
   const serve = (server: { middlewares: Connect.Server }) => {
     server.middlewares.use(prefix, async (req, res, next) => {
       try {
@@ -17,8 +19,13 @@ export function privateAssetsPlugin(root: string): Plugin {
           return;
         }
         const relative = decodeURIComponent((req.url ?? '').split('?')[0]!).replace(/^\/+/, ''),
-          file = path.resolve(directory, relative || 'catalog.html');
-        const base = await realpath(directory),
+          file =
+            relative === 'anuire.research.json'
+              ? campaign
+              : path.resolve(directory, relative || 'catalog.html');
+        const base = await realpath(
+            relative === 'anuire.research.json' ? path.dirname(campaign) : directory,
+          ),
           resolved = await realpath(file);
         if (!resolved.startsWith(base + path.sep)) {
           res.statusCode = 403;
@@ -75,20 +82,28 @@ export function privateAssetsPlugin(root: string): Plugin {
     });
   };
   return {
-    name: 'local-private-assets',
+    name: 'original-game-assets',
     configResolved(config) {
+      building = config.command === 'build';
       buildDirectory = path.resolve(config.root, config.build.outDir);
     },
     configureServer: serve,
-    configurePreviewServer: serve,
+    async buildStart() {
+      if (!building) return;
+      try {
+        await stat(path.join(directory, 'runtime.json'));
+        await stat(campaign);
+      } catch {
+        this.error(
+          'Original assets or Anuire data are missing. Run npm run assets:import before building.',
+        );
+      }
+    },
     async closeBundle() {
-      if (process.env.BIRTHRIGHT_PRIVATE_BUILD !== '1') return;
+      if (!building) return;
       const out = buildDirectory;
-      await cp(directory, path.join(out, '_private'), { recursive: true });
-      await writeFile(
-        path.join(out, 'PRIVATE_BUILD.txt'),
-        'PRIVATE LOCAL BUILD: contains original game assets. Do not distribute.\n',
-      );
+      await cp(directory, path.join(out, 'original'), { recursive: true });
+      await copyFile(campaign, path.join(out, 'original/anuire.research.json'));
     },
   };
 }

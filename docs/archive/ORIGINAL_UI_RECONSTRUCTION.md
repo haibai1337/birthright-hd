@@ -1,3 +1,5 @@
+> Historical research snapshot. Runtime/build instructions and milestone limitations below may be superseded. Current documentation starts at [README](../../README.md), [Anuire data](../ANUIRE_DATA.md) and [asset pipeline](../ASSET_PIPELINE.md). Binary layouts, source IDs, offsets and extraction findings are preserved here.
+
 # Original strategic UI reconstruction — M1C
 
 2026-10-17. The presentation uses the M1B campaign and command engine unchanged. It loads original assets from a separate local pack. Without that pack the clean frontend retains its procedural development presentation.
@@ -35,4 +37,4 @@ Map initialization queues state/selection updates until geometry is ready. Origi
 - The 13 UI FLC animations are fully extracted; live advisor/lip-sync behavior and cinematic playback are deferred. Battle/adventure sprites have catalog previews; those game modes remain deferred.
 - The 640×480 comparison is a reference layout; modern text/forms may require internal scrolling at that size. Modern gameplay targets remain 1366×768 and above.
 
-Comparison screenshots and browser results are indexed in [M1C_VISUAL_REPORT.md](M1C_VISUAL_REPORT.md).
+Comparison screenshots and browser results are indexed in [M1C_VISUAL_REPORT.md](../ASSET_PIPELINE.md).

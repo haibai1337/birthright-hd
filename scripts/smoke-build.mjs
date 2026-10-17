@@ -5,8 +5,9 @@ import { URL } from 'node:url';
 import assert from 'node:assert/strict';
 import { chromium } from '@playwright/test';
 
-const root = path.resolve('apps/game/dist-private');
-await stat(path.join(root, 'PRIVATE_BUILD.txt'));
+const root = path.resolve('apps/game/dist');
+await stat(path.join(root, 'original/runtime.json'));
+await stat(path.join(root, 'original/anuire.research.json'));
 const server = createServer(async (req, res) => {
   try {
     const pathname = decodeURIComponent(new URL(req.url, 'http://localhost').pathname),
@@ -52,9 +53,6 @@ try {
   await page.locator('[data-original-assets=ready]').waitFor();
   await page.locator('.classic-menu-shield > img').evaluate((img) => img.decode());
   await page.getByRole('button', { name: 'New game', exact: true }).click();
-  await page
-    .getByTestId('anuire-campaign-import')
-    .setInputFiles('reference/extracted/anuire/anuire.research.json');
   await page.getByLabel('Choose Anuire regent').selectOption('anuire-realm-27');
   await page.getByRole('button', { name: /Begin your reign/ }).click();
   await page
@@ -71,7 +69,7 @@ try {
         }),
   );
   assert.equal(await page.getByTestId('original-music').evaluate((a) => a.paused), false);
-  await page.goto(origin + '/_private/catalog.html');
+  await page.goto(origin + '/original/catalog.html');
   await page.getByLabel('Filter assets').fill('MAINPANL');
   await page.getByText('UI/MAINPANL.PCX', { exact: true }).waitFor();
   await page.getByLabel('Filter assets').fill('');
@@ -82,7 +80,7 @@ try {
   await page.locator('article img[src*=".1.png"]').waitFor({ timeout: 10000 });
   assert.deepEqual(errors, []);
   console.log(
-    'PASS: private static build — original menu, 206-province Anuire, seasonal command, original music, catalog pagination and animated preview.',
+    'PASS: production build — original menu, 206-province Anuire, seasonal command, original music, catalog pagination and animated preview.',
   );
 } finally {
   await browser?.close();
