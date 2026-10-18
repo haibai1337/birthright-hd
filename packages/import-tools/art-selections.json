@@ -3,17 +3,20 @@
   "base": "/original/enhanced/",
   "decidedBy": "user",
   "automaticAdoption": false,
+  "integratedScreens": ["main-strategic-screen"],
   "unlistedAssets": "individual-review-required",
   "assets": {
     "UI/SCRLBTN0.PCX": {
       "status": "approved",
       "file": "restoration/SCRLBTN0.png",
+      "frameFile": "restoration/SCRLBTN0.frame.svg",
       "milestone": "M1D-0B",
       "decision": "Use the accepted M1D-0B plain parchment scroll."
     },
     "UI/SCRLBTN1.PCX": {
       "status": "approved",
       "file": "restoration/SCRLBTN1.png",
+      "frameFile": "restoration/SCRLBTN1.frame.svg",
       "milestone": "M1D-0B",
       "decision": "Use the accepted M1D-0B purple-ribbon parchment scroll."
     },
@@ -26,6 +29,8 @@
     "UI/GOLD03_A.PCX": {
       "status": "approved",
       "file": "restoration/GOLD03_A.png",
+      "nativeSize": { "width": 1507, "height": 1044 },
+      "sourceRect": [219, 254, 1069, 543],
       "milestone": "M1D-0B",
       "decision": "Use the M1D-0B gold variant, explicitly accepted despite the earlier negative technical assessment."
     },

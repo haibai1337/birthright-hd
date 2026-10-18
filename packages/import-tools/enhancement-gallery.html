@@ -365,6 +365,21 @@
         color: #f3aaa1;
         border-color: #92574e;
       }
+      .badge.approved {
+        color: #bbdfad;
+        border-color: #64825a;
+      }
+      .sample.approved .sample-label {
+        color: #bbdfad;
+      }
+      .sample.approved .stage {
+        border-color: #64825a;
+      }
+      .decision {
+        margin-bottom: 10px;
+        color: #bbdfad;
+        font-size: 16px;
+      }
       .sample.rejected .sample-label {
         color: #e9a399;
       }
@@ -422,9 +437,8 @@
           at identical display dimensions.
         </p>
         <p class="meta" id="intro-note">
-          Five candidates await art review. The new gold trial is rejected: retain the original. No
-          candidate is approved for the game. Portrait enhancements and all original resources are
-          untouched.
+          User selection: both M1D-0B scrolls, the parchment/B panel and gold are approved. The two
+          successful HD portraits are retained. Other assets require individual selection.
         </p>
       </div>
       <nav class="review-nav" aria-label="Review version">
@@ -502,10 +516,12 @@
       <div id="gallery" class="gallery"></div>
       <p class="meta footer">
         <a href="restorations.json">Six restoration records</a> ·
+        <a href="selections.json">User selections</a> ·
         <a href="restoration/prompts.json">Imagegen prompts</a> ·
         <a href="mapping.json">Original M1D-0 mappings</a> ·
         <a href="../catalog.html">All original resources</a>. AI-painted fine detail is an
-        interpretation, not recovered evidence. Original art remains the fallback.
+        interpretation, not recovered evidence. Originals are preserved. Unlisted artwork is not
+        automatically approved.
       </p>
     </main>
     <script type="module">
@@ -599,12 +615,17 @@
         const name = el('div');
         name.append(el('h3', '', asset.title), el('code', '', key));
         const rejected = asset.restoration.status === 'rejected';
+        const approved = asset.restoration.status === 'approved';
         heading.append(
           name,
           el(
             'span',
-            'badge ' + (rejected ? 'rejected' : 'review'),
-            rejected ? 'Retain original' : 'Awaiting art review',
+            'badge ' + (approved ? 'approved' : rejected ? 'rejected' : 'review'),
+            approved
+              ? 'Approved by user'
+              : rejected
+                ? 'Retain original'
+                : 'Individual review required',
           ),
         );
         const size = asset.display.width + ' × ' + asset.display.height;
@@ -612,13 +633,19 @@
         const old = sample('M1D-0 · rejected', size, enhanced(asset));
         old.classList.add('rejected');
         const trial = sample(
-          rejected ? 'M1D-0B · rejected trial' : 'M1D-0B · restoration candidate',
+          approved
+            ? 'M1D-0B · approved by user'
+            : rejected
+              ? 'M1D-0B · rejected trial'
+              : 'M1D-0B · restoration candidate',
           size,
           restorationArt(asset),
         );
         if (rejected) trial.classList.add('rejected');
+        if (approved) trial.classList.add('approved');
         comparisons.append(sample('Original · enlarged', size, original(asset, true)), old, trial);
         const details = el('div', 'details');
+        if (approved) details.append(el('p', 'decision', asset.restoration.selection.decision));
         details.append(
           el('p', 'method', asset.restoration.assessment),
           el('p', 'limitation', 'Previous redraw rejected: ' + asset.previousReason),
@@ -626,9 +653,9 @@
         );
         const files = el('div', 'files');
         for (const [label, href] of [
-          ['Original / fallback', '../' + asset.sourceFile],
+          [approved ? 'Original (preserved)' : 'Original / fallback', '../' + asset.sourceFile],
           ['Previous M1D-0 master', asset.file],
-          ['New raster master', asset.restoration.file],
+          [approved ? 'Approved raster master' : 'New raster master', asset.restoration.file],
         ]) {
           const link = el('a', '', label);
           link.href = href;
@@ -653,16 +680,20 @@
           el(
             'span',
             'badge' +
-              (asset.previousStatus === 'rejected'
-                ? ' rejected'
+              (asset.selection?.retainExisting
+                ? ' approved'
+                : asset.previousStatus === 'rejected'
+                  ? ' rejected'
+                  : asset.status === 'manual-review'
+                    ? ' review'
+                    : ''),
+            asset.selection?.retainExisting
+              ? 'HD retained · user selection'
+              : asset.previousStatus === 'rejected'
+                ? 'Rejected in M1D-0B'
                 : asset.status === 'manual-review'
-                  ? ' review'
-                  : ''),
-            asset.previousStatus === 'rejected'
-              ? 'Rejected in M1D-0B'
-              : asset.status === 'manual-review'
-                ? 'Art review'
-                : 'Vector redraw',
+                  ? 'Art review'
+                  : 'Vector redraw',
           ),
         );
         const comparisons = el('div', 'comparisons');
@@ -719,13 +750,17 @@
         const base = await baseResponse.json(),
           review = await reviewResponse.json();
         const mapping = archive ? base : review;
+        $('intro-note').textContent =
+          `${review.approvedForGame} M1D-0B restorations approved by the user, including gold. ${review.awaitingArtReview} studies await individual selection; ${Object.keys(review.retainedPortraits).length} existing HD portraits retained. ${review.adoptedByStrategicUI ? 'The main strategic screen uses these explicit choices.' : 'Strategic UI integration is a separate step.'} Other artwork requires individual review.`;
         if (archive) {
           $('milestone').textContent = "Birthright · The Gorgon's Alliance · M1D-0 archive";
           $('page-title').textContent = 'Previous artwork studies';
           $('intro-text').textContent =
             'The original 24-item comparison is preserved for reference. Six failed redraws are explicitly rejected in M1D-0B.';
           $('intro-note').textContent =
-            'Historical art review. Portrait masters are unchanged. Return to the six restoration studies for the current direction.';
+            'Historical art review. The previously successful HD portraits are retained by user selection. Other artwork requires individual review; return to M1D-0B for the four accepted restorations.';
+          for (const [id, selection] of Object.entries(review.retainedPortraits))
+            if (base.assets[id]) base.assets[id].selection = selection;
           for (const [id, asset] of Object.entries(review.assets))
             if (base.assets[id]) {
               base.assets[id].previousStatus = 'rejected';

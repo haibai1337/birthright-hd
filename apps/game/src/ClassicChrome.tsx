@@ -1,11 +1,19 @@
 import { useEffect, useState, type CSSProperties } from 'react';
-import { forecast, type Campaign, type Command, type Scenario } from '../../../packages/core';
+import {
+  forecast,
+  sourcePotential,
+  bloodlineStrength,
+  type Campaign,
+  type Command,
+  type Scenario,
+} from '../../../packages/core';
 import { logText, playerJournal, season, signed } from '../../../packages/ui/strings';
 import { assetUrl, type OriginalAssets } from './original-assets';
 import { MapPanel } from './MapPanel';
 import { Sidebar, type Panel } from './Sidebar';
 import type { MapOverlay } from '../../../packages/rendering/types';
 import type { Settings } from './storage';
+import { CouncilIcon, StrategicImage, strategicMaterials } from './StrategicArt';
 
 export function OriginalImage({
   pack,
@@ -117,6 +125,13 @@ export function ClassicCampaign({
   mainMenu,
 }: Props) {
   const [inspecting, setInspecting] = useState(false);
+  useEffect(() => {
+    if (state.pendingDomainAction) {
+      setInspecting(true);
+      onPanel('province');
+      onSelect(state.pendingDomainAction.checks[state.pendingDomainAction.index]!.provinceId);
+    }
+  }, [state.pendingDomainAction, onPanel, onSelect]);
   const player = scenario.realms.find((r) => r.id === state.playerRealm)!,
     realm = state.realms.find((r) => r.id === player.id)!,
     income = forecast(state, scenario, player.id),
@@ -124,6 +139,12 @@ export function ClassicCampaign({
     petition = state.pendingEvents.find((e) => e.realmId === player.id);
   const avatar = Number(player.regent.original?.avatarId),
     portrait = pack.portraits[String(avatar)];
+  const province = state.provinces.find((p) => p.id === selected)!,
+    provinceDef = scenario.provinces.find((p) => p.id === selected)!,
+    provinceOwner = scenario.realms.find((r) => r.id === province.owner),
+    provinceTroops = state.armies
+      .filter((a) => a.provinceId === selected)
+      .reduce((n, a) => n + a.units.length, 0);
   const show = (p: Panel) => {
     onPanel(p);
     setInspecting(true);
@@ -160,77 +181,157 @@ export function ClassicCampaign({
     ['diplomacy', 'Diplomacy', 3],
     ['province', 'Provinces', 4],
     ['military', 'Military', 7],
-    ['chronicle', 'Chronicle', 5],
   ];
   return (
-    <div className="classic-game" data-testid="classic-layout">
+    <div
+      className="classic-game hd-strategy"
+      style={strategicMaterials(pack)}
+      data-testid="classic-layout"
+    >
       <aside className="classic-council" aria-label="Regent and domain actions">
-        <button className="classic-realm-name" onClick={() => show('realm')}>
+        <button
+          className="classic-realm-name"
+          onClick={() => show('realm')}
+          title="Open the realm ledger"
+        >
           {player.name}
         </button>
         <div className="classic-regent">
           {portrait && (
-            <OriginalImage
+            <StrategicImage
               pack={pack}
               id={portrait}
               alt={player.regent.name}
               className="regent-portrait"
             />
           )}
-          <span>{player.regent.name}</span>
+          <div
+            className="hd-regent-identity"
+            title={`${player.regent.bloodline.derivation} bloodline · Strength ${bloodlineStrength(state, scenario, player.id)}`}
+          >
+            <StrategicImage
+              pack={pack}
+              id="UI/DSHLD_IC.PCX"
+              className="hd-council-emblem"
+              alt="Council emblem"
+            />
+            <h2>{player.regent.name}</h2>
+            <span className="hd-regent-class">{player.regent.class} regent</span>
+            <span className="hd-bloodline">
+              {player.regent.bloodline.derivation} bloodline
+              <br />
+              Strength {bloodlineStrength(state, scenario, player.id)}
+            </span>
+          </div>
         </div>
         <dl className="classic-balances">
           <div>
-            <dt>Regency:</dt>
-            <dd>{realm.regency} RP</dd>
+            <dt>
+              <StrategicImage pack={pack} id="UI/GOLD03_A.PCX" className="hd-gold" />
+              <span>Treasury</span>
+            </dt>
+            <dd data-testid="treasury">
+              {realm.treasury}
+              <small>GB</small>
+            </dd>
           </div>
           <div>
-            <dt>Treasury:</dt>
-            <dd data-testid="treasury">{realm.treasury}GB</dd>
+            <dt>
+              <StrategicImage pack={pack} id="UI/CROWN_TL.PCX" className="hd-regency" />
+              <span>Regency</span>
+            </dt>
+            <dd>
+              {realm.regency}
+              <small> RP</small>
+            </dd>
           </div>
         </dl>
         <p className="classic-income" title="Expected seasonal balance">
-          {signed(income.net)} GB · +{income.regency} RP / season
+          <span className="hd-income-label">Seasonal forecast: </span>
+          {signed(income.net)} GB · +{income.regency} RP
+          <span className="hd-income-period"> / season</span>
         </p>
         <div className="classic-turn">
           <strong>{season(state.turn)}</strong>
-          <span>DOMAIN TURN {state.turn}</span>
-          <small data-testid="actions-left">{realm.actions} of 3 remaining</small>
+          <span>
+            <span className="hd-turn-domain">DOMAIN </span>TURN {state.turn}
+            {state.domainTurn && ` · Round ${state.domainTurn.round}/3`}
+          </span>
+          <div className="hd-action-budget">
+            <span className="hd-action-seals" aria-hidden="true">
+              {[0, 1, 2].map((n) => (
+                <i key={n} className={n < realm.actions ? 'available' : ''} />
+              ))}
+            </span>
+            <strong data-testid="actions-left">{realm.actions} of 3 remaining</strong>
+          </div>
         </div>
+        <div className="hd-section-caption">Domain councils</div>
         <nav className="classic-actions" aria-label="Council panels">
           {actionRows.map(([id, label, row]) => (
-            <button key={id} aria-pressed={panel === id && inspecting} onClick={() => show(id)}>
-              <span
-                className="original-action-icon"
-                style={{
-                  backgroundImage: `url("${assetUrl(pack, 'UI/DACTN_IC.PCX')}")`,
-                  backgroundPosition: `0 -${row * 48}px`,
-                }}
-              />
+            <button
+              key={id}
+              aria-pressed={panel === id && inspecting}
+              onClick={() => show(id)}
+              title={`Open ${label.toLowerCase()} council`}
+            >
+              <CouncilIcon pack={pack} row={row} />
               <b>{label}</b>
+              <span className="hd-council-arrow" aria-hidden="true">
+                ›
+              </span>
             </button>
           ))}
         </nav>
         <button
-          className="classic-end-season"
+          className="classic-end-season hd-council-end-season"
           disabled={state.outcome !== 'ongoing'}
           onClick={() => issue({ type: 'EndTurn' })}
         >
-          End season ▸
+          End season <span aria-hidden="true">▸</span>
         </button>
-        <div className="classic-side-links">
-          <button onClick={save} aria-label="Save game">
-            Save
-          </button>
-          <button onClick={() => open('settings')} aria-label="Settings">
-            Options
-          </button>
-          <button onClick={() => open('help')} aria-label="How to play">
-            Help
-          </button>
-        </div>
       </aside>
       <section className="classic-map-area" aria-label="Strategic map">
+        <div className="hd-map-heading">
+          <div className="hd-map-title">
+            <span>ANUIRE</span>
+            <small>The domain map</small>
+          </div>
+          <button
+            className="hd-selected-name"
+            onClick={() => show('province')}
+            title="Inspect the selected province"
+          >
+            <strong>{provinceDef.name}</strong>
+            <span>
+              {provinceOwner?.name} · {provinceDef.terrain}
+              {province.occupiedBy &&
+                ` · Occupied: ${scenario.realms.find((r) => r.id === province.occupiedBy)?.name}`}
+              {province.contested && ' · Contested'}
+            </span>
+          </button>
+          <dl className="hd-selected-stats" aria-label="Selected province information">
+            <div>
+              <dt>Province</dt>
+              <dd>
+                {province.level}
+                <small> / {provinceDef.maxLevel}</small>
+              </dd>
+            </div>
+            <div>
+              <dt>Source</dt>
+              <dd>{sourcePotential(scenario, selected, province.level)}</dd>
+            </div>
+            <div>
+              <dt>Fort</dt>
+              <dd>{province.fort}</dd>
+            </div>
+            <div>
+              <dt>Troops</dt>
+              <dd>{provinceTroops}</dd>
+            </div>
+          </dl>
+        </div>
         <MapPanel
           state={state}
           scenario={scenario}
@@ -251,16 +352,6 @@ export function ClassicCampaign({
           <OriginalImage pack={pack} id="UI/LOGO.PCX" alt="" />
           Menu
         </button>
-        <div className="classic-map-overlay-bar" aria-label="Map overlays">
-          {(['political', 'military', 'economic', 'magical'] as const).map((o) => (
-            <button key={o} aria-pressed={overlay === o} onClick={() => onOverlay(o)}>
-              {o}
-            </button>
-          ))}
-        </div>
-        <div className="classic-map-readout" role="status">
-          {latest ? logText(latest, scenario) : `${player.name}'s turn`}
-        </div>
         {inspecting && (
           <section className="classic-inspector" aria-label={`${panel} window`}>
             <header>
@@ -285,8 +376,28 @@ export function ClassicCampaign({
         )}
       </section>
       <footer className="classic-toolbar">
-        <button aria-label="Open province window" onClick={() => show('province')}>
-          <span className="original-map-icon" />
+        <div className="classic-map-overlay-bar" aria-label="Map overlays">
+          <span className="hd-toolbar-caption">Map view</span>
+          <div>
+            {(['political', 'military', 'economic', 'magical'] as const).map((o) => (
+              <button
+                key={o}
+                aria-label={`Map overlay: ${o}`}
+                aria-pressed={overlay === o}
+                title={`Show ${o} information`}
+                onClick={() => onOverlay(o)}
+              >
+                {o}
+              </button>
+            ))}
+          </div>
+        </div>
+        <button
+          className="hd-toolbar-province"
+          aria-label="Open province window"
+          onClick={() => show('province')}
+        >
+          <CouncilIcon pack={pack} row={4} size={44} />
           Province
         </button>
         <label>
@@ -306,19 +417,55 @@ export function ClassicCampaign({
             ))}
           </select>
         </label>
-        <button onClick={() => show('realm')}>Domain</button>
-        <button onClick={() => show('military')}>Muster / march</button>
-        <button aria-label="Open diplomacy window" onClick={() => show('diplomacy')}>
-          Diplomacy
+        <button
+          className="hd-toolbar-muster"
+          onClick={() => show('military')}
+          title="Recruit troops or issue a march"
+        >
+          Muster / march
         </button>
-        <button aria-label="Open chronicle window" onClick={() => show('chronicle')}>
+        <button
+          className="hd-toolbar-chronicle"
+          aria-label="Open chronicle window"
+          onClick={() => show('chronicle')}
+        >
           Chronicle
         </button>
+        <div className="hd-toolbar-utilities">
+          <button onClick={save} aria-label="Save game" title="Save campaign · Ctrl+S">
+            Save
+          </button>
+          <button onClick={() => open('settings')} aria-label="Settings">
+            Options
+          </button>
+          <button onClick={() => open('help')} aria-label="How to play" title="Field guide · F1">
+            Help
+          </button>
+        </div>
+        <button
+          className="classic-end-season hd-toolbar-end-season"
+          disabled={state.outcome !== 'ongoing'}
+          onClick={() => issue({ type: 'EndTurn' })}
+        >
+          End season <span aria-hidden="true">▸</span>
+        </button>
         <span className="classic-profile">
-          {state.ruleset} · Seed {state.seed}
-          <small>Anuire · experimental template</small>
+          {state.ruleset}
+          <small>Anuire campaign</small>
         </span>
       </footer>
+      <div
+        className="classic-map-readout"
+        role="status"
+        aria-live="polite"
+        title={latest ? logText(latest, scenario) : `${player.name}'s turn`}
+      >
+        <span className="hd-message-label">Council dispatch</span>
+        <span key={state.log.length}>
+          {latest ? logText(latest, scenario) : `${player.name}'s turn`}
+        </span>
+        <span className="hd-map-help">Scroll to zoom · Drag to explore</span>
+      </div>
       {petition && (
         <div className="petition" role="region" aria-label="Council petition">
           <div>

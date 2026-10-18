@@ -21,6 +21,7 @@ import { loadOriginalAssets, assetUrl, type OriginalAssets } from './original-as
 import { originalAudio } from './audio';
 import { ClassicCampaign, ClassicMainMenu, OriginalImage } from './ClassicChrome';
 import './classic.css';
+import './strategy-hd.css';
 import {
   defaultSettings,
   downloadCampaign,
@@ -54,7 +55,15 @@ export function App() {
           throw Error('Anuire campaign data is missing. Run npm run assets:import.');
         return response.json();
       })
-      .then(loadAnuireScenario)
+      .then(async (data) => {
+        const response = await fetch('/original/economy.research.json');
+        const magic = await fetch('/original/magic.research.json');
+        return loadAnuireScenario(
+          data,
+          response.ok ? await response.json() : undefined,
+          magic.ok ? await magic.json() : undefined,
+        );
+      })
       .then((data) => {
         if (active) setScenario(data);
       })
@@ -201,7 +210,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     const result = applyCommand(state, scenario, state.playerRealm, command);
     if (!result.ok) {
       originalAudio.effect('error');
-      notice(errors[result.error.code], true);
+      notice(result.error.detail ?? errors[result.error.code], true);
       return;
     }
     accept(result.state);
@@ -258,7 +267,10 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     }
   }
   return (
-    <div className={`app ${settings.largeText ? 'large-text' : ''}`} data-original-assets="ready">
+    <div
+      className={`app ${state ? 'campaign-active' : ''} ${settings.largeText ? 'large-text' : ''}`}
+      data-original-assets="ready"
+    >
       {!state ? (
         <ClassicMainMenu
           pack={original}
@@ -626,9 +638,9 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
                 the 1997 rules.
               </p>
               <p>
-                Trade-route construction, investiture, tactical battles and 3D adventures remain in
-                development. Shortcuts: P provinces, M military, D diplomacy, Ctrl+S save, F1 help
-                and Escape to close a council window.
+                Trade-route construction, tactical battles and 3D adventures remain in development.
+                Shortcuts: P provinces, M military, D diplomacy, Ctrl+S save, F1 help and Escape to
+                close a council window.
               </p>
             </div>
           )}

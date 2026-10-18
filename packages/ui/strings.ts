@@ -19,11 +19,21 @@ export const errors: Record<ErrorCode, string> = {
   GAME_OVER: 'This campaign has ended.',
 };
 export const loyaltyNames = ['Rebellious', 'Restless', 'Content', 'Loyal', 'Devoted'];
+export const domainActionNames: Record<string, string> = {
+  DevelopProvince: 'Rule Province',
+  ImproveHolding: 'Rule Holding',
+  RuleHoldings: 'Rule Holdings',
+  CreateHolding: 'Create Holding',
+  ContestHolding: 'Contest Holding',
+  Agitate: 'Agitate',
+  CreateTradeRoute: 'Create Trade Route',
+  ForgeLeyLine: 'Forge Ley Line',
+};
 export function season(turn: number) {
   return `${['Spring', 'Summer', 'Autumn', 'Winter'][(turn - 1) % 4]} · Year ${1 + Math.floor((turn - 1) / 4)}`;
 }
 export function signed(n: number) {
-  return `${n >= 0 ? '+' : ''}${n}`;
+  return `${n >= 0 ? '+' : ''}${Number(n.toFixed(2))}`;
 }
 export function logText(entry: LogEntry, scenario: Scenario): string {
   const d = entry.data;
@@ -32,8 +42,32 @@ export function logText(entry: LogEntry, scenario: Scenario): string {
   const realm = scenario.realms.find((r) => r.id === entry.realmId)?.name ?? entry.realmId;
   const target = scenario.realms.find((r) => r.id === d.target)?.name ?? String(d.target ?? '');
   switch (entry.code) {
+    case 'magic.cast':
+      return `${realm} cast ${scenario.spells.find((s) => s.id === d.spell)?.name ?? d.spell} at ${province}: ${d.gold} GB and ${d.regency} RP.`;
+    case 'bloodline.increased':
+      return `${realm} raised bloodline strength to ${d.strength}.`;
     case 'campaign.started':
       return `The council is assembled. ${realm} begins its rule.`;
+    case 'domain.action': {
+      const result = d.success
+        ? d.destroyed
+          ? 'holding destroyed'
+          : d.contested
+            ? 'holding contested'
+            : 'succeeded'
+        : 'failed';
+      return `${realm}: ${domainActionNames[String(d.action)] ?? d.action} in ${province} ${result} (d20 ${d.roll}, required ${d.threshold}; ${d.opposition} RP opposition).`;
+    }
+    case 'domain.opposition':
+      return `${realm} commits ${d.regency} RP opposing ${target}'s action in ${province}.`;
+    case 'domain.counterbid':
+      return `${realm} counters with ${d.regency} additional RP in ${province}.`;
+    case 'domain.round':
+      return `Domain action round ${d.round} of 3 begins.`;
+    case 'domain.held':
+      return `${realm} holds its action and yields this round.`;
+    case 'save.domain-rounds-upgraded':
+      return `Legacy save upgraded to domain rounds with ${d.remaining} actions remaining; completed actions and original records are preserved.`;
     case 'province.developed':
       return `${province} develops to level ${d.level}. Its magical potential recedes.`;
     case 'unit.recruited':
@@ -52,6 +86,28 @@ export function logText(entry: LogEntry, scenario: Scenario): string {
       return `${target} declines the ${d.kind} proposal. Relations improve by 5.`;
     case 'army.moved':
       return `${realm} troops march to ${province}.`;
+    case 'province.occupied':
+      return `${realm} occupies ${province}. Legitimate sovereign: ${target}. Maintain a garrison for investiture.`;
+    case 'occupation.ended':
+      return `${realm} abandons occupation of ${province}; control returns to ${target}.`;
+    case 'occupation.prepared':
+      return `${province} has maintained its garrison across the season and can be invested.`;
+    case 'province.liberated':
+      return `${realm} liberates ${province}.`;
+    case 'province.invested':
+      return `${realm} gains sovereignty over ${province} from ${target} (d20 ${d.roll} ≥ ${d.threshold}). Independent holdings retain their owners.`;
+    case 'investiture.failed':
+      return `Investiture of ${province} fails (d20 ${d.roll} < ${d.threshold}). Costs were spent; occupation continues.`;
+    case 'fort.besieged':
+      return `${realm}'s siege reduces ${target}'s fort in ${province} to level ${d.level}.`;
+    case 'army.retreated':
+      return `${realm}'s survivors retreat from ${province} to ${scenario.provinces.find((p) => p.id === d.destination)?.name}.`;
+    case 'army.trapped':
+      return `${realm}'s survivors at ${province} are lost: no safe retreat.`;
+    case 'province.pillaged':
+      return `${realm} pillages ${province} for ${d.gold} GB. Province falls to level ${d.level}; loyalty and holdings suffer.`;
+    case 'save.warfare-upgraded':
+      return 'Legacy save upgraded: reciprocal wars preserved. Occupations must cross a new season boundary to qualify for investiture.';
     case 'battle.won':
       return `${realm} wins at ${province} (${d.attack} against ${d.defense}).`;
     case 'battle.lost':
@@ -73,11 +129,36 @@ export function logText(entry: LogEntry, scenario: Scenario): string {
     case 'economy.shortfall':
       return `${realm} faces a ${d.deficit} GB shortfall. Unpaid troops disband and loyalty falls.`;
     case 'economy.collected':
-      return `${realm}: ${signed(Number(d.net))} GB net; +${d.regency} RP collected.`;
+      return (
+        `${realm}: ${signed(Number(d.net))} GB net; +${d.regency} RP collected.` +
+        (d.taxes === undefined
+          ? ''
+          : ` Tax ${d.taxes}, holdings ${d.holdings}, trade ${d.trade}, claims ${d.claims}; tribute +${d.tributeIn}/−${d.tributeOut}; administration/court/forts/occupation ${d.maintenance}, army ${d.military} GB + ${d.regencyUpkeep} RP; unpaid ${d.unpaid} GB.`)
+      );
+    case 'economy.action-paid':
+      return `${realm} paid ${d.gold} GB and ${d.regency} RP for ${d.action}.`;
+    case 'gold.transferred':
+      return `${realm} gave ${d.amount} GB to ${target}.`;
+    case 'tribute.changed':
+      return `${realm} pledges ${d.amount} GB/season to ${target} (zero ends the pledge).`;
+    case 'tribute.shortfall':
+      return `${realm} paid ${d.paid} of ${d.amount} GB tribute to ${target}.`;
+    case 'court.changed':
+      return `${realm} changed court to level ${d.level}.`;
+    case 'claims.changed':
+      return `${realm}: Law Claims ${d.enabled ? 'enabled (approximation)' : 'disabled'}.`;
+    case 'trade.ended':
+      return `${realm} ended trade from ${province}.`;
+    case 'road.built':
+      return `${realm} built a road from ${province} to ${scenario.provinces.find((p) => p.id === d.target)?.name ?? d.target}.`;
+    case 'unit.unpaid':
+      return `${realm}: an unpaid ${d.unit} unit at ${province} disbanded.`;
+    case 'economy.bankrupt':
+      return `${realm} cannot cover ${d.deficit} GB of compulsory domain/occupation costs and becomes insolvent.`;
     case 'turn.started':
       return `The ${season(Number(d.turn)).toLowerCase()} council begins.`;
     case 'realm.eliminated':
-      return `${realm} has lost its final province.`;
+      return `${realm} has lost its remaining domain assets.`;
     case 'ai.action':
       return `${realm} chooses ${d.action} to ${d.reason}.`;
     default:
@@ -90,6 +171,10 @@ export function playerJournal(state: Campaign) {
       e.realmId === state.playerRealm ||
       e.code.startsWith('treaty.') ||
       e.code === 'realm.eliminated' ||
+      e.code === 'province.invested' ||
+      (e.code.startsWith('domain.') && e.data.target === state.playerRealm) ||
+      (e.data.target === state.playerRealm &&
+        ['province.occupied', 'fort.besieged', 'province.pillaged'].includes(e.code)) ||
       e.code.startsWith('battle.'),
   );
 }

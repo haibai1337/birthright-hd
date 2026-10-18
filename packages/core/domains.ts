@@ -18,13 +18,13 @@ export function fortLevel(state: Pick<Campaign, 'fortifications'>, province: Pro
     0,
     ...state.fortifications
       .filter(
-        (f) =>
-          f.provinceId === province.id &&
-          f.realmId === provinceController(province) &&
-          f.kind === 'castle',
+        (f) => f.provinceId === province.id && f.realmId === province.owner && f.kind === 'castle',
       )
       .map((f) => f.level),
   );
+}
+export function taxableBy(province: Province, realmId: string) {
+  return provinceController(province) === realmId && !province.contested && province.loyalty > 0;
 }
 export function domainSurvives(state: Campaign, scenario: Scenario, id: string) {
   const policy =
@@ -35,7 +35,7 @@ export function domainSurvives(state: Campaign, scenario: Scenario, id: string) 
   if (state.provinces.some((p) => p.owner === id)) return true;
   if (policy === 'territory') return false;
   return (
-    state.holdings.some((h) => h.realmId === id && h.level > 0) ||
+    state.holdings.some((h) => h.realmId === id && !h.destroyed) ||
     state.armies.some((a) => a.realmId === id) ||
     (state.fortifications?.some((f) => f.realmId === id && f.level > 0) ?? false)
   );
@@ -50,7 +50,7 @@ export function holdingCapacityLimit(
   return Math.max(
     normal,
     scenario.initial.holdings
-      .filter((h) => h.provinceId === provinceId && h.type === type)
+      .filter((h) => h.provinceId === provinceId && h.type === type && !h.destroyed)
       .reduce((n, h) => n + h.level, 0),
   );
 }

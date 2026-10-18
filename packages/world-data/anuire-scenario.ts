@@ -2,6 +2,11 @@ import { validateAnuireResearch } from './anuire-research';
 import { validateScenario } from '../core/validation';
 import type { Scenario } from '../core/schema';
 import defaults from './simulation-defaults.json';
+import { anuireEconomySchema } from './anuire-economy';
+import { portIncomeRule } from '../core/ports';
+import { anuireMagicSchema } from './anuire-magic';
+import { PC_REALM_SPELLS, BLOOD_ABILITY_IDS } from '../core/realm-spells';
+import { provincePath } from '../core/ley-lines';
 
 const provinceId = (n: number) => `anuire-province-${String(n).padStart(3, '0')}`;
 const realmId = (n: number) => `anuire-realm-${String(n).padStart(2, '0')}`;
@@ -34,9 +39,22 @@ function domainColor(index: number) {
 }
 
 /** Local data only; the application never imports a private JSON file at build time. */
-export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
+export async function loadAnuireScenario(
+  input: unknown,
+  economyInput?: unknown,
+  magicInput?: unknown,
+): Promise<Scenario> {
   const data = validateAnuireResearch(input),
     c = data.campaign;
+  const economy = economyInput === undefined ? undefined : anuireEconomySchema.parse(economyInput);
+  const magic = magicInput === undefined ? undefined : anuireMagicSchema.parse(magicInput);
+  if (magic && !data.sources.some((s) => s.id === 'cd-template' && s.sha256 === magic.sourceSha256))
+    throw Error('Magic sidecar does not match the original campaign template');
+  if (
+    economy &&
+    !data.sources.some((s) => s.sha256 === economy.sourceSha256 && s.bytes === economy.sourceBytes)
+  )
+    throw Error('Economic sidecar does not match this original campaign source');
   const digest = await crypto.subtle.digest(
     'SHA-256',
     new TextEncoder().encode('anuire-m1b-adapter-v1\n' + JSON.stringify(data)),
@@ -50,25 +68,88 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
     3: 'warrior',
     4: 'priest',
     5: 'wizard',
-    6: 'wizard',
+    6: 'rogue',
     7: 'rogue',
-    8: 'rogue',
   };
   const derivations = ['Anduiras', 'Reynir', 'Brenna', 'Basaia', 'Masela', 'Vorynn', 'Azrai'];
-  const regents = c.regents.map((r) => ({
-    id: r.id,
-    name: r.identity?.name ?? 'Unresolved identity',
-    class: classes[r.classCode] ?? 'warrior',
-    bloodline: {
-      derivation:
-        derivations[r.bloodline.derivation] ?? `Original derivation ${r.bloodline.derivation}`,
-      strength: r.bloodline.strength,
-      abilities: [],
-    },
-    attributes: { command: 0, diplomacy: 0 },
-    inventory: [],
-    original: r,
-  }));
+  const avatarTypes = [
+    'fighter',
+    'paladin',
+    'ranger',
+    'priest',
+    'wizard',
+    'magician',
+    'thief',
+    'bard',
+  ] as const;
+  const nativeClassTypes = [
+    'fighter',
+    'fighter',
+    'paladin',
+    'ranger',
+    'priest',
+    'wizard',
+    'thief',
+    'bard',
+  ] as const;
+  const regents = c.regents.map((r) => {
+    const avatarId = typeof r.avatarId === 'number' ? r.avatarId : -1;
+    const inventory = magic?.characters.find((ch) => ch.regentId === r.id);
+    const ava = (
+      inventory?.classes ??
+      (r.identity?.classes as { classCode: number; level: number }[] | undefined)
+    )?.filter((cl) => cl.classCode >= 0);
+    const classEntries =
+      ava?.length && ![1049, 1054, 1055, 1056, 1999].includes(avatarId)
+        ? ava.map((cl) => ({ type: avatarTypes[cl.classCode]!, level: cl.level }))
+        : [
+            ...(r.classCode > 0 && nativeClassTypes[r.classCode]
+              ? [{ type: nativeClassTypes[r.classCode]!, level: r.level as number }]
+              : []),
+            ...(typeof r.secondClassCode === 'number' &&
+            r.secondClassCode > 0 &&
+            nativeClassTypes[r.secondClassCode]
+              ? [{ type: nativeClassTypes[r.secondClassCode]!, level: r.secondLevel as number }]
+              : []),
+          ];
+    const spells = PC_REALM_SPELLS.filter((s) =>
+      inventory?.itemIds.includes(s.originalItemId!),
+    ).map((s) => s.id);
+    const priest = classEntries.find((cl) => cl.type === 'priest');
+    if (priest)
+      spells.push(
+        'investiture-ritual',
+        'bless-land',
+        'bless-army',
+        'blight',
+        'divine-dispel',
+        ...(priest.level >= 5 ? ['honest-dealing'] : []),
+      );
+    return {
+      id: r.id,
+      name: r.identity?.name ?? 'Unresolved identity',
+      class: classes[r.classCode] ?? 'warrior',
+      classes: classEntries,
+      realmSpells: [...new Set(spells)],
+      inventoryVerified: inventory?.inventoryVerified ?? false,
+      bloodline: {
+        derivation:
+          derivations[r.bloodline.derivation] ?? `Original derivation ${r.bloodline.derivation}`,
+        strength: r.bloodline.strength,
+        grade: r.bloodline.grade,
+        abilities: [
+          ...new Set(
+            inventory?.itemIds
+              .filter((id) => id >= 210 && id <= 226)
+              .map((id) => BLOOD_ABILITY_IDS[id - 210]!) ?? [],
+          ),
+        ],
+      },
+      attributes: { command: 0, diplomacy: 0 },
+      inventory: inventory?.itemIds.map((id) => `original-item-${id}`) ?? [],
+      original: r,
+    };
+  });
   const realms = c.realms.map((r) => {
     const regent = regents.find((g) => g.id === regentId(r.regentIndex))!;
     const rawRegent = c.regents.find((g) => g.index === r.regentIndex)!;
@@ -171,7 +252,7 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
     'No imported runtime treaties: unresolved original matrices remain raw. Unnegotiated contacts use neutral HD behavior; treaties created during play use the existing simplified system.',
     'Unit strength starts at 100%. Character deployments are retained separately and do not contribute invented combat power. Original variants use documented compatibility combat/upkeep; recruitment offers three M0 basic types.',
     'Development ceiling 10 (or the observed level if higher), fort ceiling 15, generic AI, basic taxes/holding income and terrain defense are compatibility rules. Original excess holdings are grandfathered, not increased by validation.',
-    'Conquest creates occupation; sovereignty remains until future investiture. Defeat requires loss of all domain assets; placeholders are passive. Victory is domain power 600 or highest domain power after 80 seasons.',
+    'Conquest creates occupation; sovereignty changes only through valid investiture. Defeat requires loss of all domain assets; placeholders are passive. Victory is domain power 600 or highest domain power after 80 seasons.',
     'Command/diplomacy attributes are unused zero sentinels. Unknown inventories, abilities, spells and original trade routes are not fabricated.',
     'Special classless/monster rulers retain raw data and generic AI but remain technically unselectable pending dedicated gameplay support. Military source stacks are grouped by realm and province; individual source unit IDs remain intact.',
   ];
@@ -198,6 +279,7 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
       maxFort: 15,
       holdingCapacity: 'preserve-template-excess',
       conquest: 'occupation',
+      domainActions: 'pc',
     },
     regions: [
       {
@@ -232,7 +314,7 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
       };
     }),
     units,
-    spells: [],
+    spells: PC_REALM_SPELLS,
     events: defaults.events,
     initial: {
       provinces: c.provinces.map((p) => ({
@@ -264,13 +346,73 @@ export async function loadAnuireScenario(input: unknown): Promise<Scenario> {
         realmId: realmId(h.realmIndex),
         type: h.type,
         level: h.level,
+        contested: h.contested === true,
       })),
       armies: [...groups.values()],
       treaties: [],
       tradeRoutes: [],
+      leyLines: (
+        magic?.leyLines ??
+        c.holdings
+          .filter((h) => h.type === 'source')
+          .flatMap((h) =>
+            [h.route1, h.route2, h.route3].filter(Boolean).map((index) => {
+              const target = c.holdings.find(
+                (t) => t.index === index && t.type === 'source' && t.realmIndex === h.realmIndex,
+              );
+              if (!target) throw Error('Unresolved original ley endpoint');
+              return { realmIndex: h.realmIndex, fromHoldingId: h.id, toHoldingId: target.id };
+            }),
+          )
+      ).map((line, i) => {
+        const a = c.holdings.find((h) => h.id === line.fromHoldingId)!,
+          b = c.holdings.find((h) => h.id === line.toHoldingId)!;
+        if (
+          !a ||
+          !b ||
+          a.type !== 'source' ||
+          b.type !== 'source' ||
+          a.realmIndex !== line.realmIndex ||
+          b.realmIndex !== line.realmIndex
+        )
+          throw Error('Invalid original ley link reference');
+        const path = provincePath(
+          {
+            provinces: c.provinces.map((p) => ({
+              id: p.id,
+              adjacent: p.borders.map((e) => provinceId(e.provinceIndex)),
+            })),
+          },
+          provinceId(a.provinceIndex!),
+          provinceId(b.provinceIndex!),
+        );
+        if (!path) throw Error('Recovered ley endpoints are disconnected from original geography');
+        return {
+          id: `anuire-ley-${i + 1}`,
+          realmId: realmId(line.realmIndex),
+          fromHoldingId: a.id,
+          toHoldingId: b.id,
+          path,
+          status: 'active' as const,
+        };
+      }),
+      ports:
+        economy?.ports.map((p) => ({
+          id: `anuire-port-${p.index}`,
+          sourceId: `anuire-place-${p.index}`,
+          provinceId: provinceId(p.provinceIndex),
+          realmId: realmId(p.realmIndex),
+          incomeRule: portIncomeRule(p.iconCode === 96 ? 'river-port' : 'seaport'),
+          kind: p.iconCode === 96 ? ('river-port' as const) : ('seaport' as const),
+        })) ?? [],
       treasury: 0,
       regency: 0,
-      domains: c.realms.map((r) => ({ id: r.id, treasury: r.treasury, regency: r.regency })),
+      domains: c.realms.map((r) => ({
+        id: r.id,
+        treasury: r.treasury,
+        regency: r.regency,
+        court: typeof r.court === 'number' ? r.court : 1,
+      })),
       fortifications,
       characters: c.troops
         .filter((u) => u.kind === 'character')

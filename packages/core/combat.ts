@@ -2,6 +2,7 @@ import type { Army, Campaign, Scenario } from './schema';
 import { armyPower } from './selectors';
 import { RULESETS } from './rules';
 import { fortLevel } from './domains';
+import { hostileFortLevel } from './warfare';
 export interface BattleRequest {
   attacker: Army;
   defenders: Army[];
@@ -25,14 +26,21 @@ export const autoResolve: BattleResolver = {
     const province = state.provinces.find((p) => p.id === provinceId);
     const terrain = scenario.provinces.find((p) => p.id === provinceId)?.terrain ?? 'plains';
     const ward = state.effects.some(
-      (e) => e.provinceId === provinceId && e.realmId === province?.owner,
+      (e) => !e.kind && e.provinceId === provinceId && e.realmId === province?.owner,
     )
       ? RULESETS[state.ruleset].wardPower
       : 0;
     const attackPower = armyPower(attacker, scenario);
     const defensePower =
       defenders.reduce((n, a) => n + armyPower(a, scenario), 0) +
-      (province ? fortLevel(state, province) : 0) * 3 +
+      (province
+        ? scenario.policy?.conquest === 'occupation'
+          ? attacker.units.length < hostileFortLevel(state, province, attacker.realmId)
+            ? hostileFortLevel(state, province, attacker.realmId)
+            : 0
+          : fortLevel(state, province)
+        : 0) *
+        3 +
       (province?.level ?? 0) +
       (RULESETS[state.ruleset].terrainDefense[terrain] ?? 0) +
       ward;
@@ -43,9 +51,13 @@ export const autoResolve: BattleResolver = {
       defensePower,
       attackerLoss: attackerWins
         ? Math.min(70, Math.floor((defensePower / Math.max(1, attackPower)) * 65))
-        : 100,
+        : scenario.policy?.conquest === 'occupation'
+          ? 75
+          : 100,
       defenderLoss: attackerWins
-        ? 100
+        ? scenario.policy?.conquest === 'occupation'
+          ? 75
+          : 100
         : Math.min(70, Math.floor((attackPower / Math.max(1, defensePower)) * 65)),
     };
   },

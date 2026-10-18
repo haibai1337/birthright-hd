@@ -19,12 +19,17 @@ export function gameAssetsPlugin(root: string): Plugin {
           return;
         }
         const relative = decodeURIComponent((req.url ?? '').split('?')[0]!).replace(/^\/+/, ''),
-          file =
-            relative === 'anuire.research.json'
-              ? campaign
-              : path.resolve(directory, relative || 'catalog.html');
+          file = ['anuire.research.json', 'economy.research.json', 'magic.research.json'].includes(
+            relative,
+          )
+            ? path.join(path.dirname(campaign), relative)
+            : path.resolve(directory, relative || 'catalog.html');
         const base = await realpath(
-            relative === 'anuire.research.json' ? path.dirname(campaign) : directory,
+            ['anuire.research.json', 'economy.research.json', 'magic.research.json'].includes(
+              relative,
+            )
+              ? path.dirname(campaign)
+              : directory,
           ),
           resolved = await realpath(file);
         if (!resolved.startsWith(base + path.sep)) {
@@ -106,6 +111,22 @@ export function gameAssetsPlugin(root: string): Plugin {
       const out = buildDirectory;
       await cp(directory, path.join(out, 'original'), { recursive: true });
       await copyFile(campaign, path.join(out, 'original/anuire.research.json'));
+      try {
+        await copyFile(
+          path.join(path.dirname(campaign), 'economy.research.json'),
+          path.join(out, 'original/economy.research.json'),
+        );
+      } catch (e) {
+        if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
+      }
+      try {
+        await copyFile(
+          path.join(path.dirname(campaign), 'magic.research.json'),
+          path.join(out, 'original/magic.research.json'),
+        );
+      } catch (e) {
+        if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
+      }
     },
   };
 }

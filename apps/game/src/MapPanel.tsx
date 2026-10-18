@@ -60,6 +60,9 @@ export function MapPanel({
   }, [state, selected, overlay, labels, ready]);
   const hoverDef = scenario.provinces.find((p) => p.id === hover);
   const hoverState = state.provinces.find((p) => p.id === hover);
+  const hoverTroops = state.armies
+    .filter((a) => a.provinceId === hover)
+    .reduce((n, a) => n + a.units.length, 0);
   return (
     <div className="map-wrap">
       <div className="map-canvas" ref={host} data-testid="strategic-map" />
@@ -75,20 +78,39 @@ export function MapPanel({
             {hoverDef.terrain} · Level {hoverState?.level} ·{' '}
             {scenario.realms.find((r) => r.id === hoverState?.owner)?.name}
           </span>
+          <span>
+            {hoverTroops} troops · Fortification {hoverState?.fort ?? 0}
+          </span>
         </div>
       )}
       <div className="map-tools">
-        <button disabled={!ready} aria-label="Zoom in" onClick={() => renderer.current?.zoom(1.25)}>
+        <button
+          disabled={!ready}
+          aria-label="Zoom in"
+          title="Zoom in · scroll up"
+          onClick={() => renderer.current?.zoom(1.25)}
+        >
           <Icon name="plus" />
         </button>
-        <button disabled={!ready} aria-label="Zoom out" onClick={() => renderer.current?.zoom(0.8)}>
+        <button
+          disabled={!ready}
+          aria-label="Zoom out"
+          title="Zoom out · scroll down"
+          onClick={() => renderer.current?.zoom(0.8)}
+        >
           <Icon name="minus" />
         </button>
-        <button disabled={!ready} aria-label="Fit map" onClick={() => renderer.current?.fit()}>
+        <button
+          disabled={!ready}
+          aria-label="Fit map"
+          title="Show the whole Anuire map"
+          onClick={() => renderer.current?.fit()}
+        >
           <Icon name="map" />
         </button>
         <button
           aria-label="Focus selected province"
+          title="Center and zoom on the selected province"
           disabled={!ready}
           onClick={() => renderer.current?.focus(selected)}
         >

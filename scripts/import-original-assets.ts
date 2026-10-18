@@ -10,6 +10,8 @@ import {
 import { spawnSync } from 'node:child_process';
 import path from 'node:path';
 import { OriginalDisc } from '../packages/import-tools/disc.ts';
+import { decodeEconomicRecords } from '../packages/import-tools/economy.ts';
+import { extractMagicRecords } from '../packages/import-tools/magic.ts';
 import {
   decodeIndexedBitmap,
   decodeResourceDirectory,
@@ -66,6 +68,34 @@ const put = (file: string, b: Uint8Array | string) => {
   return file;
 };
 try {
+  writeFileSync(
+    'reference/extracted/anuire/magic.research.json',
+    JSON.stringify(
+      extractMagicRecords(
+        JSON.parse(readFileSync('reference/extracted/anuire/anuire.research.json', 'utf8')),
+        (name) => (disc.entries.some((e) => e.name === name) ? disc.file(name) : undefined),
+      ),
+      null,
+      2,
+    ) + '\n',
+  );
+  const campaignBytes = disc.file('RLMSTART.DAT');
+  writeFileSync(
+    'reference/extracted/anuire/economy.research.json',
+    JSON.stringify(
+      {
+        format: 'birthright-hd-economy-research',
+        version: 1,
+        sourceSha256: hash(campaignBytes),
+        sourceBytes: campaignBytes.length,
+        provenance:
+          'RLMSTART.DAT; economic place chains, MAPICON.HXX codes and raw tribute/court fields',
+        ...decodeEconomicRecords(campaignBytes),
+      },
+      null,
+      2,
+    ) + '\n',
+  );
   // Reuse complete outputs only when their original archives/palettes/music still match.
   // This never deletes assets that current screens do not use.
   let reuse = false;

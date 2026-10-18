@@ -1,6 +1,6 @@
 # Birthright HD
 
-A private personal reconstruction of **Birthright: The Gorgon's Alliance**, with playable Anuire, original map/UI artwork, portraits, soundtrack and sound effects. The campaign contains **206 provinces, 51 domains, 116 regent records and 18 selectable regents**. Deterministic seasonal strategy, AI, economy, recruitment, movement, diplomacy, occupation and save/load are implemented. Gameplay rules remain an explicitly documented reconstruction.
+A private personal reconstruction of **Birthright: The Gorgon's Alliance**, with playable Anuire, original map/UI artwork, portraits, soundtrack and sound effects. The campaign contains **206 provinces, 51 domains, 116 regent records and 18 selectable regents**. Deterministic seasonal strategy, AI, economy, recruitment, movement, diplomacy, occupation, investiture and save/load are implemented. Gameplay rules remain an explicitly documented reconstruction.
 
 ## Install and launch
 

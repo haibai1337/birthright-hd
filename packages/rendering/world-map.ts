@@ -1,4 +1,13 @@
-import { Application, Assets, Container, Graphics, Sprite, Text, Texture } from 'pixi.js';
+import {
+  Application,
+  Assets,
+  Container,
+  Graphics,
+  Rectangle,
+  Sprite,
+  Text,
+  Texture,
+} from 'pixi.js';
 import type { Campaign, Scenario } from '../core/schema';
 import { insideProvince, insideRing, provinceRings } from '../core/geometry';
 import { sourcePotential } from '../core/selectors';
@@ -36,7 +45,7 @@ export class WorldMap {
   private hovered: string | null = null;
   private shapes = new Map<
     string,
-    { graphics: Graphics; label: Text; tint: number; bounds: number[] }
+    { graphics: Graphics; label: Text; tint: number; bounds: number[]; center: [number, number] }
   >();
   private realmLabels: Text[] = [];
   private originalArt: OriginalMapArt | null = null;
@@ -103,7 +112,7 @@ export class WorldMap {
           app.destroy(true, { children: true });
           return;
         }
-        texture.source.scaleMode = 'nearest';
+        texture.source.scaleMode = 'linear';
         const background = new Sprite(texture);
         background.width = this.size.width;
         background.height = this.size.height;
@@ -121,8 +130,8 @@ export class WorldMap {
             const url = this.originalArt?.images[`UI/${name}.PCX`];
             if (url) {
               const t = await Assets.load<Texture>(url);
-              t.source.scaleMode = 'nearest';
-              this.textures.set(name, t);
+              t.source.scaleMode = 'linear';
+              this.textures.set(name, this.trimSprite(t));
             }
           }),
         ).then((results) => {
@@ -150,6 +159,7 @@ export class WorldMap {
           graphics,
           label: text,
           tint: -1,
+          center: p.center,
           bounds: [
             Math.min(...points.map((p) => p[0])),
             Math.min(...points.map((p) => p[1])),
@@ -181,9 +191,14 @@ export class WorldMap {
         );
         if (this.originalArt) text.style.stroke = { color: '#d9cba3', width: 1 };
         this.realmLabels.push(text);
+        text.label = r.id;
         this.world.addChild(text);
       }
-      this.world.addChild(this.markers, this.highlights);
+      this.world.addChild(this.markers);
+      // Keep names readable above unit/place sprites and below selection outlines.
+      for (const item of this.shapes.values()) this.world.addChild(item.label);
+      for (const label of this.realmLabels) this.world.addChild(label);
+      this.world.addChild(this.highlights);
       this.host.dataset.sceneBuilds = '1';
       this.host.dataset.provinces = String(this.shapes.size);
       this.ready = true;
@@ -198,11 +213,29 @@ export class WorldMap {
       this.observer = new ResizeObserver(() => {
         if (viewportWidth === this.host.clientWidth && viewportHeight === this.host.clientHeight)
           return;
+        if (!this.host.clientWidth || !this.host.clientHeight) return;
+        const center = [
+          (viewportWidth / 2 - this.world.x) / this.scale,
+          (viewportHeight / 2 - this.world.y) / this.scale,
+        ];
+        const fitted = Math.abs(this.scale - this.minimum) < 0.001;
         viewportWidth = this.host.clientWidth;
         viewportHeight = this.host.clientHeight;
         if (this.app) {
           this.app.renderer.resize(this.host.clientWidth, this.host.clientHeight);
-          this.fit();
+          if (fitted) this.fit();
+          else {
+            this.minimum =
+              Math.min(viewportWidth / this.size.width, viewportHeight / this.size.height) * 0.94;
+            this.scale = Math.max(this.minimum * 0.8, this.scale);
+            this.world.scale.set(this.scale);
+            this.world.position.set(
+              viewportWidth / 2 - center[0]! * this.scale,
+              viewportHeight / 2 - center[1]! * this.scale,
+            );
+            this.labels();
+            this.highlight();
+          }
         }
       });
       this.observer.observe(this.host);
@@ -231,6 +264,8 @@ export class WorldMap {
     }
   }
   private render() {
+    this.host.dataset.cameraX = String(this.world.x);
+    this.host.dataset.cameraY = String(this.world.y);
     this.app?.render();
   }
   fit = () => {
@@ -297,6 +332,7 @@ export class WorldMap {
       this.drag.distance = Math.hypot(x! - this.drag.x, y! - this.drag.y);
       if (this.drag.distance > 4) {
         this.world.position.set(this.drag.wx + x! - this.drag.x, this.drag.wy + y! - this.drag.y);
+        this.labels();
         this.render();
       }
       return;
@@ -334,42 +370,135 @@ export class WorldMap {
     this.zoom(e.deltaY < 0 ? 1.15 : 1 / 1.15, x, y);
   };
   private labels() {
-    for (const [id, item] of this.shapes) {
-      item.label.visible =
-        this.view.labels && (this.scale > this.minimum * 2.2 || id === this.view.selected);
-      item.label.style.fontSize = this.originalArt
-        ? 13 / this.scale
-        : id === this.view.selected
-          ? Math.max(16, 12 / this.scale)
-          : 16;
-      if (this.originalArt) item.label.style.stroke = { color: '#e5d2a6', width: 0.8 / this.scale };
-    }
-    const occupied: { x: number; y: number; w: number }[] = [];
-    for (const text of this.realmLabels) {
-      const x = this.world.x + text.x * this.scale,
-        y = this.world.y + text.y * this.scale,
-        w = text.text.length * (this.originalArt ? 7.5 : 6.1);
-      text.style.fontSize =
-        (this.originalArt ? (this.host.clientHeight < 650 ? 10 : 14) : 11) / this.scale;
+    const compact = this.host.clientWidth < 1150 || this.host.clientHeight < 650;
+    const provinceDetail = this.originalArt ? this.scale >= 0.95 : this.scale > this.minimum * 2.7;
+    const closeDetail = this.originalArt ? this.scale > 1.1 : this.scale > this.minimum * 3;
+    const occupied: { x: number; y: number; w: number; h: number }[] = [];
+    const overlaps = (box: (typeof occupied)[number]) =>
+      occupied.some(
+        (other) =>
+          Math.abs(other.x - box.x) < (other.w + box.w) / 2 + 8 &&
+          Math.abs(other.y - box.y) < (other.h + box.h) / 2 + 5,
+      );
+    const place = (text: Text, pixels: number, force = false) => {
+      text.style.fontSize = pixels / this.scale;
+      text.style.stroke = {
+        color: this.originalArt ? '#f4e4bc' : '#243931',
+        width: 2.4 / this.scale,
+      };
+      const box = {
+        x: this.world.x + text.x * this.scale,
+        y: this.world.y + text.y * this.scale,
+        w: text.width * this.scale,
+        h: pixels + 4,
+      };
       text.visible =
         this.view.labels &&
-        this.scale <= this.minimum * 2.2 &&
-        !occupied.some((b) => Math.abs(b.x - x) < (b.w + w) / 2 + 5 && Math.abs(b.y - y) < 17);
-      if (text.visible) occupied.push({ x, y, w });
-    }
-    if (this.originalArt)
-      for (const child of this.markers.children) {
-        if (child instanceof Sprite)
-          child.scale.set(
-            Math.min(22, Math.max(8, this.host.clientHeight / 48)) /
-              (Math.max(child.texture.width, child.texture.height) * this.scale),
+        box.x + box.w / 2 > 8 &&
+        box.x - box.w / 2 < this.host.clientWidth - 8 &&
+        box.y > 12 &&
+        box.y < this.host.clientHeight - 12 &&
+        (force || !overlaps(box));
+      if (text.visible) occupied.push(box);
+    };
+    for (const child of this.markers.children) {
+      if (child instanceof Sprite)
+        child.scale.set(
+          (child.label === 'army' ? (compact ? 30 : 34) : compact ? 20 : 24) /
+            (Math.max(child.texture.width, child.texture.height) * this.scale),
+        );
+      if (child instanceof Text) {
+        child.style.fontSize = (compact ? 16 : 18) / this.scale;
+        child.style.stroke = { color: '#2b2015', width: 2.5 / this.scale };
+        const army = (child.label ?? '').startsWith('army-');
+        const province = army ? this.shapes.get(child.label.split(':')[1]!) : undefined;
+        if (province)
+          child.position.set(
+            province.center[0] + 38 / this.scale,
+            province.center[1] - 14 / this.scale,
           );
-        if (child instanceof Text) {
-          child.visible = this.view.overlay !== 'political' || this.scale > this.minimum * 2.2;
-          child.style.fontSize = 12 / this.scale;
-          child.style.stroke = { color: '#302715', width: 1.2 / this.scale };
-        }
+        const box = {
+          x: this.world.x + child.x * this.scale,
+          y: this.world.y + child.y * this.scale,
+          w: child.width * this.scale,
+          h: 22,
+        };
+        child.visible =
+          (army
+            ? child.label.startsWith('army-friendly:') ||
+              child.label.endsWith(':' + this.view.selected) ||
+              this.view.overlay === 'military' ||
+              closeDetail
+            : this.view.overlay !== 'political' || closeDetail) && !overlaps(box);
+        if (child.visible) occupied.push(box);
       }
+    }
+    // Selection has first claim on label space. Remaining labels are culled in screen pixels.
+    const priority = (id: string) => (id === this.view.selected ? 0 : id === this.hovered ? 1 : 2);
+    for (const [id, item] of [...this.shapes].sort(([a], [b]) => priority(a) - priority(b))) {
+      item.label.position.set(item.center[0], item.center[1] + 24 / this.scale);
+      if (!provinceDetail && id !== this.view.selected && id !== this.hovered) {
+        item.label.visible = false;
+        continue;
+      }
+      place(
+        item.label,
+        id === this.view.selected ? (compact ? 19 : 21) : compact ? 17 : 18,
+        id === this.view.selected,
+      );
+    }
+    for (const text of [...this.realmLabels].sort(
+      (a, b) =>
+        Number(b.label === this.state?.playerRealm) - Number(a.label === this.state?.playerRealm),
+    )) {
+      if (provinceDetail) {
+        text.visible = false;
+        continue;
+      }
+      place(text, compact ? 18 : 20);
+    }
+    this.host.dataset.visibleLabels = String(
+      [...this.shapes.values()].filter((s) => s.label.visible).length,
+    );
+    this.host.dataset.mapScale = String(this.scale);
+  }
+  /** Crop transparent padding at texture upload; source images stay untouched. */
+  private trimSprite(texture: Texture) {
+    const image = texture.source.resource;
+    if (
+      !(image instanceof HTMLImageElement) &&
+      !(typeof ImageBitmap !== 'undefined' && image instanceof ImageBitmap)
+    )
+      return texture;
+    try {
+      const canvas = document.createElement('canvas');
+      canvas.width = image instanceof HTMLImageElement ? image.naturalWidth : image.width;
+      canvas.height = image instanceof HTMLImageElement ? image.naturalHeight : image.height;
+      const ctx = canvas.getContext('2d', { willReadFrequently: true });
+      if (!ctx) return texture;
+      ctx.drawImage(image, 0, 0);
+      const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+      let left = canvas.width,
+        top = canvas.height,
+        right = -1,
+        bottom = -1;
+      for (let y = 0; y < canvas.height; y++)
+        for (let x = 0; x < canvas.width; x++)
+          if (pixels[(y * canvas.width + x) * 4 + 3]! > 16) {
+            left = Math.min(left, x);
+            top = Math.min(top, y);
+            right = Math.max(right, x);
+            bottom = Math.max(bottom, y);
+          }
+      return right >= left
+        ? new Texture({
+            source: texture.source,
+            frame: new Rectangle(left, top, right - left + 1, bottom - top + 1),
+          })
+        : texture;
+    } catch {
+      return texture;
+    }
   }
   private path(g: Graphics, p: Scenario['provinces'][number], tint: number, alpha = 1, width = 1) {
     const rings = provinceRings(p),
@@ -431,13 +560,14 @@ export class WorldMap {
         if (p.occupiedBy) g.circle(def.center[0] + 8, def.center[1], 4).fill('#e4a665');
         this.markers.addChild(g);
         if (this.originalArt) {
-          const sprite = (name: string, x: number, y: number) => {
+          const sprite = (name: string, x: number, y: number, army = false) => {
             const t = this.textures.get(name);
             if (!t) return;
             const s = new Sprite(t);
             s.anchor.set(0.5, 1);
             s.position.set(x, y);
             s.scale.set(0.5);
+            s.label = army ? 'army' : 'site';
             this.markers.addChild(s);
           };
           const raw = this.scenario.originalData as unknown as AnuireResearch | undefined;
@@ -458,12 +588,14 @@ export class WorldMap {
               this.originalArt.troopIcons?.[type] ?? 'A_INF',
               def.center[0] + 12,
               def.center[1],
+              true,
             );
           }
           if (view.overlay === 'economic' || view.overlay === 'magical')
             for (const h of state.holdings.filter(
               (h) =>
                 h.provinceId === p.id &&
+                !h.destroyed &&
                 h.level > 0 &&
                 (h.type === 'source') === (view.overlay === 'magical'),
             )) {
@@ -475,20 +607,25 @@ export class WorldMap {
               if (name) sprite(name, center[0], center[1]);
             }
         }
-        if (count || characters)
-          this.markers.addChild(
-            this.text(
-              `${count}⚑${characters ? ' · ' + characters + '♙' : ''}`,
-              def.center[0] + 22,
-              def.center[1] - 10,
-              12,
-            ),
+        if (count || characters) {
+          const marker = this.text(
+            count ? String(count) : `${characters} regent${characters === 1 ? '' : 's'}`,
+            def.center[0] + 22,
+            def.center[1] - 26 / this.scale,
+            12,
           );
+          marker.label = count
+            ? `army-${state.armies.some((a) => a.provinceId === p.id && a.realmId === state.playerRealm) ? 'friendly' : 'foreign'}:${p.id}`
+            : 'characters';
+          this.markers.addChild(marker);
+        }
         if (view.overlay === 'economic' || view.overlay === 'magical') {
           const holdings = state.holdings
             .filter(
               (h) =>
                 h.provinceId === p.id &&
+                !h.destroyed &&
+                !h.contested &&
                 (view.overlay === 'economic' ? h.type !== 'source' : h.type === 'source'),
             )
             .reduce((n, h) => n + h.level, 0);

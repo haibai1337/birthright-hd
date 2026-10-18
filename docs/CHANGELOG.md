@@ -1,5 +1,15 @@
 # Changelog
 
+## M1B-2 — original domain actions and holdings
+
+Added seasonal initiative and three interleaved action rounds, seeded Rule Province/Holding checks, level-zero Create Holding, multi-holding Rule, two-stage Contest, Agitate and the priest's seasonal free action. Independent domains can spend RP defending holdings, with repeated bids and saved pending responses. Contested holdings stop income/regency; destroyed records retain provenance as tombstones. Existing council controls expose costs, chances and targets. Exact source evidence and remaining timing/AI approximations are in GAMEPLAY_SYSTEMS.md. M1B-3 remains pending user review.
+
+## M1B-1 — warfare, occupation and investiture
+
+Restored the original milestone roadmap. Added directional war declarations, maintained military occupation, separate fort ownership, garrison/season eligibility, paid seeded investiture, occupation income/regency consequences, sieges, safe retreat and explicit pillage. Added minimal council controls, AI garrison/investment compatibility and additive legacy-save handling. Original data, assets and the Covenant Marches regression fixture remain intact. Evidence and remaining compatibility rules are in GAMEPLAY_SYSTEMS.md.
+
+Earlier playable-campaign, art and interface work below is retained as additional M1A work; old milestone headings are historical labels.
+
 ## Repository cleanup
 
 One application/build now includes original graphics/audio and the default Anuire dataset. Removed the separate public/private pipelines, procedural product UI and prototype campaign selection. Synthetic geography remains only as a test fixture. Missing inputs open setup/import diagnostics. Original resources are retained in full, including future battle/RPG assets. Current documentation is consolidated; detailed research is archived.

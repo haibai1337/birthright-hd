@@ -67,8 +67,17 @@ for (const [name, title, display, crop, previousReason, assessment] of selected)
     throw Error(`Original changed: ${id}`);
   const file = `restoration/${name}.png`;
   const selection = selections.assets[id];
-  if (selection && selection.file !== file) throw Error(`Selection does not match this trial: ${id}`);
+  if (selection && selection.file !== file)
+    throw Error(`Selection does not match this trial: ${id}`);
   const bytes = readFileSync(path.join(enhanced, file));
+  // Presentation-only crop for nine-slice controls. The approved raster master is embedded unchanged.
+  if (selection?.frameFile && crop) {
+    const [x, y, width, height] = crop;
+    writeFileSync(
+      path.join(enhanced, selection.frameFile),
+      `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="${x} ${y} ${width} ${height}"><image width="${bytes.readUInt32BE(16)}" height="${bytes.readUInt32BE(20)}" href="data:image/png;base64,${bytes.toString('base64')}"/></svg>`,
+    );
+  }
   assets[id] = {
     ...source,
     title,
@@ -87,7 +96,7 @@ for (const [name, title, display, crop, previousReason, assessment] of selected)
       assessment,
       recommendedFile: selection ? `enhanced/${selection.file}` : source.sourceFile,
       limitation:
-        'New fine detail is an artistic interpretation, not recovered source information. Originals are preserved; strategic UI adoption is a separate implementation step.',
+        'New fine detail is an artistic interpretation, not recovered source information. Originals are preserved. Only explicitly accepted assets are used by the main strategic screen.',
     },
   };
 }
@@ -95,10 +104,15 @@ const review = {
   version: 1,
   milestone: 'M1D-0B',
   originalAssetCount: previous.originalAssetCount,
-  approvedForGame: Object.values(assets).filter(asset => asset.restoration.status === 'approved').length,
-  awaitingArtReview: Object.values(assets).filter(asset => asset.restoration.status === 'pending-review').length,
-  rejectedNewTrials: Object.values(assets).filter(asset => asset.restoration.status === 'rejected').length,
-  adoptedByStrategicUI: false,
+  approvedForGame: Object.values(assets).filter((asset) => asset.restoration.status === 'approved')
+    .length,
+  awaitingArtReview: Object.values(assets).filter(
+    (asset) => asset.restoration.status === 'pending-review',
+  ).length,
+  rejectedNewTrials: Object.values(assets).filter(
+    (asset) => asset.restoration.status === 'rejected',
+  ).length,
+  adoptedByStrategicUI: selections.integratedScreens?.includes('main-strategic-screen') ?? false,
   retainedPortraits: {},
   assets,
 };
@@ -107,14 +121,15 @@ for (const id of ['UI/LGLORDF2.PCX', 'UI/LGLORDM1.PCX']) {
   if (sha(readFileSync(path.join(enhanced, portrait.file))) !== portrait.masterSha256)
     throw Error('Portrait master changed: ' + id);
   const selection = selections.assets[id];
-  if (selection?.retainExisting && selection.file === portrait.file) review.retainedPortraits[id] = selection;
+  if (selection?.retainExisting && selection.file === portrait.file)
+    review.retainedPortraits[id] = selection;
 }
 copyFileSync('packages/import-tools/art-selections.json', path.join(enhanced, 'selections.json'));
 writeFileSync(path.join(enhanced, 'restorations.json'), JSON.stringify(review, null, 2) + '\n');
 copyFileSync('packages/import-tools/enhancement-gallery.html', path.join(enhanced, 'index.html'));
 writeFileSync(
   path.join(enhanced, 'README.md'),
-  `# Artwork reviews\n\nUser selection: M1D-0B plain and purple-ribbon scrolls, the parchment/B panel and gold are approved. The gold decision explicitly overrides the earlier negative technical assessment. Both successful M1D-0 HD portraits are retained unchanged. Leather, crown and all other unlisted elements require individual selection by quality; no automatic adoption. Strategic UI integration has not been performed.\n\nThe default gallery compares six enlarged originals, rejected M1D-0 proposals and M1D-0B raster trials at equal dimensions. The original 24-item review remains available. Fine AI-painted detail is interpretation, not recovered evidence. All original assets and previous studies remain intact.\n\npackages/import-tools/art-selections.json is the persistent source for user decisions; selections.json is its local gallery copy. mapping.json preserves original source mappings; restorations.json adds review statuses and crop/display coordinates. Master PNGs and imagegen prompts are in restoration/. Transparent scroll margins are cropped only in browser presentation. Run node scripts/review-restorations.mjs to refresh review metadata and the gallery.\n`,
+  `# Artwork reviews\n\nUser selection: M1D-0B plain and purple-ribbon scrolls, the parchment/B panel and gold are approved. The gold decision explicitly overrides the earlier negative technical assessment. Both successful M1D-0 HD portraits are retained unchanged. Leather, crown and all other unlisted elements require individual selection by quality; no automatic adoption. M1D-1 integrates only these explicit user selections into the main strategic screen; other redraws are not substituted.\n\nThe default gallery compares six enlarged originals, rejected M1D-0 proposals and M1D-0B raster trials at equal dimensions. The original 24-item review remains available. Fine AI-painted detail is interpretation, not recovered evidence. All original assets and previous studies remain intact.\n\npackages/import-tools/art-selections.json is the persistent source for user decisions; selections.json is its local gallery copy. mapping.json preserves original source mappings; restorations.json adds review statuses and crop/display coordinates. Master PNGs and imagegen prompts are in restoration/. Transparent scroll margins are cropped only in browser presentation. Run node scripts/review-restorations.mjs to refresh review metadata and the gallery.\n`,
 );
 console.log(
   `Updated review: ${review.approvedForGame} restorations approved, ${review.awaitingArtReview} await individual review, ${Object.keys(review.retainedPortraits).length} HD portraits retained. No artwork modified.`,

@@ -1,0 +1,1216 @@
+/* Main campaign only. Original menu and other dialogs retain their existing presentation. */
+.hd-strategy {
+  --council-width: 400px;
+  --hd-ink: #30200f;
+  --hd-rule: #88663c;
+  grid-template-rows: minmax(0, 1fr) 90px 44px;
+  font:
+    18px/1.4 Georgia,
+    'Times New Roman',
+    serif;
+  background: #3b2c21;
+}
+.hd-strategy button {
+  font-size: 19px;
+}
+.hd-strategy .hd-toolbar-end-season,
+.hd-income-period {
+  display: none;
+}
+.hd-strategy button:focus-visible,
+.hd-strategy select:focus-visible {
+  outline: 3px solid #6e397e;
+  outline-offset: 3px;
+}
+.hd-strategy .classic-council {
+  padding: 12px 42px 16px 20px;
+  background: #c7aa7c var(--hd-parchment) left top / 100% auto no-repeat;
+  color: var(--hd-ink);
+  box-shadow: 5px 0 14px #180f0b88;
+  gap: 4px;
+}
+.hd-strategy .classic-council::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 27px;
+  background: var(--hd-parchment) right top / 302px 412px repeat-y;
+  border-left: 2px solid #713320;
+  pointer-events: none;
+}
+.hd-strategy .classic-realm-name {
+  min-height: 48px;
+  font:
+    bold 30px/1.1 Georgia,
+    serif;
+  justify-content: center;
+  padding: 0;
+  color: #fff1c8;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+.hd-strategy .classic-realm-name:hover {
+  background: #e6c78633;
+}
+.hd-strategy .classic-regent {
+  position: relative;
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  min-height: 252px;
+  margin: 0 0 8px;
+}
+.hd-strategy .regent-portrait {
+  display: block;
+  width: 160px;
+  height: 250px;
+  border: 0;
+  background: none;
+  object-fit: contain;
+  image-rendering: auto;
+  filter: drop-shadow(2px 3px 3px #3a251b77);
+}
+.hd-regent-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  text-shadow:
+    0 1px 2px #f8e2af,
+    0 -1px 3px #f8e2af,
+    1px 0 2px #f8e2af,
+    -1px 0 3px #f8e2af;
+}
+.hd-regent-identity h2 {
+  font-size: 25px;
+  line-height: 1.1;
+  font-weight: bold;
+}
+.hd-regent-class {
+  font-size: 18px;
+  text-transform: capitalize;
+}
+.hd-bloodline {
+  font: 16px/1.5 var(--sans);
+}
+.hd-strategy .hd-council-emblem {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  image-rendering: auto;
+  filter: drop-shadow(1px 2px 2px #23180a88);
+}
+.hd-strategy .classic-balances {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 4px 8px;
+  background: #ead4a9ed;
+  border-top: 1px solid #8e693f;
+  border-bottom: 1px solid #9b784d;
+  font-size: 18px;
+}
+.hd-strategy .classic-balances > div {
+  display: block;
+  text-align: center;
+}
+.hd-strategy .classic-balances > div + div {
+  border-left: 1px solid #a4875a88;
+}
+.hd-strategy .classic-balances dt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-variant: normal;
+  font-weight: normal;
+}
+.hd-strategy .classic-balances dd {
+  margin: 2px 0 0;
+  font:
+    bold 28px/1.2 Georgia,
+    serif;
+}
+.hd-strategy .classic-balances dd small {
+  font: 16px var(--sans);
+  margin-left: 5px;
+}
+.cropped-art {
+  display: inline-block;
+  flex: none;
+  background-repeat: no-repeat;
+}
+.hd-gold {
+  width: 64px;
+  height: 34px;
+}
+.hd-regency {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+.hd-strategy .classic-income {
+  font: 16px/1.5 var(--sans);
+  color: #3d2917;
+  text-align: center;
+  margin: 2px 0 6px;
+  background: #ead4a9df;
+}
+.hd-strategy .classic-turn {
+  grid-template-columns: 1fr auto;
+  text-align: left;
+  padding: 10px 0;
+  margin: 2px 0 8px;
+  background: none;
+  border-top: 1px solid #927044;
+  border-bottom: 1px solid #927044;
+  gap: 8px 4px;
+}
+.hd-strategy .classic-turn > strong {
+  font-size: 23px;
+}
+.hd-strategy .classic-turn > span {
+  font: 16px/1.5 var(--sans);
+  align-self: center;
+}
+.hd-action-budget {
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hd-action-budget > strong {
+  font-size: 19px;
+  font-weight: normal;
+}
+.hd-action-budget > strong > span {
+  font: 17px var(--sans);
+}
+.hd-action-seals {
+  display: flex;
+  gap: 5px;
+}
+.hd-action-seals i {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #6a4b2c;
+  background: #766044;
+  box-shadow: inset 0 1px 3px #281e1299;
+}
+.hd-action-seals .available {
+  background: radial-gradient(circle at 35% 30%, #ffe5a4, #d2a645 55%, #815023);
+  box-shadow: 0 1px 2px #4c301644;
+}
+.hd-section-caption {
+  font: 16px var(--sans);
+  color: #594023;
+  margin: 0 0 4px;
+}
+.hd-strategy .classic-actions {
+  flex: 1;
+  gap: 7px;
+  align-content: start;
+}
+.hd-strategy .classic-actions button,
+.hd-strategy .classic-end-season,
+.hd-strategy .classic-toolbar > button,
+.hd-strategy .hd-toolbar-utilities button {
+  position: relative;
+  min-height: 56px;
+  border: solid transparent;
+  border-width: 12px 18px;
+  border-image: var(--hd-scroll) 80 120 fill stretch;
+  background: none;
+  color: #35210c;
+  text-shadow: 0 1px #f5dfb4;
+  padding: 0 8px;
+  font:
+    bold 19px/1.2 Georgia,
+    serif;
+  transition:
+    filter 0.12s,
+    transform 0.12s;
+}
+.hd-strategy .classic-actions button {
+  min-height: 62px;
+  border-width: 9px 14px;
+  gap: 12px;
+  padding: 0;
+}
+.council-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  background-repeat: no-repeat;
+  image-rendering: auto;
+  filter: drop-shadow(0 1px 1px #24180a88);
+}
+.hd-strategy .classic-actions .council-icon {
+  margin: -5px 0 -5px -2px;
+}
+.hd-strategy .classic-actions b {
+  font-weight: bold;
+}
+.hd-council-arrow {
+  margin-left: auto;
+  padding-right: 10px;
+  font-size: 28px;
+  color: #67451c;
+}
+.hd-strategy .classic-actions button[aria-pressed='true'] {
+  border-image-source: var(--hd-scroll-selected);
+  outline: none;
+}
+.hd-strategy .classic-actions button:hover:enabled,
+.hd-strategy .classic-end-season:hover:enabled,
+.hd-strategy .classic-toolbar button:hover:enabled {
+  filter: brightness(1.12);
+  background: none;
+}
+.hd-strategy .classic-actions button:active:enabled,
+.hd-strategy .classic-end-season:active:enabled,
+.hd-strategy .classic-toolbar button:active:enabled {
+  filter: brightness(0.9);
+  transform: translateY(1px);
+}
+.hd-strategy .classic-end-season {
+  flex-shrink: 0;
+  min-height: 58px;
+  margin: 9px 0 0;
+  font-size: 21px;
+  gap: 28px;
+}
+.hd-strategy .classic-map-area > .map-wrap {
+  inset: 88px 0 0;
+}
+.hd-map-heading {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  height: 88px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 8px 158px 8px 24px;
+  background: #dfc79f var(--hd-parchment) left top / 100% auto no-repeat;
+  border-bottom: 5px ridge #b49a6d;
+  color: #2b2118;
+  box-shadow: 0 3px 12px #24170844;
+  z-index: 3;
+}
+.hd-map-title {
+  padding-right: 24px;
+  border-right: 1px solid #66583c88;
+  color: #342a20;
+  flex-shrink: 0;
+}
+.hd-map-title > span {
+  font-size: 28px;
+  letter-spacing: 4px;
+  font-weight: bold;
+}
+.hd-map-title > small {
+  display: block;
+  font: 16px/1.5 var(--sans);
+}
+.hd-strategy .hd-selected-name {
+  display: block;
+  min-width: 185px;
+  min-height: 60px;
+  border: 0;
+  text-align: left;
+  color: #241b16;
+  background: none;
+  padding: 0 6px;
+}
+.hd-selected-name strong {
+  display: block;
+  font:
+    bold 27px/1.2 Georgia,
+    serif;
+}
+.hd-selected-name span {
+  font: 17px/1.5 var(--sans);
+  text-transform: capitalize;
+}
+.hd-selected-stats {
+  display: flex;
+  gap: 26px;
+  margin: 0;
+  margin-left: auto;
+  text-align: center;
+}
+.hd-selected-stats dt {
+  font: 16px var(--sans);
+}
+.hd-selected-stats dd {
+  font-size: 26px;
+  font-weight: bold;
+  margin: 0;
+}
+.hd-selected-stats small {
+  font: 16px var(--sans);
+}
+.hd-strategy .classic-game-menu {
+  top: 17px;
+  right: 16px;
+  min-height: 52px;
+  padding: 5px 10px;
+  font-size: 19px;
+  background: #d8c49d;
+}
+.hd-strategy .classic-game-menu img {
+  width: 38px;
+  height: 38px;
+  image-rendering: auto;
+}
+.hd-strategy .classic-toolbar {
+  gap: 14px;
+  padding: 8px 16px;
+  border-top: 5px ridge #aa8a5b;
+  background: #3f291a var(--hd-leather) center / 640px 480px repeat-x;
+  color: #f1ddb6;
+  box-shadow: 0 -4px 12px #26170e66;
+}
+.hd-strategy .classic-toolbar > button {
+  padding-left: 3px;
+  padding-right: 3px;
+  white-space: nowrap;
+}
+.hd-strategy .classic-toolbar .council-icon {
+  margin: -6px 0;
+}
+.hd-strategy .classic-map-overlay-bar {
+  position: static;
+  display: block;
+  flex-shrink: 0;
+  border: 0;
+  background: none;
+}
+.hd-toolbar-caption {
+  display: block;
+  font: 16px/1.2 var(--sans);
+  margin: 0 0 6px;
+}
+.hd-strategy .classic-map-overlay-bar > div {
+  display: flex;
+  gap: 0;
+}
+.hd-strategy .classic-map-overlay-bar button {
+  min-height: 48px;
+  padding: 4px 10px;
+  font:
+    bold 17px/1.1 Georgia,
+    serif;
+  border: 3px ridge #b99a62;
+  background: #644329 var(--hd-wood) center/auto 100%;
+  color: #f2dfb4;
+  text-shadow: 0 1px 2px #211408;
+}
+.hd-strategy .classic-map-overlay-bar button[aria-pressed='true'] {
+  border-color: #e4c58b;
+  color: #fff1c3;
+  box-shadow: inset 0 0 0 2px #321d47;
+  background: linear-gradient(#573964, #34213e);
+}
+.hd-strategy .classic-toolbar label {
+  font: 16px var(--sans);
+  gap: 5px;
+  margin: 0;
+  min-width: 155px;
+}
+.hd-strategy .classic-toolbar select {
+  width: 200px;
+  min-height: 48px;
+  font:
+    18px Georgia,
+    serif;
+  padding: 6px 8px;
+  border: 2px inset #a28554;
+}
+.hd-toolbar-utilities {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.hd-strategy .hd-toolbar-utilities button {
+  font-size: 18px;
+  padding-left: 2px;
+  padding-right: 2px;
+}
+.hd-strategy .classic-profile {
+  font: 16px var(--sans);
+  margin-left: 0;
+  min-width: 110px;
+}
+.hd-strategy .classic-toolbar label {
+  color: #f1ddb6;
+  text-shadow: 0 1px 2px #241507;
+}
+.hd-strategy .classic-profile small {
+  font-size: 16px;
+}
+.hd-strategy .classic-map-readout {
+  position: static;
+  grid-column: 1/-1;
+  display: flex;
+  align-items: center;
+  text-align: left;
+  gap: 22px;
+  background: linear-gradient(#66456f, #3d264c);
+  border: 3px ridge #b79a67;
+  padding: 5px 18px;
+  font:
+    18px/1.4 Georgia,
+    serif;
+  color: #f9e9bd;
+  min-width: 0;
+}
+.hd-message-label {
+  color: #d9bf87;
+  border-right: 1px solid #b59b7080;
+  padding-right: 20px;
+  font: 16px var(--sans);
+  flex-shrink: 0;
+}
+.hd-strategy .classic-map-readout > span:nth-child(2) {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  animation: hd-dispatch-in 0.25s ease-out;
+}
+.hd-map-help {
+  margin-left: auto;
+  font: 16px var(--sans);
+  opacity: 0.8;
+  flex-shrink: 0;
+}
+.hd-strategy .map-tools {
+  right: 18px;
+  bottom: 18px;
+  border-width: 3px;
+  background: #d1b88c;
+  box-shadow: 2px 3px 7px #24150c55;
+}
+.hd-strategy .map-tools button {
+  width: 50px;
+  height: 50px;
+}
+.hd-strategy .map-tools button svg {
+  width: 24px;
+  height: 24px;
+}
+.hd-strategy .map-tooltip {
+  bottom: 18px;
+  left: 20px;
+  padding: 10px 16px;
+  font-size: 21px;
+  max-width: calc(100% - 110px);
+  white-space: normal;
+  pointer-events: none;
+}
+.hd-strategy .map-tooltip span {
+  font: 17px/1.5 var(--sans);
+}
+.hd-strategy .classic-inspector {
+  width: 480px;
+  max-width: calc(100% - 115px);
+  top: 106px;
+  right: 84px;
+  bottom: 24px;
+  border: 7px solid transparent;
+  border-image: var(--hd-stone) 6 stretch;
+  background: #e3cfaa;
+  box-shadow: 4px 5px 20px #21140799;
+}
+.hd-strategy .classic-inspector > header {
+  min-height: 58px;
+  font-size: 25px;
+  padding: 6px 14px;
+}
+.hd-strategy .classic-inspector > header button {
+  width: 48px;
+  height: 48px;
+  font-size: 30px;
+}
+.hd-strategy .classic-inspector .sidebar-scroll {
+  padding: 22px;
+}
+.hd-strategy .sidebar {
+  font-size: 18px;
+}
+.hd-strategy .sidebar h2 {
+  font-size: 29px;
+}
+.hd-strategy .sidebar h3 {
+  font-size: 24px;
+}
+.hd-strategy .sidebar .eyebrow,
+.hd-strategy .sidebar-foot,
+.hd-strategy .sidebar small,
+.hd-strategy .section-label,
+.hd-strategy .select-label,
+.hd-strategy .treaty-badge,
+.hd-strategy .acceptance {
+  font-size: 16px;
+  letter-spacing: 0;
+  color: #655035;
+}
+.hd-strategy .sidebar-foot {
+  padding: 12px;
+}
+.hd-strategy .province-title p,
+.hd-strategy .panel-title p,
+.hd-strategy .council-note,
+.hd-strategy .original-forts p,
+.hd-strategy .regent p,
+.hd-strategy .last-report p,
+.hd-strategy .diplomacy-heading p {
+  font: 17px/1.6 var(--sans);
+  color: #5d4b32;
+}
+.hd-strategy .province-stats {
+  margin: 20px 0;
+}
+.hd-strategy .province-stats strong {
+  font-size: 30px;
+}
+.hd-strategy .province-stats > div > span {
+  font: 16px/1.3 var(--sans);
+  color: #655136;
+  letter-spacing: 0;
+}
+.hd-strategy .loyalty > div:first-child {
+  font: 17px var(--sans);
+}
+.hd-strategy .loyalty-track i {
+  height: 7px;
+}
+.hd-strategy .holdings > div {
+  min-height: 68px;
+  gap: 12px;
+}
+.hd-strategy .holdings strong {
+  font-size: 20px;
+}
+.hd-strategy .holding-level {
+  font-size: 26px;
+}
+.hd-strategy .tiny-button {
+  width: 48px;
+  height: 48px;
+  font-size: 25px;
+  flex-shrink: 0;
+}
+.hd-strategy .sidebar select {
+  font: 18px/1.4 var(--sans);
+  min-height: 48px;
+}
+.hd-strategy .sidebar .order {
+  min-height: 76px;
+  padding: 10px 12px;
+  gap: 10px;
+}
+.hd-strategy .order strong {
+  font-size: 20px;
+}
+.hd-strategy .order small {
+  font-size: 16px;
+  margin-top: 5px;
+}
+.hd-strategy .order-icon > svg {
+  width: 28px;
+  height: 28px;
+}
+.hd-strategy .army-card {
+  min-height: 72px;
+  font-size: 20px;
+}
+.hd-strategy .unit-roster,
+.hd-strategy .ledger {
+  font: 18px/1.5 var(--sans);
+}
+.hd-strategy .journal p {
+  font-size: 19px;
+}
+.hd-strategy .sidebar details {
+  font: 16px/1.6 var(--sans);
+  margin: 12px 0;
+}
+.hd-strategy .sidebar summary {
+  min-height: 48px;
+  padding: 10px 0;
+  cursor: pointer;
+}
+.hd-strategy .sidebar details button {
+  min-height: 48px;
+  padding: 5px 12px;
+}
+.hd-strategy .petition {
+  bottom: 155px;
+  left: 425px;
+  right: 90px;
+  font-size: 20px;
+}
+.hd-strategy .petition p {
+  font: 17px/1.5 var(--sans);
+  color: #533c24;
+}
+.hd-strategy .petition button {
+  min-height: 52px;
+  font-size: 18px;
+}
+.campaign-active > .toast {
+  bottom: 148px;
+  font: 18px/1.5 var(--sans);
+  max-width: min(900px, 85vw);
+}
+.campaign-active > .toast button {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+}
+.campaign-active > .toast button svg {
+  width: 24px;
+  height: 24px;
+}
+.campaign-active.large-text .hd-strategy .sidebar {
+  font-size: 20px;
+}
+.campaign-active.large-text .hd-strategy .order strong,
+.campaign-active.large-text .hd-strategy .journal p {
+  font-size: 22px;
+}
+@keyframes hd-dispatch-in {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@media (max-width: 1650px) {
+  .hd-strategy {
+    --council-width: 350px;
+  }
+  .hd-strategy .classic-council {
+    padding-left: 16px;
+    padding-right: 36px;
+  }
+  .hd-strategy .classic-regent {
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 8px;
+  }
+  .hd-strategy .regent-portrait {
+    width: 140px;
+    height: 219px;
+  }
+  .hd-regent-identity h2 {
+    font-size: 23px;
+  }
+  .hd-strategy .classic-turn {
+    grid-template-columns: 1fr;
+  }
+  .hd-strategy .classic-turn > span {
+    display: none;
+  }
+  .hd-strategy .classic-toolbar {
+    gap: 8px;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+  .hd-strategy .classic-profile {
+    display: none;
+  }
+  .hd-strategy .classic-map-overlay-bar button {
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+  .hd-strategy .classic-toolbar select {
+    width: 170px;
+  }
+  .hd-strategy .classic-toolbar > button,
+  .hd-strategy .hd-toolbar-utilities button {
+    font-size: 17px;
+    border-left-width: 12px;
+    border-right-width: 12px;
+  }
+  .hd-map-heading {
+    gap: 18px;
+    padding-left: 18px;
+  }
+  .hd-map-title {
+    display: none;
+  }
+  .hd-selected-stats {
+    gap: 24px;
+  }
+}
+@media (max-height: 900px) {
+  .hd-strategy .classic-regent {
+    min-height: 180px;
+  }
+  .hd-strategy .regent-portrait {
+    width: 115px;
+    height: 180px;
+    justify-self: center;
+  }
+  .hd-strategy .classic-regent {
+    grid-template-columns: 130px minmax(0, 1fr);
+  }
+  .hd-strategy .classic-balances {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  .hd-strategy .classic-actions {
+    gap: 4px;
+  }
+  .hd-strategy .classic-actions button {
+    min-height: 56px;
+  }
+  .hd-strategy .classic-turn {
+    margin: 0 0 3px;
+    padding: 5px 0;
+  }
+  .hd-strategy .classic-income {
+    margin-bottom: 0;
+  }
+  .hd-strategy .classic-council {
+    overflow-y: auto;
+  }
+  .hd-strategy .classic-end-season {
+    margin-top: 5px;
+    min-height: 52px;
+  }
+  .hd-strategy .classic-inspector {
+    top: 96px;
+    bottom: 16px;
+  }
+}
+@media (max-width: 1300px) {
+  .hd-strategy .hd-toolbar-utilities button:last-child,
+  .hd-strategy .classic-toolbar > button:nth-of-type(2) {
+    display: none;
+  }
+  .hd-strategy .classic-map-overlay-bar button {
+    font-size: 16px;
+  }
+  .hd-selected-stats {
+    gap: 15px;
+  }
+  .hd-selected-name strong {
+    font-size: 24px;
+  }
+  .hd-strategy .classic-toolbar label {
+    min-width: 130px;
+  }
+  .hd-strategy .classic-toolbar select {
+    width: 150px;
+  }
+  .hd-strategy .hd-map-help {
+    display: none;
+  }
+}
+
+/* Laptop layout: reflow controls instead of scaling the entire Full HD screen. */
+@media (max-width: 1500px), (max-height: 900px) {
+  .hd-strategy {
+    --council-width: 332px;
+    grid-template-rows: minmax(0, 1fr) 84px 34px;
+  }
+  .hd-strategy .classic-council {
+    padding: 6px 28px 8px 10px;
+    gap: 3px;
+    overflow-x: hidden;
+  }
+  .hd-strategy .classic-council::after {
+    width: 20px;
+    background-size: 224px 305.5px;
+  }
+  .hd-strategy .classic-realm-name {
+    min-height: 42px;
+    font-size: 26px;
+  }
+  .hd-strategy .classic-regent {
+    --profile-height: clamp(128px, calc(100dvh - 514px), 180px);
+    flex: 0 0 auto;
+    height: var(--profile-height);
+    min-height: 0;
+    grid-template-columns: calc(var(--profile-height) * 0.64) minmax(0, 1fr);
+    gap: 10px;
+    margin: 0;
+  }
+  .hd-strategy .regent-portrait {
+    width: 100%;
+    height: var(--profile-height);
+  }
+  .hd-regent-identity {
+    min-width: 0;
+    gap: 5px;
+    padding: 0;
+  }
+  .hd-regent-identity h2 {
+    font-size: 22px;
+    line-height: 1.1;
+  }
+  .hd-strategy .hd-council-emblem {
+    width: 36px;
+    height: 36px;
+  }
+  .hd-regent-class {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .hd-bloodline {
+    font-size: 16px;
+    line-height: 1.3;
+  }
+  .hd-strategy .classic-balances {
+    padding: 6px 4px;
+    gap: 7px;
+    flex-shrink: 0;
+  }
+  .hd-strategy .classic-balances > div {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    grid-template-rows: 19px 27px;
+    gap: 0 5px;
+    align-items: center;
+    text-align: left;
+  }
+  .hd-strategy .classic-balances dt {
+    display: contents;
+  }
+  .hd-strategy .classic-balances dt > .strategic-image {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+    justify-self: center;
+  }
+  .hd-strategy .classic-balances dt > span:not(.strategic-image) {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 16px;
+  }
+  .hd-strategy .classic-balances dd {
+    grid-column: 2;
+    grid-row: 2;
+    font-size: 25px;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .hd-strategy .classic-balances dd small {
+    font-size: 15px;
+    margin-left: 3px;
+  }
+  .hd-strategy .hd-gold {
+    width: 48px;
+    height: 26px;
+  }
+  .hd-strategy .hd-regency {
+    width: 32px;
+    height: 32px;
+  }
+  .hd-strategy .classic-income {
+    font-size: 16px;
+    line-height: 1.3;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .hd-income-label {
+    display: none;
+  }
+  .hd-income-period {
+    display: inline;
+  }
+  .hd-strategy .classic-turn {
+    grid-template-columns: minmax(0, 1fr) auto;
+    margin: 0;
+    padding: 3px 6px;
+    gap: 4px;
+    flex-shrink: 0;
+    background: #ead4a9ed;
+  }
+  .hd-strategy .classic-turn > strong {
+    font-size: 21px;
+    line-height: 1.2;
+  }
+  .hd-strategy .classic-turn > span {
+    display: block;
+    font-size: 16px;
+  }
+  .hd-turn-domain {
+    display: none;
+  }
+  .hd-strategy .hd-action-budget {
+    gap: 10px;
+  }
+  .hd-strategy .hd-action-budget > strong {
+    font-size: 18px;
+    line-height: 1.2;
+  }
+  .hd-action-seals i {
+    width: 16px;
+    height: 16px;
+  }
+  .hd-strategy .hd-section-caption {
+    display: none;
+  }
+  .hd-strategy .classic-actions {
+    --council-icon-size: 40px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    flex: 1 0 auto;
+  }
+  .hd-strategy .classic-actions button {
+    min-width: 0;
+    min-height: 58px;
+    padding: 0;
+    border-width: 8px 7px;
+    font-size: 17px;
+    gap: 5px;
+    white-space: nowrap;
+  }
+  .hd-strategy .classic-actions .council-icon {
+    margin: 0;
+  }
+  .hd-council-arrow {
+    display: none;
+  }
+  .hd-strategy .hd-council-end-season {
+    display: none;
+  }
+  .hd-strategy .classic-profile {
+    display: none;
+  }
+  .hd-strategy .classic-map-area > .map-wrap {
+    top: 72px;
+  }
+  .hd-map-heading {
+    height: 72px;
+    gap: 16px;
+    padding: 5px 128px 5px 16px;
+  }
+  .hd-map-title {
+    display: none;
+  }
+  .hd-strategy .hd-selected-name {
+    min-width: 0;
+    flex: 1;
+    min-height: 54px;
+    padding: 0;
+  }
+  .hd-selected-name strong {
+    font-size: 24px;
+  }
+  .hd-selected-name span {
+    font-size: 16px;
+  }
+  .hd-selected-stats {
+    gap: 20px;
+    flex-shrink: 0;
+  }
+  .hd-selected-stats dt {
+    font-size: 16px;
+  }
+  .hd-selected-stats dd {
+    font-size: 24px;
+  }
+  .hd-strategy .classic-game-menu {
+    top: 12px;
+    right: 10px;
+    min-height: 48px;
+    font-size: 18px;
+    gap: 6px;
+    padding: 4px 7px;
+  }
+  .hd-strategy .classic-game-menu img {
+    width: 30px;
+    height: 30px;
+  }
+  .hd-strategy .classic-toolbar {
+    display: grid;
+    grid-template-columns: minmax(300px, 1fr) minmax(180px, 240px) 130px auto 154px;
+    gap: 12px;
+    padding: 5px 10px;
+    min-width: 0;
+  }
+  .hd-strategy .classic-toolbar .hd-toolbar-province,
+  .hd-strategy .classic-toolbar .hd-toolbar-muster {
+    display: none;
+  }
+  .hd-strategy .classic-toolbar label {
+    min-width: 0;
+    width: 100%;
+    gap: 3px;
+  }
+  .hd-strategy .classic-toolbar select {
+    width: 100%;
+    min-height: 46px;
+    font-size: 17px;
+  }
+  .hd-toolbar-caption {
+    font-size: 16px;
+    margin-bottom: 3px;
+  }
+  .hd-strategy .classic-map-overlay-bar > div {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .hd-strategy .classic-map-overlay-bar button {
+    min-width: 0;
+    min-height: 46px;
+    font-size: 16px;
+    padding: 4px 6px;
+  }
+  .hd-strategy .classic-toolbar > button,
+  .hd-strategy .hd-toolbar-utilities button {
+    min-height: 48px;
+    border-width: 9px 12px;
+    font-size: 17px;
+    padding: 0 3px;
+  }
+  .hd-strategy .classic-toolbar .hd-toolbar-chronicle {
+    display: inline-flex;
+  }
+  .hd-strategy .hd-toolbar-end-season {
+    display: inline-flex;
+    margin: 0;
+    gap: 10px;
+    min-height: 50px;
+    font-size: 18px;
+  }
+  .hd-strategy .hd-toolbar-utilities {
+    gap: 5px;
+    margin-left: 0;
+  }
+  .hd-strategy .hd-toolbar-utilities button:last-child {
+    display: inline-flex;
+  }
+  .hd-strategy .classic-map-readout {
+    gap: 14px;
+    padding: 3px 12px;
+    font-size: 17px;
+    line-height: 1.2;
+  }
+  .hd-strategy .hd-message-label {
+    font-size: 16px;
+    padding-right: 12px;
+  }
+  .hd-strategy .hd-map-help {
+    display: none;
+  }
+  .hd-strategy .map-tools {
+    right: 12px;
+    bottom: 12px;
+  }
+  .hd-strategy .map-tools button {
+    width: 46px;
+    height: 46px;
+  }
+  .hd-strategy .classic-inspector {
+    width: 440px;
+    max-width: calc(100% - 85px);
+    top: 82px;
+    bottom: 12px;
+    right: 68px;
+  }
+  .hd-strategy .classic-inspector > header {
+    min-height: 50px;
+    font-size: 23px;
+    padding: 2px 10px;
+  }
+  .hd-strategy .classic-inspector .sidebar-scroll {
+    padding: 16px;
+  }
+  .hd-strategy .petition {
+    left: 350px;
+    right: 75px;
+    bottom: 132px;
+    padding: 14px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hd-strategy .petition p {
+    margin-top: 5px;
+  }
+  .campaign-active > .toast {
+    bottom: 125px;
+    font-size: 17px;
+  }
+}
+@media (max-height: 720px) {
+  .hd-strategy .classic-balances {
+    padding-top: 4px;
+    padding-bottom: 4px;
+  }
+  .hd-strategy .hd-bloodline,
+  .hd-strategy .classic-income {
+    display: none;
+  }
+  .hd-strategy .classic-actions {
+    --council-icon-size: 36px;
+    gap: 4px;
+  }
+  .hd-strategy .classic-actions button {
+    min-height: 50px;
+    border-top-width: 6px;
+    border-bottom-width: 6px;
+  }
+}
+@media (max-width: 1150px) {
+  .hd-strategy {
+    --council-width: 300px;
+  }
+  .hd-strategy .classic-council {
+    padding-left: 8px;
+    padding-right: 25px;
+  }
+  .hd-strategy .classic-actions {
+    --council-icon-size: 34px;
+  }
+  .hd-strategy .classic-actions button {
+    font-size: 16px;
+    gap: 4px;
+    border-left-width: 6px;
+    border-right-width: 6px;
+  }
+  .hd-strategy .classic-toolbar {
+    grid-template-columns: minmax(280px, 1fr) minmax(140px, 180px) 110px auto 136px;
+    gap: 6px;
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  .hd-strategy .classic-toolbar > button,
+  .hd-strategy .hd-toolbar-utilities button {
+    font-size: 16px;
+    border-left-width: 8px;
+    border-right-width: 8px;
+  }
+  .hd-strategy .classic-profile {
+    display: none;
+  }
+  .hd-selected-stats {
+    gap: 12px;
+  }
+  .hd-selected-name strong {
+    font-size: 22px;
+  }
+}
+@media (max-height: 610px) {
+  .hd-strategy .classic-actions {
+    --council-icon-size: 32px;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hd-strategy .classic-actions button {
+    font-size: 16px;
+    gap: 4px;
+  }
+}

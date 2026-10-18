@@ -1,12 +1,22 @@
 # Roadmap
 
-The playable Anuire campaign, original strategic artwork/audio and one default build are implemented. No synthetic campaign ships in the application.
+The original milestone numbering is authoritative. Historical filenames/asset review IDs retain their old labels; they do not redefine this plan.
 
-1. **Finish classic presentation:** original font glyph metrics, verified realm/heraldry mapping, more faithful dialog interiors, advisor animation and remaining original screen states. Preserve all recovered assets for this work.
-2. **Resolve original-data behavior:** controlled isolated-VM New Game/save comparisons, selected-regent/difficulty transformations, diplomacy matrix axes/flags, movement codes, character tails and special NPC state.
-3. **Improve rule fidelity:** original economy/law/court/tribute, native unit balance/recruitment, trade-route creation, investiture and realm magic, with evidence and deterministic regressions.
-4. **Validate Windows delivery:** install Rust/Cargo and Windows build prerequisites, exercise the existing Tauri app with original assets/media, then address any native-specific findings.
-5. **Expand faction availability:** optional unrestricted selection where domain mechanics support it, including holding-only campaigns and appropriate objectives. Preserve original flags and special behavior.
-6. **Tactical battles and RPG adventures:** use recovered sprites, audio and animation resources with dedicated presentation/gameplay modules. Full strategic/Cerilia expansion follows verified regional data.
+| Milestone | Scope                                                     | Status                                                          |
+| --------- | --------------------------------------------------------- | --------------------------------------------------------------- |
+| M1A       | Anuire reconstruction, original data, playable foundation | Complete; includes all graphics/interface work completed so far |
+| M1B       | Original Birthright mechanics                             | Current                                                         |
+| M1C       | HD graphics, interface, 2.5D map                          | Later; further visual work is frozen                            |
+| M1D       | Advanced AI, balance, regent behavior                     | Later                                                           |
 
-1920×1080 is the main modern display target. Continue supporting 1366×768 and use 640×480 for original-layout comparisons. Do not add new gameplay systems as part of maintenance-only work.
+M1B proceeds in this order:
+
+M1B-1 is complete. M1B-2 implements domain rounds and holding competition; M1B-3 starts only after user review.
+
+1. **M1B-1 — Warfare, Occupation & Investiture:** invasion permission, military control, occupation, conquest rituals and seasonal consequences.
+2. **M1B-2 — Domain Actions & Holdings:** original actions, GB/RP costs, success rolls and the three action rounds.
+3. **M1B-3 — Economy & Trade Routes:** taxation, law, guilds, maintenance, roads, ports, court and trade.
+4. **M1B-4 — Realm Magic & Bloodlines:** sources, ley lines, spells, regency, bloodlines and character classes.
+5. **M1B-5 — Diplomacy, Units & Remaining Rules:** relations, vassals, tribute, treaties, units, recruitment and remaining RULES.TXT rules.
+
+Preserve the existing presentation and every recovered original asset. Maintain 1366×768 support. Synthetic Covenant Marches remains a development/regression fixture. Original selectability and future unrestricted availability remain separate; nonterritorial domains retain independent survival rules. Tactical battles and RPG adventures require later dedicated work.
