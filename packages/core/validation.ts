@@ -8,6 +8,9 @@ import {
 import { RULESETS } from './rules';
 import { magicProblem, magicQuote, bloodlineProblem } from './realm-magic';
 import { bloodlineStrength } from './bloodlines';
+import { realmRegentCandidates, rulingRegent } from './regents';
+import { commandRealm, fealtyProblem, playerControls } from './fealty';
+import { militaryProblem, movementCost, usesPCStrategy, monsterEncounter } from './military';
 import { tradeProblem, roadCost } from './trade';
 import { relation, sourcePotential } from './selectors';
 import { fortLevel, holdingCapacityLimit, provinceController } from './domains';
@@ -90,7 +93,11 @@ export function commandCost(
         actions: 1,
       };
     case 'Fortify':
-      return { gold: rules.fortCost + (p?.fort ?? 0), regency: 0, actions: 1 };
+      return {
+        gold: usesPCStrategy(scenario) ? 0 : rules.fortCost + (p?.fort ?? 0),
+        regency: 0,
+        actions: 1,
+      };
     case 'ProposeTreaty':
       if (command.kind === 'war') return { gold: 0, regency: 0, actions: 1 };
       return { gold: rules.diplomacyGold, regency: rules.diplomacyRegency, actions: 1 };
@@ -114,7 +121,19 @@ export function commandCost(
     case 'ResolveEvent':
       return { gold: command.choice === 'relief' ? 2 : 0, regency: 0, actions: 0 };
     case 'MoveArmy':
-      return { gold: 0, regency: 0, actions: usesPCDomainActions(scenario) ? 0 : 1 };
+      return {
+        gold:
+          usesPCStrategy(scenario) && state.armies.some((a) => a.id === command.armyId)
+            ? (movementCost(
+                state,
+                scenario,
+                state.armies.find((a) => a.id === command.armyId)!,
+                command.destination,
+              ) ?? 0)
+            : 0,
+        regency: 0,
+        actions: usesPCDomainActions(scenario) ? 0 : 1,
+      };
     case 'HoldAction':
       return { gold: 0, regency: 0, actions: 1 };
     case 'RespondDomainAction':
@@ -132,12 +151,22 @@ export function validateCommand(
   const parsed = commandSchema.safeParse(input);
   if (!parsed.success) return { code: 'INVALID_COMMAND' };
   const cmd = parsed.data;
+  if (cmd.type === 'SetCampaignOptions')
+    return actor === state.playerRealm ? null : { code: 'NOT_OWNER' };
+  if (cmd.type === 'AcknowledgeCampaignScene')
+    return actor === state.playerRealm && state.pendingGorgonScenes[0] === cmd.stage
+      ? null
+      : { code: 'INVALID_TARGET' };
+  if (cmd.type === 'ContinueCampaign')
+    return state.outcome === 'victory' && usesPCStrategy(scenario) && actor === state.playerRealm
+      ? null
+      : { code: 'GAME_OVER' };
   if (state.outcome !== 'ongoing') return { code: 'GAME_OVER' };
   const realm = state.realms.find((r) => r.id === actor);
   if (!realm || realm.eliminated || realm.controller === 'passive')
     return { code: 'UNKNOWN_REALM' };
   if (state.pendingDomainAction) {
-    if (cmd.type !== 'RespondDomainAction' || actor !== state.playerRealm)
+    if (cmd.type !== 'RespondDomainAction' || actor !== commandRealm(state as Campaign, scenario))
       return {
         code: 'PREREQUISITE',
         detail: 'Resolve the pending domain action and regency opposition first.',
@@ -154,10 +183,42 @@ export function validateCommand(
   )
     return { code: 'PREREQUISITE', detail: 'Wait for your domain action slot in this round.' };
   if (cmd.type === 'EndTurn')
-    return actor !== state.playerRealm ? { code: 'INVALID_TARGET' } : null;
+    return !playerControls(state, scenario, actor) ? { code: 'INVALID_TARGET' } : null;
+  if (cmd.type === 'SetFealtyRegency' || cmd.type === 'DonateFealtyRegency') {
+    if (!usesPCStrategy(scenario))
+      return { code: 'PREREQUISITE', detail: 'Fealty orders require the Anuire strategic rules.' };
+    const detail = fealtyProblem(state, actor, cmd);
+    if (detail) return { code: 'PREREQUISITE', detail };
+  }
   if (cmd.type !== 'ResolveEvent' && state.pendingEvents.some((e) => e.realmId === actor))
     return { code: 'PENDING_EVENT' };
-  const pcAction = usesPCDomainActions(scenario) && isDomainAction(cmd);
+  const pcAction = usesPCDomainActions(scenario) && isDomainAction(cmd, scenario);
+  if (usesPCStrategy(scenario)) {
+    const detail = militaryProblem(state, scenario, actor, cmd);
+    if (detail) return { code: 'PREREQUISITE', detail };
+  } else if (['DisbandUnit', 'SplitArmy', 'JoinArmies', 'BreakTreaty'].includes(cmd.type))
+    return {
+      code: 'PREREQUISITE',
+      detail: 'This scenario uses legacy military and diplomatic rules.',
+    };
+  if (
+    cmd.type === 'BreakTreaty' &&
+    !['pact', 'alliance', 'vassal'].includes(relation(state, actor, cmd.target)?.kind ?? '')
+  )
+    return { code: 'INVALID_TARGET', detail: 'No agreement with this domain can be renounced.' };
+  if (
+    cmd.type === 'BreakTreaty' &&
+    state.realms.some(
+      (r) =>
+        (r.id === actor || r.id === cmd.target) &&
+        r.lieutenantOf === (r.id === actor ? cmd.target : actor),
+    )
+  )
+    return {
+      code: 'PREREQUISITE',
+      detail:
+        'This domain has already joined as a lieutenant. Dismissal and restoration of transferred holdings are not implemented.',
+    };
   const pcMagic = usesPCDomainActions(scenario) && cmd.type === 'CastRealmSpell';
   if (cmd.type === 'IncreaseBloodline' || cmd.type === 'ForgeLeyLine') {
     if (!usesPCDomainActions(scenario))
@@ -198,6 +259,7 @@ export function validateCommand(
   if (
     cmd.type === 'ProposeTreaty' &&
     cmd.kind !== 'war' &&
+    !state.unrestrictedDiplomacy &&
     usesPCDomainActions(scenario) &&
     (realm.court ?? 1) === 0
   )
@@ -226,6 +288,8 @@ export function validateCommand(
         };
     } else if (cmd.type === 'ChangeTaxPolicy') {
       if (provinceController(p) !== actor || p.contested) return { code: 'NOT_OWNER' };
+    } else if (cmd.type === 'RecruitUnit' && usesPCStrategy(scenario)) {
+      // Recruitment checks include original holding-only and mercenary exceptions.
     } else if (cmd.type === 'RecruitUnit') {
       if (provinceController(p) !== actor || p.contested) return { code: 'NOT_OWNER' };
     } else if (p.owner !== actor || provinceController(p) !== actor || p.contested)
@@ -235,7 +299,20 @@ export function validateCommand(
     if (cmd.type === 'DevelopProvince' && p.level >= def.maxLevel) return { code: 'MAX_LEVEL' };
     if (cmd.type === 'Fortify' && p.fort >= Math.min(scenario.policy?.maxFort ?? 5, p.level))
       return { code: 'MAX_LEVEL' };
-    if (cmd.type === 'RecruitUnit') {
+    if (cmd.type === 'Fortify' && usesPCStrategy(scenario)) {
+      if (realm.treasury < 1) return { code: 'GOLD' };
+      if (
+        state.fortifications?.some(
+          (f) =>
+            f.realmId === actor &&
+            f.provinceId === p.id &&
+            f.kind === 'castle' &&
+            (f.constructionTarget ?? f.level) >= p.level,
+        )
+      )
+        return { code: 'MAX_LEVEL' };
+    }
+    if (cmd.type === 'RecruitUnit' && !usesPCStrategy(scenario)) {
       const unit = scenario.units.find((u) => u.id === cmd.unitType);
       if (!unit) return { code: 'INVALID_TARGET' };
       if (unit.recruitable === false) return { code: 'PREREQUISITE' };
@@ -252,7 +329,7 @@ export function validateCommand(
     }
     if (cmd.type === 'CastRealmSpell') {
       const spell = scenario.spells.find((s) => s.id === cmd.spellId);
-      const cls = scenario.realms.find((r) => r.id === actor)?.regent.class;
+      const cls = rulingRegent(scenario, actor, state)?.class;
       if (!spell || (spell.holding === 'source' ? cls !== 'wizard' : cls !== 'priest'))
         return { code: 'PREREQUISITE' };
       if (
@@ -286,7 +363,7 @@ export function validateCommand(
     const destination = state.provinces.find((p) => p.id === cmd.destination);
     if (!army || !destination) return { code: 'INVALID_TARGET' };
     if (army.realmId !== actor) return { code: 'NOT_OWNER' };
-    if (army.moved) return { code: 'ALREADY_MOVED' };
+    if (army.moved && !usesPCStrategy(scenario)) return { code: 'ALREADY_MOVED' };
     if (
       [army.provinceId, destination.id].some((id) =>
         state.effects.some(
@@ -303,10 +380,16 @@ export function validateCommand(
         detail: 'Warding prevents foreign units from entering or leaving the province.',
       };
     if (
+      !(
+        usesPCStrategy(scenario) &&
+        cmd.destination === army.provinceId &&
+        monsterEncounter(state, army)
+      ) &&
       !scenario.provinces.find((p) => p.id === army.provinceId)?.adjacent.includes(cmd.destination)
     )
       return { code: 'NOT_ADJACENT' };
     if (
+      !usesPCStrategy(scenario) &&
       ['mountains', 'heavy-mountains'].includes(
         scenario.provinces.find((p) => p.id === cmd.destination)?.terrain ?? '',
       ) &&
@@ -322,8 +405,11 @@ export function validateCommand(
       (a) =>
         a.provinceId === destination.id &&
         a.realmId !== actor &&
+        !mayInvade(state, actor, a.realmId) &&
         !(destination.owner === actor && a.realmId === destination.occupiedBy) &&
-        !['war', 'alliance'].includes(relation(state, actor, a.realmId)?.kind ?? 'peace'),
+        !['war', 'alliance', ...(usesPCStrategy(scenario) ? ['pact', 'vassal'] : [])].includes(
+          relation(state, actor, a.realmId)?.kind ?? 'peace',
+        ),
     );
     if (blocked) return { code: 'TREATY_REQUIRED' };
   }
@@ -438,6 +524,17 @@ export function validateScenario(input: unknown): Scenario {
     if (s.realms.some((r) => !s.regents!.some((g) => g.id === r.regent.id)))
       throw new Error('Unknown realm regent');
   }
+  for (const realm of s.realms) {
+    if (
+      realm.regentCandidates &&
+      (!realm.regentCandidates.includes(realm.regent.id) ||
+        new Set(realm.regentCandidates).size !== realm.regentCandidates.length ||
+        realm.regentCandidates.some(
+          (id) => id !== realm.regent.id && !s.regents?.some((g) => g.id === id),
+        ))
+    )
+      throw new Error('Invalid regent candidates');
+  }
   for (const p of s.initial.provinces)
     if (p.level > (s.provinces.find((d) => d.id === p.id)?.maxLevel ?? 0))
       throw new Error('Province over level cap');
@@ -466,8 +563,11 @@ type ReferenceState = Pick<
     | 'ports'
     | 'tributes'
     | 'leyLines'
+    | 'gorgonAllyRealmId'
   >;
 export function validateStateReferences(state: ReferenceState, s: Scenario): void {
+  if (state.gorgonAllyRealmId && !state.realms.some((r) => r.id === state.gorgonAllyRealmId))
+    throw new Error('Unknown Gorgon ally realm');
   unique(
     state.provinces.map((p) => p.id),
     'province state',
@@ -491,8 +591,11 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
   if (state.provinces.length !== s.provinces.length || state.realms.length !== s.realms.length)
     throw new Error('Incomplete world state');
   if (!s.realms.some((r) => r.id === state.playerRealm)) throw new Error('Unknown player');
-  for (const r of state.realms)
+  for (const r of state.realms) {
     if (!s.realms.some((d) => d.id === r.id)) throw new Error('Unknown realm');
+    if (r.regentId && !realmRegentCandidates(s, r.id).some((g) => g.id === r.regentId))
+      throw new Error('Invalid ruling regent');
+  }
   for (const p of state.provinces) {
     const def = s.provinces.find((d) => d.id === p.id);
     if (
@@ -552,15 +655,18 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
       !state.domainTurn ||
       state.domainTurn.order[state.domainTurn.cursor] !== p.actor ||
       p.index >= p.checks.length ||
-      !isDomainAction(p.command)
+      !isDomainAction(p.command, s)
     )
       throw new Error('Invalid pending domain action');
     if (
       p.stage === 'prepare' ||
-      (p.stage === 'counter' && p.actor !== state.playerRealm) ||
+      !playerControls(state, s, p.responseRealm ?? state.playerRealm) ||
+      (p.stage === 'counter' && p.actor !== (p.responseRealm ?? state.playerRealm)) ||
       (p.stage === 'defend' &&
-        (p.actor === state.playerRealm ||
-          !p.checks[p.index]!.opponents.includes(state.playerRealm)))
+        !p.checks[p.index]!.opponents.includes(p.responseRealm ?? state.playerRealm)) ||
+      p.responseQueue?.some(
+        (id) => !p.checks[p.index]!.opponents.includes(id) || !playerControls(state, s, id),
+      )
     )
       throw new Error('Invalid pending response role');
     for (const c of p.checks)
@@ -600,8 +706,28 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
         throw new Error(`Invalid ${label} reference`);
   }
   for (const c of state.characters ?? [])
-    if (c.regentId !== null && !s.regents?.some((r) => r.id === c.regentId))
+    if (
+      (c.regentId !== null && !s.regents?.some((r) => r.id === c.regentId)) ||
+      (c.role === 'regent' && c.regentId !== rulingRegent(s, c.realmId, state)?.id) ||
+      (c.role === 'lieutenant' &&
+        (c.originRealm
+          ? !state.realms.some((r) => r.id === c.originRealm && r.lieutenantOf === c.realmId)
+          : c.regentId === rulingRegent(s, c.realmId, state)?.id ||
+            !realmRegentCandidates(s, c.realmId).some((g) => g.id === c.regentId) ||
+            !s.initial.characters?.some(
+              (original) =>
+                original.id === c.id &&
+                original.realmId === c.realmId &&
+                original.regentId === c.regentId,
+            )))
+    )
       throw new Error('Invalid deployed regent reference');
+  for (const r of state.realms)
+    if (
+      r.lieutenantOf &&
+      (r.id === r.lieutenantOf || !state.realms.some((d) => d.id === r.lieutenantOf))
+    )
+      throw new Error('Invalid assimilated domain reference');
   if (
     !!s.initial.fortifications !== !!state.fortifications ||
     !!s.initial.characters !== !!state.characters
@@ -612,7 +738,12 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
     'treaty',
   );
   for (const t of state.treaties)
-    if (t.a === t.b || ![t.a, t.b].every((id) => s.realms.some((r) => r.id === id)))
+    if (
+      t.a === t.b ||
+      ![t.a, t.b].every((id) => s.realms.some((r) => r.id === id)) ||
+      (t.kind === 'vassal' && (!t.vassal || ![t.a, t.b].includes(t.vassal))) ||
+      (t.brokenBy && ![t.a, t.b].includes(t.brokenBy))
+    )
       throw new Error('Invalid treaty');
   unique(
     (state.warDeclarations ?? []).map((w) => `${w.actor}|${w.target}`),
@@ -716,7 +847,11 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
       !s.spells.some((d) => d.id === e.spellId) ||
       !state.provinces.some((p) => p.id === e.provinceId) ||
       !state.realms.some((r) => r.id === e.realmId) ||
-      (e.kind && !s.spells.some((d) => d.id === e.spellId && d.effect === e.kind))
+      (e.kind &&
+        !s.spells.some(
+          (d) => d.id === e.spellId && d.effect === (e.kind === 'antimagic' ? 'dispel' : e.kind),
+        )) ||
+      (e.kind === 'antimagic' && e.resistance === undefined)
     )
       throw new Error('Invalid spell effect');
   for (const e of state.pendingEvents)

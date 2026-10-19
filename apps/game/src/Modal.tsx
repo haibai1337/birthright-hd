@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type CSSProperties } from 'react';
 import { Icon } from '../../../packages/ui/Icon';
 export function Modal({
   title,
@@ -6,12 +6,14 @@ export function Modal({
   onClose,
   wide = false,
   className = '',
+  style,
 }: {
   title: string;
   children: React.ReactNode;
   onClose: () => void;
   wide?: boolean;
   className?: string;
+  style?: CSSProperties;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
   const close = useRef(onClose);
@@ -33,7 +35,12 @@ export function Modal({
     };
   }, []);
   return (
-    <dialog ref={ref} className={`modal ${wide ? 'wide' : ''} ${className}`} aria-label={title}>
+    <dialog
+      ref={ref}
+      className={`modal ${wide ? 'wide' : ''} ${className}`}
+      aria-label={title}
+      style={style}
+    >
       <div className="modal-header">
         <h2>{title}</h2>
         <button aria-label="Close dialog" onClick={onClose}>

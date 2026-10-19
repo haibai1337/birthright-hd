@@ -1,3 +1,4 @@
+import { rulingRegent } from './regents';
 import type { Campaign, Command, Scenario } from './schema';
 import { sourcePotential } from './selectors';
 import { randomInt } from './random';
@@ -5,6 +6,9 @@ import { compareIds } from './order';
 import { tradeProblem } from './trade';
 import { leyLineProblem, provincePath } from './ley-lines';
 import { hasMagicEffect } from './realm-magic';
+import { diplomacyTerms, diplomacyProblem, applyDiplomacy } from './diplomacy';
+import { usesPCStrategy } from './military';
+import { playerControls } from './fealty';
 
 export const usesPCDomainActions = (s: Scenario) => s.policy?.domainActions === 'pc';
 type Check = NonNullable<Campaign['pendingDomainAction']>['checks'][number];
@@ -14,7 +18,7 @@ export interface DomainQuote {
   actions: number;
   checks: Check[];
 }
-export const isDomainAction = (c: Command) =>
+export const isDomainAction = (c: Command, scenario?: Scenario) =>
   [
     'DevelopProvince',
     'ImproveHolding',
@@ -24,7 +28,8 @@ export const isDomainAction = (c: Command) =>
     'Agitate',
     'CreateTradeRoute',
     'ForgeLeyLine',
-  ].includes(c.type);
+  ].includes(c.type) ||
+  (c.type === 'ProposeTreaty' && c.kind !== 'war' && (!scenario || usesPCStrategy(scenario)));
 export function holdingInfluence(state: Campaign, provinceId: string, actor: string) {
   return Math.max(
     -1,
@@ -51,7 +56,16 @@ export function domainActionQuote(
           state.realms.some((r) => r.id === id && !r.eliminated && r.controller !== 'passive'),
       )
       .sort(compareIds);
-  if (cmd.type === 'DevelopProvince') {
+  if (cmd.type === 'ProposeTreaty' && cmd.kind !== 'war' && usesPCStrategy(scenario)) {
+    const terms = diplomacyTerms(state, scenario, actor, cmd);
+    q.gold = 1;
+    q.regency = 1 + (cmd.regencyBid ?? 0);
+    q.checks.push({
+      provinceId: terms.provinceId,
+      threshold: terms.threshold,
+      opponents: opponents([cmd.target]),
+    });
+  } else if (cmd.type === 'DevelopProvince') {
     const p = state.provinces.find((p) => p.id === cmd.provinceId);
     if (!p) return null;
     q.gold = p.level + 1;
@@ -100,7 +114,7 @@ export function domainActionQuote(
   } else if (cmd.type === 'Agitate') {
     const r = state.realms.find((r) => r.id === actor);
     if (
-      scenario.realms.find((r) => r.id === actor)?.regent.class === 'priest' &&
+      rulingRegent(scenario, actor, state)?.class === 'priest' &&
       r?.freeAgitateUsedTurn !== state.turn
     )
       q.actions = 0;
@@ -178,8 +192,10 @@ export function domainActionProblem(
   actor: string,
   cmd: Command,
 ): string | null {
-  if (!isDomainAction(cmd)) return null;
+  if (!isDomainAction(cmd, scenario)) return null;
   if (!usesPCDomainActions(scenario)) return 'This scenario uses legacy development rules.';
+  if (cmd.type === 'ProposeTreaty')
+    return usesPCStrategy(scenario) ? diplomacyProblem(state, scenario, actor, cmd) : null;
   if (cmd.type === 'ForgeLeyLine') return leyLineProblem(state, scenario, actor, cmd);
   if (cmd.type === 'CreateTradeRoute') return tradeProblem(state, scenario, actor, cmd);
   if (cmd.type === 'DevelopProvince') {
@@ -268,6 +284,7 @@ function resolveCheck(state: Campaign, scenario: Scenario) {
   const won = roll >= threshold;
   const p = state.provinces.find((p) => p.id === c.provinceId)!;
   const h = state.holdings.find((h) => h.id === c.holdingId);
+  if (cmd.type === 'ProposeTreaty') applyDiplomacy(state, scenario, pending.actor, cmd, won);
   if (won) {
     if (cmd.type === 'DevelopProvince') {
       p.contested = false;
@@ -355,6 +372,8 @@ function resolveCheck(state: Campaign, scenario: Scenario) {
   pending.opposition = [];
   pending.extraRegency = 0;
   pending.stage = 'prepare';
+  delete pending.responseRealm;
+  delete pending.responseQueue;
 }
 /** Source action-specific NPC response probabilities; no invented universal RP formula. */
 function npcOpposition(state: Campaign, actor: string, kind: Command['type'], threshold: number) {
@@ -363,7 +382,13 @@ function npcOpposition(state: Campaign, actor: string, kind: Command['type'], th
   if (threshold < 15 && r.regency > 0) {
     if (kind === 'Agitate' && randomInt(state, 0, 2) === 0) bid = randomInt(state, 0, 9);
     else if (
-      ['CreateHolding', 'ContestHolding', 'CreateTradeRoute', 'ForgeLeyLine'].includes(kind) &&
+      [
+        'CreateHolding',
+        'ContestHolding',
+        'CreateTradeRoute',
+        'ForgeLeyLine',
+        'ProposeTreaty',
+      ].includes(kind) &&
       randomInt(state, 0, 1) === 1
     )
       bid = randomInt(state, 0, Math.max(0, 19 - threshold));
@@ -379,7 +404,7 @@ export function continueDomainAction(state: Campaign, scenario: Scenario) {
     }
     const check = pending.checks[pending.index]!;
     if (pending.stage === 'prepare') {
-      for (const id of check.opponents.filter((id) => id !== state.playerRealm)) {
+      for (const id of check.opponents.filter((id) => !playerControls(state, scenario, id))) {
         const bid = npcOpposition(state, id, pending.command.type, check.threshold);
         if (bid) {
           state.realms.find((r) => r.id === id)!.regency -= bid;
@@ -391,12 +416,15 @@ export function continueDomainAction(state: Campaign, scenario: Scenario) {
           });
         }
       }
-      if (check.opponents.includes(state.playerRealm) && pending.actor !== state.playerRealm) {
+      pending.responseQueue = check.opponents.filter((id) => playerControls(state, scenario, id));
+      if (pending.responseQueue.length) {
         pending.stage = 'defend';
+        pending.responseRealm = pending.responseQueue.shift()!;
         return;
       }
-      if (pending.actor === state.playerRealm && pending.opposition.length) {
+      if (playerControls(state, scenario, pending.actor) && pending.opposition.length) {
         pending.stage = 'counter';
+        pending.responseRealm = pending.actor;
         return;
       }
     }
@@ -427,13 +455,15 @@ export function beginDomainAction(
 export function respondDomainAction(state: Campaign, scenario: Scenario, regency: number) {
   const pending = state.pendingDomainAction!;
   const check = pending.checks[pending.index]!;
-  state.realms.find((r) => r.id === state.playerRealm)!.regency -= regency;
+  const responder =
+    pending.responseRealm ?? (pending.stage === 'counter' ? pending.actor : state.playerRealm);
+  state.realms.find((r) => r.id === responder)!.regency -= regency;
   if (pending.stage === 'counter') {
     pending.extraRegency += regency;
     // A changed offensive bid reopens the original opposition cycle. Passing rolls.
     let modified = false;
     if (regency > 0)
-      for (const id of check.opponents.filter((id) => id !== state.playerRealm)) {
+      for (const id of check.opponents.filter((id) => !playerControls(state, scenario, id))) {
         const threshold =
           check.threshold +
           pending.opposition.reduce((n, o) => n + o.regency, 0) -
@@ -452,12 +482,20 @@ export function respondDomainAction(state: Campaign, scenario: Scenario, regency
           modified = true;
         }
       }
+    if (regency > 0) {
+      pending.responseQueue = check.opponents.filter((id) => playerControls(state, scenario, id));
+      if (pending.responseQueue.length) {
+        pending.stage = 'defend';
+        pending.responseRealm = pending.responseQueue.shift()!;
+        return;
+      }
+    }
     if (modified) return;
   } else {
-    const previous = pending.opposition.find((o) => o.realmId === state.playerRealm);
+    const previous = pending.opposition.find((o) => o.realmId === responder);
     if (previous) previous.regency += regency;
-    else pending.opposition.push({ realmId: state.playerRealm, regency });
-    log(state, 'domain.opposition', state.playerRealm, {
+    else pending.opposition.push({ realmId: responder, regency });
+    log(state, 'domain.opposition', responder, {
       province: check.provinceId,
       regency,
       target: pending.actor,
@@ -469,7 +507,12 @@ export function respondDomainAction(state: Campaign, scenario: Scenario, regency
       pending.opposition.reduce((n, o) => n + o.regency, 0) -
       pending.extraRegency;
     const probability = pending.command.type === 'Agitate' ? 30 : 60;
-    if (regency > 0 && threshold > 10 && randomInt(state, 0, 99) < probability) {
+    if (
+      !playerControls(state, scenario, pending.actor) &&
+      regency > 0 &&
+      threshold > 10 &&
+      randomInt(state, 0, 99) < probability
+    ) {
       const extra = Math.min(actor.regency, randomInt(state, 0, Math.max(0, threshold - 2)));
       actor.regency -= extra;
       pending.extraRegency += extra;
@@ -478,6 +521,18 @@ export function respondDomainAction(state: Campaign, scenario: Scenario, regency
         regency: extra,
       });
       if (extra > 0) return;
+    }
+    if (pending.responseQueue?.length) {
+      pending.responseRealm = pending.responseQueue.shift()!;
+      return;
+    }
+    if (
+      playerControls(state, scenario, pending.actor) &&
+      pending.opposition.some((o) => o.regency > 0)
+    ) {
+      pending.stage = 'counter';
+      pending.responseRealm = pending.actor;
+      return;
     }
   }
   resolveCheck(state, scenario);

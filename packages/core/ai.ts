@@ -1,3 +1,4 @@
+import { rulingRegent } from './regents';
 import type { Campaign, Command, Scenario } from './schema';
 import { armyPower, forecast, relation, treatyAcceptance } from './selectors';
 import { validateCommand } from './validation';
@@ -10,6 +11,8 @@ import { tradeProblem } from './trade';
 import { magicProblem, hasMagicEffect } from './realm-magic';
 import { availableSource, leyLineProblem } from './ley-lines';
 import { isTrueWizard } from './bloodlines';
+import { usesPCStrategy, recruitmentProblem, monsterEncounter } from './military';
+import { diplomacyProblem } from './diplomacy';
 export interface AIPlan {
   command: Command;
   reason:
@@ -33,6 +36,23 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
   const realm = state.realms.find((r) => r.id === actor);
   if (!realm || realm.eliminated || realm.controller === 'passive') return null;
   if (realm.actions === 0 && !state.pendingEvents.some((e) => e.realmId === actor)) return null;
+  if (realm.behavior === 'monsters') {
+    // Original owner/passability; deterministic bounded strategic movement replaces tactical AI.
+    for (const a of state.armies
+      .filter((a) => a.realmId === actor)
+      .sort((a, b) => compareIds(a.id, b.id))) {
+      const destinations = monsterEncounter(state, a)
+        ? [a.provinceId]
+        : state.provinces.some((p) => p.id === a.provinceId && p.occupiedBy === actor)
+          ? []
+          : [...(scenario.provinces.find((p) => p.id === a.provinceId)?.adjacent ?? [])].sort();
+      for (const destination of destinations) {
+        const command: Command = { type: 'MoveArmy', armyId: a.id, destination };
+        if (!validateCommand(state, scenario, actor, command)) return { command, reason: 'invade' };
+      }
+    }
+    return null;
+  }
   if (state.pendingEvents.some((e) => e.realmId === actor))
     candidates.push({
       command: { type: 'ResolveEvent', choice: realm.treasury >= 4 ? 'relief' : 'decline' },
@@ -54,7 +74,7 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
         });
     }
     if (
-      scenario.realms.find((r) => r.id === actor)?.regent.class === 'priest' &&
+      rulingRegent(scenario, actor, state)?.class === 'priest' &&
       realm.freeAgitateUsedTurn !== state.turn
     )
       for (const p of state.provinces.filter((p) => p.owner === actor && p.loyalty < 3))
@@ -141,7 +161,7 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
         }
       if (commands.length && candidates.some((c) => c.reason === 'magic')) break;
     }
-    if (isTrueWizard(scenario, actor)) {
+    if (isTrueWizard(scenario, actor, state)) {
       const sources = state.holdings
         .filter((h) => h.realmId === actor && h.type === 'source' && !h.contested && !h.destroyed)
         .sort((a, b) => b.level - a.level || compareIds(a.id, b.id));
@@ -166,7 +186,9 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
   const tradeOwners = new Set([
     actor,
     ...state.treaties
-      .filter((t) => t.kind === 'alliance' && (t.a === actor || t.b === actor))
+      .filter(
+        (t) => ['alliance', 'pact', 'vassal'].includes(t.kind) && (t.a === actor || t.b === actor),
+      )
       .map((t) => (t.a === actor ? t.b : t.a)),
   ]);
   if (
@@ -208,24 +230,43 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
               ?.adjacent.some((id) => state.provinces.find((n) => n.id === id)?.owner !== actor),
           ) || compareIds(a.id, b.id),
     );
-    for (const p of border)
+    for (const p of border) {
+      const native = usesPCStrategy(scenario)
+        ? scenario.units
+            .filter(
+              (u) =>
+                u.pc &&
+                u.recruitable &&
+                u.upkeep <= Math.max(1, budget.net) &&
+                !recruitmentProblem(state, scenario, actor, p.id, u.id),
+            )
+            .sort(
+              (a, b) =>
+                b.power / Math.max(1, b.cost + b.upkeep) -
+                  a.power / Math.max(1, a.cost + a.upkeep) || a.id.localeCompare(b.id),
+            )[0]
+        : undefined;
+      if (usesPCStrategy(scenario) && !native) continue;
       candidates.push({
         command: {
           type: 'RecruitUnit',
           provinceId: p.id,
           unitType:
+            native?.id ??
             scenario.units.find((u) => u.id === 'infantry' && u.recruitable !== false)?.id ??
             scenario.units.find((u) => u.recruitable !== false)?.id ??
             'infantry',
         },
         reason: 'recruit',
       });
+    }
   }
   if (state.turn % 3 === 0)
     for (const other of state.realms
       .filter((r) => r.id !== actor && !r.eliminated && r.controller !== 'passive')
       .sort((a, b) => compareIds(a.id, b.id))) {
       const current = relation(state, actor, other.id);
+      if (usesPCStrategy(scenario) && current?.kind === 'vassal') continue;
       const kind =
         current?.kind === 'war'
           ? 'peace'
@@ -234,7 +275,16 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
             : current?.kind === 'pact'
               ? 'alliance'
               : null;
-      if (kind && treatyAcceptance(state, scenario, actor, other.id, kind))
+      if (
+        kind &&
+        (usesPCStrategy(scenario)
+          ? !diplomacyProblem(state, scenario, actor, {
+              type: 'ProposeTreaty',
+              target: other.id,
+              kind,
+            })
+          : treatyAcceptance(state, scenario, actor, other.id, kind))
+      )
         candidates.push({
           command: { type: 'ProposeTreaty', target: other.id, kind },
           reason: 'diplomacy',
@@ -245,7 +295,7 @@ export function planNextAI(state: Campaign, scenario: Scenario, actor: string): 
   for (const h of state.holdings.filter((h) => h.realmId === actor && !h.destroyed))
     candidates.push({ command: { type: 'ImproveHolding', holdingId: h.id }, reason: 'holding' });
   if (usesPCDomainActions(scenario)) {
-    const cls = scenario.realms.find((r) => r.id === actor)?.regent.class;
+    const cls = rulingRegent(scenario, actor, state)?.class;
     const type =
       cls === 'wizard' ? 'source' : cls === 'priest' ? 'temple' : cls === 'rogue' ? 'guild' : 'law';
     const footholds = [

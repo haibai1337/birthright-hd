@@ -7,6 +7,8 @@ import { portIncomeRule } from '../core/ports';
 import { anuireMagicSchema } from './anuire-magic';
 import { PC_REALM_SPELLS, BLOOD_ABILITY_IDS } from '../core/realm-spells';
 import { provincePath } from '../core/ley-lines';
+import { PC_UNITS } from '../core/military';
+import { anuireStrategySchema } from './anuire-strategy';
 
 const provinceId = (n: number) => `anuire-province-${String(n).padStart(3, '0')}`;
 const realmId = (n: number) => `anuire-realm-${String(n).padStart(2, '0')}`;
@@ -43,11 +45,31 @@ export async function loadAnuireScenario(
   input: unknown,
   economyInput?: unknown,
   magicInput?: unknown,
+  strategyInput?: unknown,
 ): Promise<Scenario> {
   const data = validateAnuireResearch(input),
     c = data.campaign;
   const economy = economyInput === undefined ? undefined : anuireEconomySchema.parse(economyInput);
   const magic = magicInput === undefined ? undefined : anuireMagicSchema.parse(magicInput);
+  const strategy =
+    strategyInput === undefined ? undefined : anuireStrategySchema.parse(strategyInput);
+  if (
+    strategy &&
+    !data.sources.some((s) => s.id === 'cd-template' && s.sha256 === strategy.sourceSha256)
+  )
+    throw Error('Military sidecar differs from the original campaign template');
+  if (
+    strategy &&
+    (strategy.troops.length !== c.troops.filter((t) => t.kind === 'military').length ||
+      new Set(strategy.troops.map((t) => t.id)).size !== strategy.troops.length ||
+      strategy.troops.some(
+        (t) =>
+          !c.troops.some(
+            (u) => u.id === t.id && u.typeCode === t.nativeTypeCode && u.offset === t.offset,
+          ),
+      ))
+  )
+    throw Error('Invalid military source references');
   if (magic && !data.sources.some((s) => s.id === 'cd-template' && s.sha256 === magic.sourceSha256))
     throw Error('Magic sidecar does not match the original campaign template');
   if (
@@ -151,6 +173,8 @@ export async function loadAnuireScenario(
     };
   });
   const realms = c.realms.map((r) => {
+    // REALM::MONSTERS is original slot 23, localized as Chaos by this CD.
+    const monsters = !!strategy && r.index === 23;
     const regent = regents.find((g) => g.id === regentId(r.regentIndex))!;
     const rawRegent = c.regents.find((g) => g.index === r.regentIndex)!;
     const special = !classes[rawRegent.classCode];
@@ -161,6 +185,19 @@ export async function loadAnuireScenario(
         c.troops.some((u) => u.realmIndex === r.index);
     const identified = !!regent && !/^(unknown|unnamed|unresolved identity)$/i.test(regent.name);
     const active = r.exists === true && assets && identified;
+    // CHARSEL shows the pair (realm * 2 - 1, realm * 2), only with a deployed unit.
+    const candidates = c.regents
+      .filter(
+        (candidate) =>
+          [r.index * 2 - 1, r.index * 2].includes(candidate.index) &&
+          candidate.realmIndex === r.index &&
+          typeof candidate.unitIndex === 'number' &&
+          candidate.unitIndex > 0 &&
+          c.troops.some(
+            (unit) => unit.index === candidate.unitIndex && unit.realmIndex === r.index,
+          ),
+      )
+      .map((candidate) => candidate.id);
     return {
       id: r.id,
       name: r.name,
@@ -169,16 +206,23 @@ export async function loadAnuireScenario(
       sigil: 'crown' as const,
       motto: 'Experimental original template campaign',
       regent,
+      regentCandidates: candidates.includes(regent.id) ? candidates : [regent.id],
       originalPlayable: r.playable,
-      technicalPlayable: active && !special,
-      specialBehavior: special ? ('unresolved-original' as const) : ('standard' as const),
-      domainType: !active
-        ? ('inactive' as const)
-        : landed
-          ? ('territorial' as const)
-          : ('holding' as const),
-      controller: active ? ('ai' as const) : ('passive' as const),
-      survival: active ? ('domain-assets' as const) : ('persistent' as const),
+      technicalPlayable: !monsters && active && !special,
+      specialBehavior: monsters
+        ? ('monsters' as const)
+        : special
+          ? ('unresolved-original' as const)
+          : ('standard' as const),
+      domainType: monsters
+        ? ('special' as const)
+        : !active
+          ? ('inactive' as const)
+          : landed
+            ? ('territorial' as const)
+            : ('holding' as const),
+      controller: monsters || active ? ('ai' as const) : ('passive' as const),
+      survival: !monsters && active ? ('domain-assets' as const) : ('persistent' as const),
       original: r,
       provenance: {
         status: 'INFERRED' as const,
@@ -223,6 +267,10 @@ export async function loadAnuireScenario(
       },
     });
   }
+  if (strategy) {
+    for (const u of units) u.recruitable = false;
+    units.push(...structuredClone(PC_UNITS));
+  }
   const groups = new Map<string, Scenario['initial']['armies'][number]>();
   for (const u of c.troops.filter((u) => u.kind === 'military')) {
     const location = provinceId(u.effectiveProvinceIndex!),
@@ -239,23 +287,75 @@ export async function loadAnuireScenario(
       };
       groups.set(key, army);
     }
+    const native = strategy?.troops.find((t) => t.id === u.id);
     army.units.push({
       id: u.id,
       sourceId: u.id,
-      type: `original-troop-${u.typeCode}`,
+      type: native ? `pc-unit-${native.icon}` : `original-troop-${u.typeCode}`,
       strength: 100,
+      ...(native
+        ? {
+            nativeTypeCode: native.nativeTypeCode,
+            nativeIcon: native.icon,
+            blessed: native.blessed,
+          }
+        : {}),
     });
   }
   const notes = [
     'Experimental CD template campaign; not a certified initialized 1997 game.',
-    'Original faction flags preserved separately from technical support. CLASSIC selection uses eligible flags; future UNRESTRICTED scenarios may override availability without changing source records.',
-    'No imported runtime treaties: unresolved original matrices remain raw. Unnegotiated contacts use neutral HD behavior; treaties created during play use the existing simplified system.',
-    'Unit strength starts at 100%. Character deployments are retained separately and do not contribute invented combat power. Original variants use documented compatibility combat/upkeep; recruitment offers three M0 basic types.',
-    'Development ceiling 10 (or the observed level if higher), fort ceiling 15, generic AI, basic taxes/holding income and terrain defense are compatibility rules. Original excess holdings are grandfathered, not increased by validation.',
-    'Conquest creates occupation; sovereignty changes only through valid investiture. Defeat requires loss of all domain assets; placeholders are passive. Victory is domain power 600 or highest domain power after 80 seasons.',
+    'Original faction flags are preserved separately from technical support. CLASSIC uses eligible flags; the Campaign Access option exposes all supported landed realms in UNRESTRICTED mode without changing source records.',
+    'Original diplomatic matrices and directional reactions are recovered. Missing non-landed matrix directions use an explicit neutral fallback; historical raw status bytes remain preserved.',
+    strategy
+      ? 'All 234 military identities use recovered icon profiles and native payroll. Recruitment uses the original catalogue and province/population requirements. Strategic auto-battle remains an explicit approximation; characters remain separate deployments.'
+      : 'Unit strength starts at 100%. Original avatar IDs are preserved; load the private strategy sidecar for native unit profiles and recruitment. Characters remain separate deployments.',
+    'PC domain rounds, holdings, economy and realm magic are integrated. Original excess holdings are preserved. Combat, AI and unresolved retail edge cases retain documented compatibility policies.',
+    'Conquest creates occupation; sovereignty changes only through valid investiture. Defeat requires loss of all domain assets; inactive placeholders remain passive. Anuire strategy uses the configured empire-point target.',
     'Command/diplomacy attributes are unused zero sentinels. Unknown inventories, abilities, spells and original trade routes are not fabricated.',
-    'Special classless/monster rulers retain raw data and generic AI but remain technically unselectable pending dedicated gameplay support. Military source stacks are grouped by realm and province; individual source unit IDs remain intact.',
+    'MONSTERS is original record 23 (Chaos), a persistent nonselectable event controller. Other special rulers retain qualified AI behavior. Military source stacks are grouped by realm and province; source IDs remain intact.',
+    'With the verified strategy sidecar, new campaigns convert native treasury tenths to GB (150 = 15 GB). Saved balances are never rescaled. Landed vassals have separate controlled slots; non-landed fealty transfers holdings and recruits the verified regent as a lieutenant.',
   ];
+  const treaties: Scenario['initial']['treaties'] = [];
+  // Native declarations are [REALM_COUNT][LAND_REALM_COUNT], despite reversed block headers.
+  // All bytes remain in originalData; non-landed/non-landed pairs have no stored cell.
+  for (let a = 1; a < 52; a++)
+    for (let b = a + 1; b < 52; b++) {
+      const ab = b < 35 ? c.relationships.values[a * 35 + b] : undefined,
+        ba = a < 35 ? c.relationships.values[b * 35 + a] : undefined;
+      if (ab === undefined && ba === undefined) continue;
+      const ra = b < 35 ? c.reactions.values[a * 35 + b] : undefined,
+        rb = a < 35 ? c.reactions.values[b * 35 + a] : undefined;
+      const code = Math.max(ab ?? 2, ba ?? 2);
+      const kind =
+        code === 5
+          ? 'vassal'
+          : code === 4
+            ? 'alliance'
+            : code === 3
+              ? 'pact'
+              : code === 1
+                ? 'war'
+                : 'peace';
+      treaties.push({
+        a: realmId(a),
+        b: realmId(b),
+        kind,
+        opinion: Math.round(((ra ?? 50) + (rb ?? 50)) / 2) - 50,
+        since: 1,
+        ...(ra !== undefined ? { reactionA: ra } : {}),
+        ...(rb !== undefined ? { reactionB: rb } : {}),
+        ...(ab !== undefined ? { originalStatusA: ab } : {}),
+        ...(ba !== undefined ? { originalStatusB: ba } : {}),
+        ...(kind === 'vassal' ? { vassal: realmId(ab === 5 ? a : b) } : {}),
+      });
+    }
+  const conquestPoints: Record<string, number> = {};
+  for (const p of c.provinces) {
+    const realm = c.realms.find((r) => r.index === p.realmIndex)?.name;
+    if (["Gorgon's Crown", 'Spiderfell', 'Rhuobhe'].includes(realm ?? '')) conquestPoints[p.id] = 7;
+    else if (['Markazor', 'Mur-Kilad', 'Chimaeron', 'Thurazor'].includes(realm ?? ''))
+      conquestPoints[p.id] = 2;
+  }
   return validateScenario({
     id: 'anuire-template',
     revision: 1,
@@ -280,6 +380,7 @@ export async function loadAnuireScenario(
       holdingCapacity: 'preserve-template-excess',
       conquest: 'occupation',
       domainActions: 'pc',
+      ...(strategy ? { strategicRules: 'pc-1997' as const } : {}),
     },
     regions: [
       {
@@ -349,7 +450,7 @@ export async function loadAnuireScenario(
         contested: h.contested === true,
       })),
       armies: [...groups.values()],
-      treaties: [],
+      treaties,
       tradeRoutes: [],
       leyLines: (
         magic?.leyLines ??
@@ -409,7 +510,7 @@ export async function loadAnuireScenario(
       regency: 0,
       domains: c.realms.map((r) => ({
         id: r.id,
-        treasury: r.treasury,
+        treasury: strategy ? r.treasury / 10 : r.treasury,
         regency: r.regency,
         court: typeof r.court === 'number' ? r.court : 1,
       })),
@@ -425,6 +526,17 @@ export async function loadAnuireScenario(
           typeCode: u.typeCode,
         })),
     },
-    victory: { provinces: 124, turns: 80, metric: 'domain-power', target: 600 },
+    victory: strategy
+      ? {
+          provinces: 124,
+          turns: 80,
+          metric: 'empire-points',
+          target: 400,
+          conquestPoints,
+          excludedBonusRealms: c.realms
+            .filter((r) => ['Spiderfell', 'Rhuobhe', "Gorgon's Crown"].includes(r.name))
+            .map((r) => r.id),
+        }
+      : { provinces: 124, turns: 80, metric: 'domain-power', target: 600 },
   });
 }

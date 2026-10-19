@@ -1,3 +1,4 @@
+import { rulingRegent } from './regents';
 import type { Campaign, Scenario, Army, Report, TreatyKind } from './schema';
 import { RULESETS } from './rules';
 import { fortLevel, taxableBy } from './domains';
@@ -42,7 +43,7 @@ export function sourcePotential(scenario: Scenario, provinceId: string, level: n
   );
 }
 export function domainPower(state: Campaign, scenario: Scenario, realmId: string): number {
-  const classes = new Set(characterClasses(scenario, realmId).map((c) => c.type));
+  const classes = new Set(characterClasses(scenario, realmId, state).map((c) => c.type));
   const provinces = state.provinces
     .filter((p) => p.owner === realmId && !p.occupiedBy && !p.contested)
     .reduce((n, p) => n + p.level, 0);
@@ -111,7 +112,7 @@ export function forecast(state: Campaign, scenario: Scenario, realmId: string): 
       0,
     );
   const regency = Math.min(
-    scenario.realms.find((r) => r.id === realmId)?.regent.bloodline.strength ?? 0,
+    rulingRegent(scenario, realmId, state)?.bloodline.strength ?? 0,
     domainPower(state, scenario, realmId),
   );
   return {

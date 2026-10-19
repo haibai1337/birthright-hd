@@ -19,15 +19,21 @@ export function gameAssetsPlugin(root: string): Plugin {
           return;
         }
         const relative = decodeURIComponent((req.url ?? '').split('?')[0]!).replace(/^\/+/, ''),
-          file = ['anuire.research.json', 'economy.research.json', 'magic.research.json'].includes(
-            relative,
-          )
+          file = [
+            'anuire.research.json',
+            'economy.research.json',
+            'magic.research.json',
+            'strategy.research.json',
+          ].includes(relative)
             ? path.join(path.dirname(campaign), relative)
             : path.resolve(directory, relative || 'catalog.html');
         const base = await realpath(
-            ['anuire.research.json', 'economy.research.json', 'magic.research.json'].includes(
-              relative,
-            )
+            [
+              'anuire.research.json',
+              'economy.research.json',
+              'magic.research.json',
+              'strategy.research.json',
+            ].includes(relative)
               ? path.dirname(campaign)
               : directory,
           ),
@@ -115,6 +121,14 @@ export function gameAssetsPlugin(root: string): Plugin {
         await copyFile(
           path.join(path.dirname(campaign), 'economy.research.json'),
           path.join(out, 'original/economy.research.json'),
+        );
+      } catch (e) {
+        if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;
+      }
+      try {
+        await copyFile(
+          path.join(path.dirname(campaign), 'strategy.research.json'),
+          path.join(out, 'original/strategy.research.json'),
         );
       } catch (e) {
         if ((e as NodeJS.ErrnoException).code !== 'ENOENT') throw e;

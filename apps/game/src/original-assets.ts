@@ -11,15 +11,30 @@ export interface OriginalAssets {
   portraits: Record<string, string>;
   mapIcons: string[];
   troopIcons?: Record<number, string>;
-  music: { menu: string; campaign: string; campaignFallback: boolean; note: string };
-  effects: { click: string; order: string; error: string };
+  eventReports?: Record<string, string>;
+  music: {
+    menu: string;
+    campaign: string;
+    campaignFallback: boolean;
+    note: string;
+    battle?: string;
+    credits?: string;
+    victory?: string[];
+    defeat?: string[];
+    combatDefeat?: string;
+    finale?: string;
+    adventures?: Record<string, string>;
+  };
+  effects: { click: string; order: string; error: string; council?: string; magic?: string };
 }
 let pending: Promise<OriginalAssets> | undefined;
-export function assetUrl(pack: OriginalAssets | null, id: string) {
-  const file = pack?.assets[id]?.file;
-  return file && /^(?:images|audio)\/[A-Za-z0-9_./&!+ -]+$/.test(file) && !file.includes('..')
+export function assetFileUrl(file?: string) {
+  return file && /^(?:images|audio|text)\/[A-Za-z0-9_./&!+ -]+$/.test(file) && !file.includes('..')
     ? '/original/' + file
     : undefined;
+}
+export function assetUrl(pack: OriginalAssets | null, id: string) {
+  return assetFileUrl(pack?.assets[id]?.file);
 }
 export function loadOriginalAssets() {
   pending ??= fetch('/original/runtime.json')

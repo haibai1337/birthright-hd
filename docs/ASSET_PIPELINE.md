@@ -1,5 +1,7 @@
 # Asset pipeline
 
+The main menu (including the in-game menu) and campaign menu-button logo use the user-supplied birthright.net artwork at `apps/game/public/art/branding/birthright-logo-hd.png` (1377×768 RGBA, SHA-256 `b6d48cf3be87725847cffd43db899a4bb2334a8aa8890c26c08d0e9826ddd494`). The PNG is displayed unchanged with proportional containment and its existing transparency. The recovered `UI/MAINPANL.PCX` remains the lower shield/button artwork; its baked-in upper emblem is hidden only in presentation. Original files and `UI/MAINPANL.PCX` / `UI/LOGO.PCX` manifest mappings remain available.
+
 Original graphics and audio are standard game assets. One command prepares them, one runtime path serves them, and one build includes them. **All recovered original resources are retained**, including currently unused font sheets, alternate buttons, animations, battle sprites, voices and adventure illustrations.
 
 ```powershell
@@ -23,15 +25,20 @@ The app reads compact `runtime.json`; the browsable [local catalog](http://127.0
 | UI.RES                                     |              1,396 |
 | WAVE.RES                                   |              1,101 |
 | Loose music WAVs                           |                  9 |
-| **Total**                                  |          **9,501** |
+| Loose WAVE00/10/20/30/384/LOOP WAVs        |                194 |
+| **Total**                                  |          **9,695** |
 
-There are 2,384 indexed bitmap records, 6,007 FLC records and 1,110 WAV recordings. All have decoded previews/audio. All 44 frames of 13 UI animations are exported. Other sprite animations retain first-frame previews and their original source records; the decoder supports full sequences for later gameplay. Nine palettes and 246 AVA-to-portrait mappings are retained.
+There are 2,384 indexed bitmap records, 6,007 FLC records and 1,304 WAV recordings. All have decoded previews/audio. All 44 frames of 13 UI animations are exported. Other sprite animations retain first-frame previews and their original source records; the decoder supports full sequences for later gameplay. Nine palettes and 246 AVA-to-portrait mappings are retained.
 
 RES framing/LZSS uses the original read-only extractor. Embedded PCX members are ten-byte-header indexed bitmaps, not ordinary PCX files. COL palettes contain an eight-byte header and 768 full 8-bit RGB bytes. PNG export preserves native indices/dimensions; source map art is opaque and UI cutouts use index-zero transparency. FLC supports palette/copy/black/BRUN/LC/SS2 chunks. Eleven observed COPY chunks underdeclare by one or two bytes; the bounded decoder accepts only data fitting within the enclosing frame tail. WAV data is preserved byte-for-byte, including harmless trailing non-audio bytes.
 
-The original soundtrack has nine mono 22,050 Hz, 16-bit PCM recordings: 101, 103, 104, 106–111, totaling 22 minutes 11 seconds. No conversion is needed. The CUE has one MODE1/2352 data track and no CD audio tracks. Menu playback uses original 106; campaign playback explicitly labels original 101 as an alternate because realm cue 105 is absent. Battle cue 102 is also absent. A user-supplied `reference/original/MUSIC/105.WAV` is validated and selected on the next import. No unrelated replacement soundtrack is generated.
+The complete recovered audio catalog contains the nine Adventure recordings in `MUSIC/`, 1,101 `WAVE.RES` members and 194 streamed files from the six loose `WAVE*` directories. All 194 paths retain their original IDs and bytes; they contain 188 additional distinct hashes. Realm music is `WAVE00/105.WAV`; battle music is `WAVE00/102.WAV` (native 8-bit PCM). `WAVE00/103.WAV` is credits music and remains separate from the Adventure recording `MUSIC/103.WAV`. Victory, defeat, finale, voices and ambience remain registered for appropriate contexts. The single-track CUE is not an audio blocker. See [the investigation](AUDIO_ASSET_INVESTIGATION.md) and [full recovered file list](AUDIO_ASSET_APPENDIX.md).
 
-`audio.ts` activates after a user gesture, loops recordings, crossfades scene changes and persists music/effects volume, mute and track selection. UI click/error sounds are original 8010/8015. Browser and Tauri use same-origin media; the CSP allows those loads. Native WebView execution still needs verification on a machine with Rust/Cargo.
+`npm run assets:import` upgrades an existing catalog without re-decoding unchanged graphics and checks the loose audio hashes on every run. Existing imported recordings, including an optional previously supplied recording, are retained. Native PCM WAVs are copied byte-for-byte; extraction failures identify the actual source path and stop the import.
+
+`audio.ts` uses one looping HTML media element, starts or resumes after user interaction, and pauses for Music Off, master mute or zero music volume. Music enabled, music/effects volumes, master mute and explicit recording overrides persist independently. Options keeps every reversing control accessible, displays current playback/error state and uses the restored parchment/scroll and original leather assets. UI click/error sounds are 8010/8015; council feedback uses the short UI status cue 8020, and accepted realm-spell casts use general magic 2200. Long dialogue never starts merely from opening a council. Main-menu playback retains 106 as a presentation choice; its exact retail assignment is unverified.
+
+Recording choices saved before recovery of the realm cue migrate once to the original strategy default (105). Other preferences are preserved. Newly saved manual recording choices carry a soundtrack version and remain deliberate overrides on later loads.
 
 The classic presentation uses the original 420×480 shield menu, left regent/resource council, map, toolbar, portraits and materials. Modern targets are 1366×768 and **1920×1080**, with 640×480 as a reference. Font metrics, full heraldry assignment, exact dialog interiors and live advisor animation remain incomplete. Original/reference comparison captures can be regenerated with `scripts/capture-m1c-comparisons.mjs` using the saved local reference images and browser screenshots.
 
@@ -42,3 +49,7 @@ M1D-0B corrects six studies toward faithful textured raster restoration. The [lo
 M1D-1 uses a 400 px council at 1920×1080, 18–20 px primary text, enlarged cropped icons, nine-slice restored scrolls, and a persistent selected-province summary. Original textured action tiles, crown, generic council emblem and leather are chosen individually; the emblem is not assigned as a verified realm coat of arms. The map retains all 206 original geometries, with screen-size labels, collision suppression and cropped troop sprites. Simulation and other dialogs are unchanged. The reviewed capture is `test-results/m1d1-strategy-1920.png`.
 
 The primary laptop target is now **1366×768**, including **1366×650** of usable browser content. Its 332 px council preserves a vertical command list and moves End season to the bottom toolbar; redundant toolbar shortcuts collapse while all councils remain available. Portrait/details adapt to available height. Map labels follow actual zoom, and resizing preserves the camera instead of forcing Fit map. Laptop captures are `test-results/strategy-laptop-1366x768.png` and `test-results/strategy-laptop-1366x650.png`.
+
+## Campaign events integration — 2026-10-18
+
+The existing importer incrementally recovers loose INTRO/GORGON2–4.FLC and TEXT/GORGON1–3.TXT, retaining source paths, hashes, palettes, frame counts/timing and full PNG sequences. It also maps original campaign immediate report strings from STRDAT.DAT to event IDs with string offsets/provenance under private reference/assets/text. Runtime exposes these alongside existing audio; proprietary media/text remain private imported outputs. Complete prior recoveries are reused. See [implementation report](CAMPAIGN_EVENTS_IMPLEMENTATION_REPORT.md).

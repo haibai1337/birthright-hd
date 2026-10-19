@@ -20,7 +20,7 @@ function friendlyPassage(state: Campaign, realmId: string, provinceId: string) {
     p.owner === realmId ||
     state.treaties.some(
       (t) =>
-        t.kind === 'alliance' &&
+        ['alliance', 'pact', 'vassal'].includes(t.kind) &&
         ((t.a === realmId && t.b === p.owner) || (t.b === realmId && t.a === p.owner)),
     )
   );

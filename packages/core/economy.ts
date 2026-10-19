@@ -6,6 +6,44 @@ import { inspectTradeRoute, refreshTradeRoutes } from './trade';
 import { portIncome } from './ports';
 import { bloodlineStrength, characterClasses } from './bloodlines';
 import { hasMagicEffect } from './realm-magic';
+import { goldBars } from './military';
+import { settleFealtyRegency, playerControls } from './fealty';
+
+function nativeNPC(state: Campaign, scenario: Scenario, realmId: string) {
+  const index = Number(scenario.realms.find((r) => r.id === realmId)?.original?.index);
+  return (
+    state.realms.some((r) => r.id === realmId && r.controller === 'ai') &&
+    !playerControls(state, scenario, realmId) &&
+    Number.isInteger(index) &&
+    index >= 1 &&
+    index < 35
+  );
+}
+function npcPayrollExempt(state: Campaign, scenario: Scenario, realmId: string) {
+  return (
+    nativeNPC(state, scenario, realmId) &&
+    [17, 19, 23, 24, 26, 29].includes(
+      Number(scenario.realms.find((r) => r.id === realmId)?.original?.index),
+    )
+  );
+}
+/** DoNPCAdmin reserve conversions and tiny cash floor; never controlled by random-event switches. */
+export function npcTreasuryFallback(state: Campaign, scenario: Scenario, realmId: string) {
+  if (!nativeNPC(state, scenario, realmId)) return;
+  const r = state.realms.find((r) => r.id === realmId)!;
+  const convert = (reserve: number) => {
+    const nativeGold = Math.max(0, Math.trunc((r.regency - reserve) / 5));
+    r.treasury = goldBars(r.treasury + nativeGold / 10);
+    r.regency -= nativeGold * 5;
+  };
+  if (r.treasury < 1.5) {
+    if (r.regency > 25) convert(25);
+    if (r.treasury < 0.5) r.treasury = randomInt(state, 5, 9) / 10;
+  }
+  if (r.regency > 50 && r.treasury < 5) convert(50);
+  if (Number(scenario.realms.find((d) => d.id === realmId)?.original?.index) === 15) r.regency = 0;
+  delete r.bankrupt;
+}
 
 type Dice = readonly [number, number, number];
 // PROVTAX.C distributions, checked against CD RULES.TXT §§126/168 ranges.
@@ -284,6 +322,22 @@ function income(state: Campaign, scenario: Scenario, actual: boolean) {
 }
 function expenseReport(state: Campaign, scenario: Scenario, realmId: string): Report {
   const realm = state.realms.find((r) => r.id === realmId)!;
+  if (realm.behavior === 'monsters')
+    return {
+      realmId,
+      turn: state.turn,
+      taxes: 0,
+      holdings: 0,
+      trade: 0,
+      maintenance: 0,
+      military: 0,
+      regency: 0,
+      net: 0,
+      administration: 0,
+      forts: 0,
+      occupation: 0,
+      court: 0,
+    };
   const count =
     state.provinces.filter((p) => p.owner === realmId).length +
     state.holdings.filter(
@@ -297,6 +351,9 @@ function expenseReport(state: Campaign, scenario: Scenario, realmId: string): Re
     (p) => p.occupiedBy === realmId && p.owner !== realmId,
   ).length;
   const court = COURTS[realm.court ?? 1]!.gold;
+  const lieutenantSalaries = (state.characters ?? [])
+    .filter((c) => c.realmId === realmId && c.role === 'lieutenant')
+    .reduce((n, c) => n + (c.salary ?? 0), 0);
   return {
     realmId,
     turn: state.turn,
@@ -310,19 +367,27 @@ function expenseReport(state: Campaign, scenario: Scenario, realmId: string): Re
     forts,
     occupation,
     court,
-    maintenance: administration + forts + occupation + court,
-    military: militaryUpkeep(state, scenario, realmId),
+    lieutenantSalaries,
+    maintenance: administration + forts + occupation + court + lieutenantSalaries,
+    military: npcPayrollExempt(state, scenario, realmId)
+      ? 0
+      : militaryUpkeep(state, scenario, realmId),
     regency: 0,
     net: 0,
   };
 }
 function finishReport(state: Campaign, scenario: Scenario, r: Report) {
+  if (state.realms.some((realm) => realm.id === r.realmId && realm.behavior === 'monsters')) {
+    r.regency = 0;
+    r.net = 0;
+    return;
+  }
   r.regency = Math.min(
     bloodlineStrength(state, scenario, r.realmId),
     Math.max(0, 65535 - (state.realms.find((realm) => realm.id === r.realmId)?.regency ?? 0)),
     // Keep whole RP; round combined trade receipts once, not each port.
     domainPower(state, scenario, r.realmId) +
-      (characterClasses(scenario, r.realmId).some((c) => c.type === 'thief')
+      (characterClasses(scenario, r.realmId, state).some((c) => c.type === 'thief')
         ? Math.floor(r.trade)
         : 0),
   );
@@ -354,14 +419,14 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
   const collected = income(state, scenario, true);
   const reports = new Map<string, Report>();
   const active = [...state.realms]
-    .filter((r) => !r.eliminated && r.controller !== 'passive')
+    .filter((r) => !r.eliminated && r.controller !== 'passive' && r.behavior !== 'monsters')
     .sort((a, b) => a.id.localeCompare(b.id));
   for (const realm of active) {
     const r = Object.assign(expenseReport(state, scenario, realm.id), collected.get(realm.id));
     r.opening = realm.treasury;
     r.unpaid = 0;
     r.regencyUpkeep = 0;
-    realm.treasury += r.taxes + r.holdings + r.trade + r.lawClaims!;
+    realm.treasury = goldBars(realm.treasury + r.taxes + r.holdings + r.trade + r.lawClaims!);
     reports.set(realm.id, r);
   }
   // Reserve only already-owned gold; incoming tribute cannot fund a circular chain this season.
@@ -372,8 +437,8 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
     if (!a || !b || !reports.has(a.id) || !reports.has(b.id)) continue;
     const paid = Math.min(t.amount, available.get(a.id) ?? 0);
     available.set(a.id, available.get(a.id)! - paid);
-    a.treasury -= paid;
-    b.treasury += paid;
+    a.treasury = goldBars(a.treasury - paid);
+    b.treasury = goldBars(b.treasury + paid);
     reports.get(a.id)!.tributeOut! += paid;
     reports.get(b.id)!.tributeIn! += paid;
     if (paid < t.amount)
@@ -384,17 +449,19 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
         data: { target: b.id, amount: t.amount, paid },
       });
   }
+  const mutinies: Campaign['armies'] = [];
+  const monsters = state.realms.find((r) => r.behavior === 'monsters' && !r.eliminated);
   for (const realm of active) {
     const r = reports.get(realm.id)!;
     const pay = (amount: number) => {
       const paid = Math.min(amount, realm.treasury);
-      realm.treasury -= paid;
+      realm.treasury = goldBars(realm.treasury - paid);
       r.unpaid! += amount - paid;
       return paid;
     };
     r.administration = pay(r.administration!);
     r.occupation = pay(r.occupation!);
-    if (r.unpaid! > 0) {
+    if (r.unpaid! > 0 && !nativeNPC(state, scenario, realm.id)) {
       realm.bankrupt = true;
       state.log.push({
         code: 'economy.bankrupt',
@@ -407,6 +474,7 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
     while ((realm.court ?? 1) > 0 && COURTS[realm.court ?? 1]!.gold > realm.treasury)
       realm.court = (realm.court ?? 1) - 1;
     r.court = pay(COURTS[realm.court ?? 1]!.gold);
+    r.lieutenantSalaries = pay(r.lieutenantSalaries ?? 0);
     r.forts = 0;
     if (state.fortifications) {
       for (const f of state.fortifications
@@ -434,7 +502,9 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
       .filter((a) => a.realmId === realm.id)
       .sort((a, b) => a.id.localeCompare(b.id))) {
       a.units = a.units.filter((u) => {
-        const cost = scenario.units.find((d) => d.id === u.type)?.upkeep ?? 0;
+        const cost = npcPayrollExempt(state, scenario, realm.id)
+          ? 0
+          : (scenario.units.find((d) => d.id === u.type)?.upkeep ?? 0);
         if (realm.treasury >= cost) {
           r.military += pay(cost);
           return true;
@@ -445,18 +515,34 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
           return true;
         }
         r.unpaid! += cost;
+        const mercenary = scenario.units.find((d) => d.id === u.type)?.pc?.mercenary;
+        if (mercenary && monsters) {
+          let band = mutinies.find((b) => b.provinceId === a.provinceId && b.units.length < 15);
+          if (!band) {
+            band = {
+              id: `army-${state.nextId++}`,
+              realmId: monsters.id,
+              provinceId: a.provinceId,
+              units: [],
+              moved: false,
+            };
+            mutinies.push(band);
+          }
+          band.units.push(u);
+        }
         state.log.push({
-          code: 'unit.unpaid',
+          code: mercenary && monsters ? 'unit.mutinied' : 'unit.unpaid',
           turn: state.turn,
           realmId: realm.id,
-          data: { unit: u.type, province: a.provinceId },
+          data: { unit: u.type, province: a.provinceId, target: monsters?.id ?? '' },
         });
         return false;
       });
     }
-    r.maintenance = r.administration! + r.forts + r.occupation! + r.court;
+    r.maintenance = r.administration! + r.forts + r.occupation! + r.court + r.lieutenantSalaries;
     finishReport(state, scenario, r);
     realm.regency += r.regency;
+    npcTreasuryFallback(state, scenario, realm.id);
     r.closing = realm.treasury;
     r.net = r.closing - r.opening!;
     state.reports.push(r);
@@ -480,7 +566,8 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
       },
     });
   }
-  state.armies = state.armies.filter((a) => a.units.length > 0);
+  settleFealtyRegency(state, reports);
+  state.armies = [...state.armies.filter((a) => a.units.length > 0), ...mutinies];
   for (const p of state.provinces) {
     // CD §128: consequences at the end of the following domain turn.
     p.loyalty = Math.max(0, Math.min(4, p.loyalty + (p.pendingTaxLoyalty ?? 0)));

@@ -22,6 +22,9 @@ test('selection remains safe while original map artwork is still loading', async
     );
     await page.getByRole('button', { name: 'New game', exact: true }).click();
     await page.getByRole('button', { name: /Begin your reign/ }).click();
+    await page.getByTestId('original-council')
+      .getByRole('button', { name: 'Done — return to realm management' })
+      .click();
     await expect(page.getByTestId('strategic-map').locator('canvas')).toBeVisible();
     await page.getByLabel('Inspect province', { exact: true }).selectOption('anuire-province-003');
     await expect(
@@ -65,7 +68,7 @@ test('every recovered music recording and representative effects decode in Chrom
     }
     return results;
   });
-  expect(decoded).toHaveLength(12);
+  expect(decoded).toHaveLength(15);
   for (const track of decoded) {
     expect(track.duration).toBeGreaterThan(0);
     expect(Math.abs(track.duration - track.expected!)).toBeLessThan(0.1);
@@ -96,13 +99,16 @@ test('original audio obeys interaction, scene transitions, volume, mute and pers
   await page.getByLabel('Music volume', { exact: true }).press('Home');
   await page.getByLabel('Music volume', { exact: true }).press('ArrowRight');
   await expect.poll(() => music.evaluate((a: HTMLAudioElement) => a.volume)).toBeCloseTo(0.01, 2);
-  await page.getByLabel('Mute all audio').check();
+  await page.getByRole('switch', { name: 'Mute all audio' }).click();
   await expect.poll(() => music.evaluate((a: HTMLAudioElement) => a.volume)).toBe(0);
-  await page.getByLabel('Mute all audio').uncheck();
+  await page.getByRole('switch', { name: 'Mute all audio' }).click();
   await page.getByRole('button', { name: 'Close dialog' }).click();
   await page.getByRole('button', { name: 'New game', exact: true }).click();
   await page.getByRole('button', { name: /Begin your reign/ }).click();
-  await expect(music).toHaveAttribute('src', /101\.WAV$/);
+  await page.getByTestId('original-council')
+    .getByRole('button', { name: 'Done — return to realm management' })
+    .click();
+  await expect(music).toHaveAttribute('src', /WAVE00\/105\.WAV$/);
   await expect
     .poll(() => music.evaluate((a: HTMLAudioElement) => a.currentTime))
     .toBeGreaterThan(0);
@@ -137,6 +143,9 @@ for (const [width, height] of [
     await page.getByRole('button', { name: 'New game', exact: true }).click();
     await page.getByLabel('Choose Anuire regent').selectOption('anuire-realm-27');
     await page.getByRole('button', { name: /Begin your reign/ }).click();
+    await page.getByTestId('original-council')
+      .getByRole('button', { name: 'Done — return to realm management' })
+      .click();
     const map = page.getByTestId('strategic-map');
     await expect(map).toHaveAttribute('data-original-map', 'aligned-1-to-1');
     await expect(map).toHaveAttribute('data-scene-builds', '1', { timeout: 20000 });

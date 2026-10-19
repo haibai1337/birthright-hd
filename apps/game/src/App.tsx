@@ -9,17 +9,25 @@ import {
   type Scenario,
   realmSelectable,
   domainFocus,
+  commandRealm,
+  DEFAULT_CAMPAIGN_EVENTS,
+  type CampaignEventOptions,
+  type CampaignDifficulty,
+  type SelectionMode,
 } from '../../../packages/core';
 import { loadAnuireScenario } from '../../../packages/world-data/anuire-scenario';
 import { type MapOverlay } from '../../../packages/rendering/types';
-import { Herald } from '../../../packages/ui/Herald';
 import { Icon } from '../../../packages/ui/Icon';
 import { errors, logText, playerJournal, season } from '../../../packages/ui/strings';
 import { type Panel } from './Sidebar';
 import { Modal } from './Modal';
 import { loadOriginalAssets, assetUrl, type OriginalAssets } from './original-assets';
 import { originalAudio } from './audio';
-import { ClassicCampaign, ClassicMainMenu, OriginalImage } from './ClassicChrome';
+import { OptionsPanel } from './OptionsPanel';
+import { GorgonScene } from './GorgonScene';
+import { NewGamePanel } from './NewGamePanel';
+import { strategicMaterials } from './StrategicArt';
+import { ClassicCampaign, ClassicMainMenu } from './ClassicChrome';
 import './classic.css';
 import './strategy-hd.css';
 import {
@@ -58,10 +66,12 @@ export function App() {
       .then(async (data) => {
         const response = await fetch('/original/economy.research.json');
         const magic = await fetch('/original/magic.research.json');
+        const strategy = await fetch('/original/strategy.research.json');
         return loadAnuireScenario(
           data,
           response.ok ? await response.json() : undefined,
           magic.ok ? await magic.json() : undefined,
+          strategy.ok ? await strategy.json() : undefined,
         );
       })
       .then((data) => {
@@ -129,6 +139,7 @@ export function App() {
 }
 function Game({ original, scenario }: { original: OriginalAssets; scenario: Scenario }) {
   const [state, setState] = useState<Campaign | null>(null);
+  const [councilOpen, setCouncilOpen] = useState(false);
   const [dialog, setDialog] = useState<Dialog>(null);
   const [selected, setSelected] = useState(scenario.provinces[0]!.id);
   const [panel, setPanel] = useState<Panel>('province');
@@ -139,9 +150,42 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
   const [realmId, setRealmId] = useState(
     scenario.realms.find((r) => realmSelectable(scenario, r.id))!.id,
   );
+  const [regentId, setRegentId] = useState(
+    scenario.realms.find((r) => r.id === realmId)!.regent.id,
+  );
+  function chooseRealm(id: string) {
+    if (id === realmId) return;
+    setRealmId(id);
+    setRegentId(scenario.realms.find((r) => r.id === id)!.regent.id);
+  }
   const [seed, setSeed] = useState('1997');
+  const [victoryTarget, setVictoryTarget] = useState<300 | 400 | 500>(400);
   const [ruleset, setRuleset] = useState<RulesetId>('ENHANCED');
+  const [eventDefaults, setEventDefaults] = useState<CampaignEventOptions>({
+    ...DEFAULT_CAMPAIGN_EVENTS,
+  });
+  const [difficulty, setDifficulty] = useState<CampaignDifficulty>('medium');
+  const [selectionDefaults, setSelectionDefaults] = useState<SelectionMode>(
+    scenario.selection?.mode ?? 'CLASSIC',
+  );
+  const [diplomacyDefaults, setDiplomacyDefaults] = useState(false);
+  const selectionMode = state ? (state.selectionMode ?? scenario.selection?.mode ?? 'CLASSIC') : selectionDefaults;
+  const unrestrictedDiplomacy = state?.unrestrictedDiplomacy ?? diplomacyDefaults;
+  useEffect(() => {
+    if (state) {
+      setSelectionDefaults(state.selectionMode ?? scenario.selection?.mode ?? 'CLASSIC');
+      setDiplomacyDefaults(state.unrestrictedDiplomacy);
+    }
+  }, [state?.selectionMode, state?.unrestrictedDiplomacy]);
+  useEffect(() => {
+    if (!realmSelectable(scenario, realmId, selectionMode))
+      chooseRealm(scenario.realms.find((r) => realmSelectable(scenario, r.id, selectionMode))!.id);
+  }, [selectionMode, realmId, scenario]);
   const file = useRef<HTMLInputElement>(null);
+  const actingRealm = state ? commandRealm(state, scenario) : null;
+  useEffect(() => {
+    if (state && actingRealm) setSelected(domainFocus(state, actingRealm));
+  }, [actingRealm]);
   const notice = (text: string, error = false) => {
     setMessage(text);
     setIsError(error);
@@ -152,8 +196,11 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
   useEffect(() => {
     const interaction = (e: Event) => {
       originalAudio.unlock();
-      if (e.type === 'pointerdown' && e.target instanceof Element && e.target.closest('button'))
-        originalAudio.effect('click');
+      if (e.type === 'pointerdown' && e.target instanceof Element) {
+        const button = e.target.closest('button');
+        if (button)
+          originalAudio.effect(/^Open .+ council$/.test(button.title) ? 'council' : 'click');
+      }
     };
     window.addEventListener('pointerdown', interaction, true);
     window.addEventListener('keydown', interaction, true);
@@ -180,7 +227,9 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
   }, [original]);
   useEffect(() => {
     try {
-      setSettings(loadSettings());
+      const restored = loadSettings();
+      setSettings(restored);
+      persistSettings(restored);
     } catch (e) {
       notice(
         `Settings could not be restored: ${e instanceof Error ? e.message : 'storage error'}`,
@@ -207,20 +256,32 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
   }
   function issue(command: Command) {
     if (!state) return;
-    const result = applyCommand(state, scenario, state.playerRealm, command);
+    const result = applyCommand(
+      state,
+      scenario,
+      command.type === 'ContinueCampaign' ||
+        command.type === 'SetCampaignOptions' ||
+        command.type === 'AcknowledgeCampaignScene'
+        ? state.playerRealm
+        : commandRealm(state, scenario),
+      command,
+    );
     if (!result.ok) {
       originalAudio.effect('error');
       notice(result.error.detail ?? errors[result.error.code], true);
       return;
     }
     accept(result.state);
+    if (result.state.turn > state.turn && result.state.outcome === 'ongoing')
+      setCouncilOpen(true);
+    if (command.type === 'CastRealmSpell') originalAudio.effect('magic');
     if (command.type === 'MoveArmy') {
       const army = result.state.armies.find((a) => a.id === command.armyId);
       if (army) setSelected(army.provinceId);
     }
     if (command.type !== 'EndTurn') {
       const last = playerJournal(result.state).at(-1);
-      if (last) notice(logText(last, scenario));
+      if (last) notice(logText(last, scenario, original.eventReports));
     }
   }
   function start() {
@@ -229,8 +290,20 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
       notice('Enter a whole campaign seed from 0 to 4294967295.', true);
       return;
     }
-    const next = createCampaign(scenario, realmId, value, ruleset);
+    const next = createCampaign(
+      scenario,
+      realmId,
+      value,
+      ruleset,
+      selectionMode,
+      victoryTarget,
+      regentId,
+      difficulty,
+      eventDefaults,
+      unrestrictedDiplomacy,
+    );
     accept(next);
+    setCouncilOpen(true);
     setSelected(domainFocus(next));
     setPanel('province');
     setDialog(null);
@@ -239,6 +312,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     try {
       const next = loadCampaign(scenario, automatic);
       setState(next);
+      setCouncilOpen(false);
       setSelected(domainFocus(next));
       setDialog(null);
       notice('Your campaign has been restored.');
@@ -256,6 +330,9 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     }
   }
   function changeSettings(next: Settings) {
+    // Apply within the user gesture, including resume after an autoplay rejection.
+    originalAudio.configure(original, next, state ? 'campaign' : 'menu');
+    originalAudio.unlock();
     setSettings(next);
     try {
       persistSettings(next);
@@ -282,7 +359,9 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
       ) : (
         <ClassicCampaign
           pack={original}
-          state={state}
+          state={
+            actingRealm === state.playerRealm ? state : { ...state, playerRealm: actingRealm! }
+          }
           scenario={scenario}
           selected={selected}
           panel={panel}
@@ -291,11 +370,15 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
           onSelect={setSelected}
           onPanel={setPanel}
           onOverlay={setOverlay}
+          councilOpen={councilOpen}
+          onCouncilOpen={() => setCouncilOpen(true)}
+          onCouncilClose={() => setCouncilOpen(false)}
           issue={issue}
           save={save}
           open={setDialog}
           mainMenu={() => {
             setState(null);
+            setCouncilOpen(false);
             setDialog(null);
           }}
         />
@@ -308,6 +391,19 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
           </button>
         </div>
       )}
+      {state?.eventOptions.gorgonPlot &&
+        state.pendingGorgonScenes[0] &&
+        !dialog &&
+        !councilOpen && (
+        <GorgonScene
+          key={state.pendingGorgonScenes[0]}
+          stage={state.pendingGorgonScenes[0]}
+          pack={original}
+          onContinue={() =>
+            issue({ type: 'AcknowledgeCampaignScene', stage: state.pendingGorgonScenes[0]! })
+          }
+        />
+      )}
       {dialog === 'menu' && (
         <ClassicMainMenu
           pack={original}
@@ -319,6 +415,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
               setDialog(null);
             } else if (action === 'quit') {
               setState(null);
+              setCouncilOpen(false);
               setDialog(null);
             } else setDialog(action);
           }}
@@ -330,110 +427,37 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
             {
               new: 'Choose your birthright',
               load: 'Restore your reign',
-              settings: 'Settings',
+              settings: 'Options',
               help: 'The regent’s field guide',
               menu: 'The royal council',
             }[dialog]
           }
           onClose={() => setDialog(null)}
           wide={dialog === 'new'}
+          className={
+            dialog === 'settings' ? 'options-dialog' : dialog === 'new' ? 'new-game-dialog' : ''
+          }
+          style={
+            dialog === 'settings' || dialog === 'new' ? strategicMaterials(original) : undefined
+          }
         >
           {dialog === 'new' && (
-            <>
-              <div className="campaign-intro">
-                <span className="eyebrow">ANUIRE · EXPERIMENTAL ORIGINAL TEMPLATE</span>
-                <p>
-                  {`${scenario.provinces.length} original provinces. Choose an eligible regent; active territorial and holding domains use AI. Starting records are original; gameplay uses documented compatibility rules.`}
-                </p>
-              </div>
-              {scenario.fingerprint && (
-                <label>
-                  Choose Anuire regent
-                  <select
-                    aria-label="Choose Anuire regent"
-                    value={realmId}
-                    onChange={(e) => setRealmId(e.target.value)}
-                  >
-                    {scenario.realms
-                      .filter((r) => realmSelectable(scenario, r.id))
-                      .map((r) => (
-                        <option key={r.id} value={r.id}>
-                          {r.name} · {r.regent.name}
-                        </option>
-                      ))}
-                  </select>
-                </label>
-              )}
-              <div className="realm-choices">
-                {scenario.realms
-                  .filter((r) => realmSelectable(scenario, r.id) && r.id === realmId)
-                  .map((r) => (
-                    <button
-                      key={r.id}
-                      className={`realm-choice ${realmId === r.id ? 'selected' : ''}`}
-                      aria-pressed={realmId === r.id}
-                      onClick={() => setRealmId(r.id)}
-                    >
-                      {original.portraits[String(r.regent.original?.avatarId)] ? (
-                        <OriginalImage
-                          pack={original}
-                          id={original.portraits[String(r.regent.original?.avatarId)]!}
-                          alt={r.regent.name}
-                          className="regent-portrait"
-                        />
-                      ) : (
-                        <Herald realm={r} size={62} />
-                      )}
-                      <h3>{r.name}</h3>
-                      <p>{r.regent.name}</p>
-                      <small>
-                        {r.regent.class} · Bloodline {r.regent.bloodline.strength}
-                      </small>
-                      <em>“{r.motto}”</em>
-                    </button>
-                  ))}
-              </div>
-              <div className="new-game-options">
-                <label>
-                  Ruleset
-                  <select
-                    aria-label="Ruleset"
-                    value={ruleset}
-                    onChange={(e) => setRuleset(e.target.value as RulesetId)}
-                  >
-                    <option value="ENHANCED">Enhanced · persistent wars</option>
-                    <option value="CLASSIC">Classic reconstruction · seasonal wars</option>
-                  </select>
-                </label>
-                <label>
-                  Campaign seed
-                  <input
-                    value={seed}
-                    onChange={(e) => setSeed(e.target.value)}
-                    inputMode="numeric"
-                    aria-label="Campaign seed"
-                  />
-                </label>
-              </div>
-              <p className="council-note">
-                {
-                  'Original template selection flags apply. Both rule profiles are experimental. Reach domain power 600 or lead after 80 seasons; holding-only domains survive without provinces.'
-                }
-              </p>
-              {scenario.fingerprint && (
-                <details className="compatibility-details">
-                  <summary>Experimental campaign policies</summary>
-                  <ul>
-                    {scenario.compatibilityNotes?.map((note) => (
-                      <li key={note}>{note}</li>
-                    ))}
-                  </ul>
-                </details>
-              )}
-              <button className="primary full" onClick={start}>
-                Begin your reign <Icon name="arrow" />
-              </button>
-            </>
+            <NewGamePanel
+              scenario={scenario}
+              pack={original}
+              realmId={realmId}
+              onRealm={chooseRealm}
+              regentId={regentId}
+              onRegent={setRegentId}
+              ruleset={ruleset}
+              onRuleset={setRuleset}
+              seed={seed}
+              onSeed={setSeed}
+              victoryTarget={victoryTarget}
+              onVictoryTarget={setVictoryTarget}
+              onStart={start}
+              selectionMode={selectionMode}
+            />
           )}
           {dialog === 'load' && (
             <>
@@ -468,6 +492,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
                     .then((text) => {
                       const next = deserializeCampaign(text, scenario);
                       setState(next);
+                      setCouncilOpen(false);
                       setSelected(domainFocus(next));
                       setDialog(null);
                       notice('Campaign file imported.');
@@ -484,117 +509,37 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
             </>
           )}
           {dialog === 'settings' && (
-            <>
-              <p>Preferences apply immediately and are stored locally.</p>
-              {(
-                [
-                  {
-                    key: 'labels',
-                    label: 'Province labels',
-                    description: 'Show province names and source potential on the map.',
-                  },
-                  {
-                    key: 'autosave',
-                    label: 'Automatic saves',
-                    description: 'Save after every accepted player order.',
-                  },
-                  {
-                    key: 'largeText',
-                    label: 'Larger interface text',
-                    description: 'Increase panel text for comfortable reading.',
-                  },
-                ] as const
-              ).map((s) => (
-                <label className="setting" key={s.key}>
-                  <span>
-                    <strong>{s.label}</strong>
-                    <small>{s.description}</small>
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={settings[s.key]}
-                    onChange={(e) => changeSettings({ ...settings, [s.key]: e.target.checked })}
-                  />
-                </label>
-              ))}
-              <div className="audio-settings">
-                <h3>Original soundtrack</h3>
-                <p>Recovered original recordings. Playback starts after a click or key press.</p>
-                {original.music.campaignFallback && (
-                  <p className="audio-cue-note">
-                    Original realm cue 105 is missing from this disc image. Campaign playback uses
-                    recovered track 101 as an explicitly selected alternate.
-                  </p>
-                )}
-                <button onClick={() => originalAudio.unlock()}>Enable music</button>
-                <label className="setting">
-                  <span>Music volume</span>
-                  <input
-                    aria-label="Music volume"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={settings.musicVolume}
-                    onChange={(e) =>
-                      changeSettings({ ...settings, musicVolume: Number(e.target.value) })
-                    }
-                  />
-                </label>
-                <label className="setting">
-                  <span>Effects volume</span>
-                  <input
-                    aria-label="Effects volume"
-                    type="range"
-                    min="0"
-                    max="1"
-                    step="0.01"
-                    value={settings.effectsVolume}
-                    onChange={(e) =>
-                      changeSettings({ ...settings, effectsVolume: Number(e.target.value) })
-                    }
-                  />
-                </label>
-                <label className="setting">
-                  <span>Mute all audio</span>
-                  <input
-                    type="checkbox"
-                    checked={settings.muted}
-                    onChange={(e) => changeSettings({ ...settings, muted: e.target.checked })}
-                  />
-                </label>
-                {original && (
-                  <label className="select-label">
-                    Campaign soundtrack
-                    <select
-                      aria-label="Campaign soundtrack"
-                      value={settings.campaignTrack}
-                      onChange={(e) =>
-                        changeSettings({ ...settings, campaignTrack: e.target.value })
-                      }
-                    >
-                      <option value="default">
-                        {original.music.campaignFallback
-                          ? 'Alternate original track 101 (realm 105 unavailable)'
-                          : 'Original realm cue 105'}
-                      </option>
-                      {Object.keys(original.assets)
-                        .filter((id) => /^MUSIC\//.test(id))
-                        .map((id) => (
-                          <option key={id} value={id}>
-                            {id.replace('MUSIC/', 'Original track ')}
-                          </option>
-                        ))}
-                    </select>
-                  </label>
-                )}
-                {original && (
-                  <a href="/original/catalog.html" target="_blank" rel="noreferrer">
-                    Browse original asset catalog
-                  </a>
-                )}
-              </div>
-            </>
+            <OptionsPanel
+              pack={original}
+              settings={settings}
+              onChange={changeSettings}
+              onClose={() => setDialog(null)}
+              eventOptions={state?.eventOptions ?? eventDefaults}
+              difficulty={state?.difficulty ?? difficulty}
+              activeCampaign={Boolean(state)}
+              selectionMode={selectionMode}
+              unrestrictedDiplomacy={unrestrictedDiplomacy}
+              onAccessChange={(mode, diplomacy) => {
+                if (state)
+                  issue({
+                    type: 'SetCampaignOptions',
+                    selectionMode: mode,
+                    unrestrictedDiplomacy: diplomacy,
+                  });
+                else {
+                  setSelectionDefaults(mode);
+                  setDiplomacyDefaults(diplomacy);
+                }
+              }}
+              onCampaignChange={(eventOptions, nextDifficulty) => {
+                if (state)
+                  issue({ type: 'SetCampaignOptions', eventOptions, difficulty: nextDifficulty });
+                else {
+                  setEventDefaults(eventOptions);
+                  setDifficulty(nextDifficulty);
+                }
+              }}
+            />
           )}
           {dialog === 'help' && (
             <div className="guide">
@@ -638,9 +583,9 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
                 the 1997 rules.
               </p>
               <p>
-                Trade-route construction, tactical battles and 3D adventures remain in development.
-                Shortcuts: P provinces, M military, D diplomacy, Ctrl+S save, F1 help and Escape to
-                close a council window.
+                Tactical battles, character succession, unresolved realm spells and 3D adventures
+                remain in development. Shortcuts: P provinces, M military, D diplomacy, Ctrl+S save,
+                F1 help and Escape to close a council window.
               </p>
             </div>
           )}

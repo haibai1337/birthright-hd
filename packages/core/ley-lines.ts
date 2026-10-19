@@ -61,7 +61,7 @@ export function leyLineProblem(
   cmd: Command,
 ): string | null {
   if (cmd.type !== 'ForgeLeyLine') return null;
-  if (!isTrueWizard(scenario, actor))
+  if (!isTrueWizard(scenario, actor, state))
     return 'Only wizard regents may forge ley lines; bards and priests cannot.';
   const a = state.holdings.find((h) => h.id === cmd.fromHoldingId),
     b = state.holdings.find((h) => h.id === cmd.toHoldingId);

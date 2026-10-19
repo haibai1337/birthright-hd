@@ -26,6 +26,8 @@ export function MapPanel({
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [hover, setHover] = useState<string | null>(null);
+  const [presentation, setPresentation] = useState<'relief' | 'original'>('relief');
+  const [realmTint, setRealmTint] = useState(false);
   const select = useRef(onSelect);
   select.current = onSelect;
   useEffect(() => {
@@ -56,19 +58,48 @@ export function MapPanel({
     };
   }, [scenario, original]);
   useEffect(() => {
-    renderer.current?.update(state, { selected, overlay, labels });
-  }, [state, selected, overlay, labels, ready]);
+    renderer.current?.update(state, { selected, overlay, labels, presentation, realmTint });
+  }, [state, selected, overlay, labels, ready, presentation, realmTint]);
   const hoverDef = scenario.provinces.find((p) => p.id === hover);
   const hoverState = state.provinces.find((p) => p.id === hover);
   const hoverTroops = state.armies
     .filter((a) => a.provinceId === hover)
     .reduce((n, a) => n + a.units.length, 0);
+  const hoverForces = [
+    ...new Set(state.armies.filter((a) => a.provinceId === hover).map((a) => a.realmId)),
+  ].map(
+    (id) =>
+      `${scenario.realms.find((r) => r.id === id)?.name}: ${state.armies.filter((a) => a.provinceId === hover && a.realmId === id).reduce((n, a) => n + a.units.length, 0)}`,
+  );
   return (
     <div className="map-wrap">
       <div className="map-canvas" ref={host} data-testid="strategic-map" />
+      <div className="map-presentation" role="group" aria-label="Map illustration">
+        <button
+          aria-pressed={presentation === 'relief'}
+          onClick={() => setPresentation('relief')}
+          title="Layered illustrated terrain"
+        >
+          Relief
+        </button>
+        <button
+          aria-pressed={presentation === 'original'}
+          onClick={() => setPresentation('original')}
+          title="Compare the original map at the same coordinates"
+        >
+          Original
+        </button>
+        <button
+          aria-pressed={realmTint}
+          onClick={() => setRealmTint(!realmTint)}
+          title="Show restrained realm ownership colors"
+        >
+          Realm tint
+        </button>
+      </div>
       {!ready && !error && (
         <div className="map-loading" role="status">
-          Restoring the original map…
+          Preparing the Anuire landscape…
         </div>
       )}
       {hoverDef && (
@@ -81,6 +112,13 @@ export function MapPanel({
           <span>
             {hoverTroops} troops · Fortification {hoverState?.fort ?? 0}
           </span>
+          {!!hoverForces.length && <span>{hoverForces.join(' · ')}</span>}
+          {!!hoverState?.occupiedBy && (
+            <span>
+              Occupied by {scenario.realms.find((r) => r.id === hoverState.occupiedBy)?.name}
+            </span>
+          )}
+          {hoverState?.contested && <span>Contested control</span>}
         </div>
       )}
       <div className="map-tools">

@@ -10,6 +10,8 @@ Birthright HD is one React/Pixi application with a headless TypeScript simulatio
 
 `App.tsx` loads the compact original-asset manifest and validates/adapts the default Anuire dataset. Loading errors lead to a setup/import screen. Once ready, a single classic menu and campaign layout expose the existing command handlers. `ClassicChrome.tsx` owns layout/keyboard interaction, `Sidebar.tsx` owns council command forms, and `Modal.tsx` owns dialog focus/Escape behavior. Prototype menus, research-only UI and procedural product layout have been removed.
 
+`NewGamePanel.tsx` presents eligible kingdoms, both original regent candidates and starting province counts alongside campaign settings. It uses the existing `realmSelectable` filter and delegates selection and campaign creation to `App.tsx`; its parchment/leather styles are scoped to the new-game dialog. The adapter supplies verified `regentCandidates`; a campaign realm's optional `regentId` stores its chosen ruler. `core/regents.ts::rulingRegent` resolves that identity for rules and presentation, falling back to the template head for old saves. At 1366×768 the kingdom list scrolls independently and the start button stays in the dialog footer.
+
 `MapPanel.tsx` hosts the sole Pixi `WorldMap` renderer. It builds province geometry once, queues updates until initialization completes, supports disjoint rings/holes, aligns original terrain with source coordinates and updates selection/overlays/markers without rebuilding the scene. Map camera/labels/textures never consume simulation RNG. `rendering/types.ts` contains the small presentation contract.
 
 `original-assets.ts` validates resource identities/paths independently of game rules. `audio.ts` manages gesture activation, scene transitions, looping, effects and persisted preferences. UI image IDs and manifest paths can later point at replacement artwork without changing campaign state.
@@ -27,3 +29,7 @@ Original selectability, technical playability and scenario selection overrides r
 Saved campaigns include schema/rules identifiers, seed/PRNG state, command/journal state and the scenario fingerprint. Browser manual/autosave slots and exported JSON preserve this contract. The automatically loaded dataset supplies the same fingerprint on restart, so Anuire no longer needs manual re-import before loading a save. Cleanup retains existing Anuire save compatibility.
 
 Detailed mechanics are in [GAMEPLAY_SYSTEMS.md](GAMEPLAY_SYSTEMS.md). Binary findings and raw-field provenance are in [ANUIRE_DATA.md](ANUIRE_DATA.md) and the research archive. Future tactical/RPG renderers can consume core state/commands without replacing the strategic engine.
+
+## Campaign events integration — 2026-10-18
+
+`strategic-events.ts` runs the post-report native-date scheduler once per season, separate from legal-action AI and ordinary seasonal systems. Campaign schema v1 additively persists difficulty, eight event choices, diagnostic history, plot stage/ally and a presentation queue. Free validated options/scene-acknowledgement commands never advance AI slots. Browser Gorgon playback uses imported frames/text/cues and never consumes gameplay RNG. See [implementation report](CAMPAIGN_EVENTS_IMPLEMENTATION_REPORT.md).

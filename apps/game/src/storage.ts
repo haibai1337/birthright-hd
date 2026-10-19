@@ -6,10 +6,12 @@ import {
 } from '../../../packages/core';
 export const SAVE_KEY = 'birthright-hd.save.v1',
   AUTO_KEY = 'birthright-hd.auto.v1';
+const SOUNDTRACK_VERSION = 1;
 export interface Settings {
   labels: boolean;
   autosave: boolean;
   largeText: boolean;
+  musicEnabled: boolean;
   musicVolume: number;
   effectsVolume: number;
   muted: boolean;
@@ -19,6 +21,7 @@ export const defaultSettings: Settings = {
   labels: true,
   autosave: true,
   largeText: false,
+  musicEnabled: true,
   musicVolume: 0.45,
   effectsVolume: 0.6,
   muted: false,
@@ -46,17 +49,25 @@ export function loadSettings(): Settings {
     labels: v.labels,
     autosave: v.autosave,
     largeText: v.largeText,
+    musicEnabled: typeof v.musicEnabled === 'boolean' ? v.musicEnabled : true,
     musicVolume: volume('musicVolume', 0.45),
     effectsVolume: volume('effectsVolume', 0.6),
     muted: typeof v.muted === 'boolean' ? v.muted : false,
     campaignTrack:
-      typeof v.campaignTrack === 'string' && /^(?:default|MUSIC\/\d+\.WAV)$/.test(v.campaignTrack)
+      v.soundtrackVersion === SOUNDTRACK_VERSION &&
+      typeof v.campaignTrack === 'string' &&
+      /^(?:default|MUSIC\/\d+\.WAV)$/.test(v.campaignTrack)
         ? v.campaignTrack
         : 'default',
   };
 }
 export function persistSettings(settings: Settings) {
-  localStorage.setItem('birthright-hd.settings', JSON.stringify(settings));
+  // Older selections predate recovery of the real realm cue and must not silently
+  // override it. Later explicit manual selections are retained with this version.
+  localStorage.setItem(
+    'birthright-hd.settings',
+    JSON.stringify({ ...settings, soundtrackVersion: SOUNDTRACK_VERSION }),
+  );
 }
 export function saveCampaign(state: Campaign, automatic = false) {
   localStorage.setItem(

@@ -19,6 +19,9 @@ test('loads the full local Anuire campaign, manages a domain, marches, negotiate
     page.getByText('ANUIRE · EXPERIMENTAL ORIGINAL TEMPLATE', { exact: true }),
   ).toBeVisible();
   await page.getByRole('button', { name: /Begin your reign/ }).click();
+  await page.getByTestId('original-council')
+    .getByRole('button', { name: 'Done — return to realm management' })
+    .click();
   const map = page.getByTestId('strategic-map');
   await expect(map.locator('canvas')).toBeVisible();
   await expect(map).toHaveAttribute('data-provinces', '206', { timeout: 20000 });
@@ -38,6 +41,9 @@ test('loads the full local Anuire campaign, manages a domain, marches, negotiate
   for (let turn = 2; turn <= 4; turn++) {
     await page.getByRole('button', { name: /End season/ }).click();
     await expect(page.getByText(`DOMAIN TURN ${turn}`, { exact: true })).toBeVisible();
+    await page.getByTestId('original-council')
+      .getByRole('button', { name: 'Done — return to realm management' })
+      .click();
   }
   if (await page.getByRole('button', { name: 'Decline', exact: true }).count())
     await page.getByRole('button', { name: 'Decline', exact: true }).click();
@@ -64,6 +70,9 @@ test('loads the full local Anuire campaign, manages a domain, marches, negotiate
   await page.getByRole('button', { name: 'Save game', exact: true }).click();
   await page.getByRole('button', { name: /End season/ }).click();
   await expect(page.getByText('DOMAIN TURN 5', { exact: true })).toBeVisible();
+  await page.getByTestId('original-council')
+    .getByRole('button', { name: 'Done — return to realm management' })
+    .click();
   await page.getByRole('button', { name: 'Open game menu' }).click();
   await page.getByRole('button', { name: 'Load game', exact: true }).click();
   await page.getByRole('button', { name: 'Load manual save' }).click();
@@ -81,6 +90,9 @@ test('selects and hovers an original detached island through the canvas in a sec
   await page.getByLabel('Choose Anuire regent').selectOption('anuire-realm-14');
   await page.getByLabel('Ruleset', { exact: true }).selectOption('CLASSIC');
   await page.getByRole('button', { name: /Begin your reign/ }).click();
+  await page.getByTestId('original-council')
+    .getByRole('button', { name: 'Done — return to realm management' })
+    .click();
   const raw = JSON.parse(readFileSync(input, 'utf8')) as {
     map: {
       width: number;

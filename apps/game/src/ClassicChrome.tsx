@@ -1,5 +1,6 @@
 import { useEffect, useState, type CSSProperties } from 'react';
 import {
+  rulingRegent,
   forecast,
   sourcePotential,
   bloodlineStrength,
@@ -11,6 +12,7 @@ import { logText, playerJournal, season, signed } from '../../../packages/ui/str
 import { assetUrl, type OriginalAssets } from './original-assets';
 import { MapPanel } from './MapPanel';
 import { Sidebar, type Panel } from './Sidebar';
+import { CouncilScreen } from './CouncilScreen';
 import type { MapOverlay } from '../../../packages/rendering/types';
 import type { Settings } from './storage';
 import { CouncilIcon, StrategicImage, strategicMaterials } from './StrategicArt';
@@ -69,7 +71,15 @@ export function ClassicMainMenu({
       aria-label="Birthright main menu"
     >
       <div className="classic-menu-shield">
-        <OriginalImage pack={pack} id="UI/MAINPANL.PCX" alt="Birthright: The Gorgon's Alliance" />
+        <OriginalImage pack={pack} id="UI/MAINPANL.PCX" className="classic-menu-panel" />
+        <img
+          className="classic-menu-logo"
+          src="/art/branding/birthright-logo-hd.png"
+          alt="Birthright: The Gorgon's Alliance"
+          width={1377}
+          height={768}
+          draggable={false}
+        />
         <nav aria-label="Main menu">
           {rows.map((r, i) => (
             <button
@@ -103,6 +113,9 @@ interface Props {
   onSelect: (id: string) => void;
   onPanel: (panel: Panel) => void;
   onOverlay: (overlay: MapOverlay) => void;
+  councilOpen: boolean;
+  onCouncilOpen: () => void;
+  onCouncilClose: () => void;
   issue: (command: Command) => void;
   save: () => void;
   open: (dialog: 'new' | 'load' | 'settings' | 'help' | 'menu') => void;
@@ -119,12 +132,16 @@ export function ClassicCampaign({
   onSelect,
   onPanel,
   onOverlay,
+  councilOpen,
+  onCouncilOpen,
+  onCouncilClose,
   issue,
   save,
   open,
   mainMenu,
 }: Props) {
   const [inspecting, setInspecting] = useState(false);
+  const [councilReturn, setCouncilReturn] = useState(false);
   useEffect(() => {
     if (state.pendingDomainAction) {
       setInspecting(true);
@@ -132,7 +149,8 @@ export function ClassicCampaign({
       onSelect(state.pendingDomainAction.checks[state.pendingDomainAction.index]!.provinceId);
     }
   }, [state.pendingDomainAction, onPanel, onSelect]);
-  const player = scenario.realms.find((r) => r.id === state.playerRealm)!,
+  const definition = scenario.realms.find((r) => r.id === state.playerRealm)!,
+    player = { ...definition, regent: rulingRegent(scenario, definition.id, state)! },
     realm = state.realms.find((r) => r.id === player.id)!,
     income = forecast(state, scenario, player.id),
     latest = playerJournal(state).at(-1),
@@ -146,8 +164,20 @@ export function ClassicCampaign({
       .filter((a) => a.provinceId === selected)
       .reduce((n, a) => n + a.units.length, 0);
   const show = (p: Panel) => {
+    setCouncilReturn(false);
     onPanel(p);
     setInspecting(true);
+  };
+  const showCouncil = () => {
+    setCouncilReturn(false);
+    setInspecting(false);
+    onCouncilOpen();
+  };
+  const openCouncilPanel = (p: Panel) => {
+    setCouncilReturn(true);
+    onPanel(p);
+    setInspecting(true);
+    onCouncilClose();
   };
   const select = (id: string) => {
     onSelect(id);
@@ -155,6 +185,7 @@ export function ClassicCampaign({
   };
   useEffect(() => {
     const key = (e: KeyboardEvent) => {
+      if (councilOpen) return;
       if (e.target instanceof HTMLElement && e.target.closest('input,select,textarea,dialog'))
         return;
       if (e.key === 'Escape') {
@@ -175,7 +206,7 @@ export function ClassicCampaign({
     };
     window.addEventListener('keydown', key);
     return () => window.removeEventListener('keydown', key);
-  });
+  }, [councilOpen, open, save]);
   const actionRows: [Panel, string, number][] = [
     ['realm', 'Realm', 2],
     ['diplomacy', 'Diplomacy', 3],
@@ -253,6 +284,11 @@ export function ClassicCampaign({
         </p>
         <div className="classic-turn">
           <strong>{season(state.turn)}</strong>
+          {realm.controller !== 'player' && (
+            <span role="status" data-testid="vassal-command">
+              Commanding {player.name} · own treasury and actions
+            </span>
+          )}
           <span>
             <span className="hd-turn-domain">DOMAIN </span>TURN {state.turn}
             {state.domainTurn && ` · Round ${state.domainTurn.round}/3`}
@@ -266,6 +302,9 @@ export function ClassicCampaign({
             <strong data-testid="actions-left">{realm.actions} of 3 remaining</strong>
           </div>
         </div>
+        <button className="classic-council-entry" onClick={showCouncil}>
+          Council of advisors
+        </button>
         <div className="hd-section-caption">Domain councils</div>
         <nav className="classic-actions" aria-label="Council panels">
           {actionRows.map(([id, label, row]) => (
@@ -349,7 +388,13 @@ export function ClassicCampaign({
           aria-label="Open game menu"
           onClick={() => open('menu')}
         >
-          <OriginalImage pack={pack} id="UI/LOGO.PCX" alt="" />
+          <img
+            src="/art/branding/birthright-logo-hd.png"
+            alt=""
+            width={1377}
+            height={768}
+            draggable={false}
+          />
           Menu
         </button>
         {inspecting && (
@@ -360,11 +405,23 @@ export function ClassicCampaign({
                   ? scenario.provinces.find((p) => p.id === selected)?.name
                   : panel}
               </strong>
-              <button aria-label="Close council window" onClick={() => setInspecting(false)}>
+              {councilReturn && (
+                <button className="council-return" onClick={showCouncil}>
+                  Return to Council
+                </button>
+              )}
+              <button
+                aria-label="Close council window"
+                onClick={() => {
+                  setInspecting(false);
+                  setCouncilReturn(false);
+                }}
+              >
                 ×
               </button>
             </header>
             <Sidebar
+              eventReports={pack.eventReports}
               state={state}
               scenario={scenario}
               selected={selected}
@@ -458,11 +515,11 @@ export function ClassicCampaign({
         className="classic-map-readout"
         role="status"
         aria-live="polite"
-        title={latest ? logText(latest, scenario) : `${player.name}'s turn`}
+        title={latest ? logText(latest, scenario, pack.eventReports) : `${player.name}'s turn`}
       >
         <span className="hd-message-label">Council dispatch</span>
         <span key={state.log.length}>
-          {latest ? logText(latest, scenario) : `${player.name}'s turn`}
+          {latest ? logText(latest, scenario, pack.eventReports) : `${player.name}'s turn`}
         </span>
         <span className="hd-map-help">Scroll to zoom · Drag to explore</span>
       </div>
@@ -487,8 +544,21 @@ export function ClassicCampaign({
         <div className="outcome" role="status">
           <h2>{state.outcome === 'victory' ? 'Your crown endures.' : 'Your reign has ended.'}</h2>
           <button onClick={() => open('new')}>Begin another reign</button>
+          {state.outcome === 'victory' && scenario.policy?.strategicRules === 'pc-1997' && (
+            <button onClick={() => issue({ type: 'ContinueCampaign' })}>Continue as Emperor</button>
+          )}
           <button onClick={mainMenu}>Main menu</button>
         </div>
+      )}
+      {councilOpen && (
+        <CouncilScreen
+          pack={pack}
+          factionIndex={
+            typeof definition.original?.index === 'number' ? definition.original.index : undefined
+          }
+          onOpenPanel={openCouncilPanel}
+          onDone={onCouncilClose}
+        />
       )}
     </div>
   );

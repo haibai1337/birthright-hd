@@ -3,6 +3,8 @@ export interface MapView {
   selected: string;
   overlay: MapOverlay;
   labels: boolean;
+  presentation?: 'relief' | 'original';
+  realmTint?: boolean;
 }
 export interface MapCallbacks {
   select(id: string): void;

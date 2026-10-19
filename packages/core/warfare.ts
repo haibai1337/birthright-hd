@@ -1,3 +1,4 @@
+import { rulingRegent } from './regents';
 import type { Army, Campaign, Province, Scenario } from './schema';
 import type { BattleResolver } from './combat';
 import { relation } from './selectors';
@@ -20,8 +21,13 @@ export const unitsHere = (state: Campaign, provinceId: string, realmId: string) 
     .filter((a) => a.provinceId === provinceId && a.realmId === realmId)
     .reduce((n, a) => n + a.units.length, 0);
 export const allied = (state: Campaign, a: string, b: string) =>
-  a === b || relation(state, a, b)?.kind === 'alliance';
+  a === b || ['pact', 'alliance', 'vassal'].includes(relation(state, a, b)?.kind ?? '');
 export function mayInvade(state: Campaign, actor: string, target: string) {
+  if (
+    actor !== target &&
+    state.realms.some((r) => (r.id === actor || r.id === target) && r.behavior === 'monsters')
+  )
+    return true;
   return state.warDeclarations
     ? state.warDeclarations.some((w) => w.actor === actor && w.target === target)
     : relation(state, actor, target)?.kind === 'war';
@@ -61,7 +67,7 @@ export function investitureTerms(
   bid = 0,
 ) {
   const priest =
-    scenario.realms.find((r) => r.id === actor)?.regent.class === 'priest' ||
+    rulingRegent(scenario, actor, state)?.class === 'priest' ||
     state.characters?.some(
       (c) =>
         c.realmId === actor &&
@@ -186,6 +192,7 @@ function retreat(state: Campaign, scenario: Scenario, army: Army, from: string, 
   if (target) {
     army.provinceId = target.id;
     army.moved = true;
+    if (scenario.policy?.strategicRules === 'pc-1997') army.retreatedTurn = state.turn;
     record(state, 'army.retreated', army.realmId, { province: from, destination: target.id });
   } else {
     army.units = [];
@@ -208,7 +215,7 @@ export function resolveMarch(
     (a) =>
       a.provinceId === p.id &&
       a.realmId !== actor &&
-      (relation(state, actor, a.realmId)?.kind === 'war' ||
+      (mayInvade(state, actor, a.realmId) ||
         (originalRules &&
           !allied(state, actor, a.realmId) &&
           (p.owner === actor || p.occupiedBy === a.realmId))),
@@ -260,13 +267,18 @@ export function resolveMarch(
         )
       )
         retreat(state, scenario, army, p.id, p.id);
-      else record(state, 'army.retreated', actor, { province: p.id, destination: from });
+      else {
+        if (scenario.policy?.strategicRules === 'pc-1997') army.retreatedTurn = state.turn;
+        record(state, 'army.retreated', actor, { province: p.id, destination: from });
+      }
     }
     state.armies = state.armies.filter((a) => a.units.length > 0);
     record(state, won ? 'battle.won' : 'battle.lost', actor, {
       province: p.id,
       attack: Math.round(result.attackPower),
       defense: Math.round(result.defensePower),
+      attackerLoss: result.attackerLoss,
+      defenderLoss: result.defenderLoss,
     });
   } else {
     army.provinceId = p.id;
@@ -274,7 +286,12 @@ export function resolveMarch(
   }
   if (won && oldController !== actor && !allied(state, actor, oldController)) {
     if (originalRules) {
-      p.occupiedBy = actor === p.owner ? null : actor;
+      p.occupiedBy =
+        allied(state, actor, p.owner) ||
+        (state.realms.some((r) => r.id === oldController && r.behavior === 'monsters') &&
+          !mayInvade(state, actor, p.owner))
+          ? null
+          : actor;
       clearPreparation(p);
       delete p.occupationInterruptedTurn;
       if (p.occupiedBy) {

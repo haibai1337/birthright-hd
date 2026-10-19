@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import {
+  rulingRegent,
   availableSource,
   bloodlineStrength,
   casterProfile,
@@ -51,7 +52,7 @@ export function MagicCouncil({
     [toId, setTo] = useState(''),
     [bid, setBid] = useState(0);
   const realm = state.realms.find((r) => r.id === state.playerRealm)!,
-    regent = scenario.realms.find((r) => r.id === realm.id)!.regent;
+    regent = rulingRegent(scenario, realm.id, state)!;
   const known = realm.knownSpells ?? regent.realmSpells ?? [];
   const spell =
     scenario.spells.find((s) => s.id === spellId) ??
@@ -117,7 +118,7 @@ export function MagicCouncil({
     to =
       sources.find((h) => h.id === toId && h.id !== from?.id) ??
       sources.find((h) => h.id !== from?.id);
-  const caster = casterProfile(scenario, realm.id, spell.holding as 'source' | 'temple');
+  const caster = casterProfile(scenario, realm.id, spell.holding as 'source' | 'temple', state);
   const toggle = (ids: string[], id: string) =>
     ids.includes(id) ? ids.filter((x) => x !== id) : [...ids, id];
   return (
@@ -295,7 +296,10 @@ export function MagicCouncil({
             {!effects.length && <option value="">No active province effect</option>}
             {effects.map((e) => (
               <option key={e.id} value={e.id}>
-                {scenario.spells.find((s) => s.id === e.spellId)?.name} · {e.regencyCost} RP
+                {e.kind === 'antimagic'
+                  ? `Antimagic ward (+${(e.resistance ?? 0) + 1} RP per cast)`
+                  : scenario.spells.find((s) => s.id === e.spellId)?.name}{' '}
+                · {e.regencyCost} RP
               </option>
             ))}
           </select>
@@ -310,9 +314,11 @@ export function MagicCouncil({
         .filter((e) => e.realmId === realm.id || e.provinceId === base)
         .map((e) => (
           <p key={e.id ?? `${e.spellId}-${e.provinceId}`}>
-            {scenario.spells.find((s) => s.id === e.spellId)?.name} · {name(e.provinceId)} ·{' '}
-            {Math.max(0, e.expiresTurn - state.turn)} seasonal boundaries remaining ·{' '}
-            {scenario.realms.find((r) => r.id === e.realmId)?.name}
+            {e.kind === 'antimagic'
+              ? `Antimagic ward (+${(e.resistance ?? 0) + 1} RP per cast)`
+              : scenario.spells.find((s) => s.id === e.spellId)?.name}{' '}
+            · {name(e.provinceId)} · {Math.max(0, e.expiresTurn - state.turn)} seasonal boundaries
+            remaining · {scenario.realms.find((r) => r.id === e.realmId)?.name}
           </p>
         ))}
       <div className="section-label">

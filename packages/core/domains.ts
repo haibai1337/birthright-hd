@@ -7,6 +7,13 @@ export function realmSelectable(
 ) {
   const r = scenario.realms.find((r) => r.id === id);
   if (!r || r.technicalPlayable === false || r.domainType === 'inactive') return false;
+  // The Anuire unlock exposes real landed realms, never holding-only or event-controller slots.
+  if (
+    mode === 'UNRESTRICTED' &&
+    scenario.policy?.strategicRules === 'pc-1997' &&
+    (r.domainType !== 'territorial' || !scenario.initial.provinces.some((p) => p.owner === id))
+  )
+    return false;
   return (
     scenario.selection?.overrides?.[id] ?? (mode === 'UNRESTRICTED' || r.originalPlayable !== false)
   );
@@ -27,6 +34,7 @@ export function taxableBy(province: Province, realmId: string) {
   return provinceController(province) === realmId && !province.contested && province.loyalty > 0;
 }
 export function domainSurvives(state: Campaign, scenario: Scenario, id: string) {
+  if (state.realms.some((r) => r.id === id && r.lieutenantOf)) return true;
   const policy =
     scenario.realms.find((r) => r.id === id)?.survival ??
     scenario.policy?.survival ??

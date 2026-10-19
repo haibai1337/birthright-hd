@@ -1,0 +1,270 @@
+{
+  "version": 1,
+  "milestone": "M1C-1F",
+  "templateSha256": "34cdf204908be6fa43438f1341a9078d672865988a59f7a0f0eb596f1fe094e6",
+  "evidence": {
+    "sourceProject": "https://github.com/fire-lizard/birthrt",
+    "referenceRevision": "fc47055002c4b776bfb1e8737b5aaf7f6d43edce",
+    "sources": [
+      {
+        "file": "GAMEMAP.CPP",
+        "sha256": "cde04971efd72b563f1c42c51dac6a5c35e2e2ca851175e8db3ba2e2c66b92a4"
+      },
+      {
+        "file": "MAPICON.HXX",
+        "sha256": "0043482a7b3f2cfd487f6da5395f719208740f1b9d2daf158dfe5e1daf7f0cb3"
+      },
+      {
+        "file": "PLACES.CPP",
+        "sha256": "6d4831513876e33dce951c47c4d33ab621154760421aafa8481ef45a485636e1"
+      }
+    ],
+    "qualification": "Modified historical source, corroborated with the supplied CD template and decoded resources; retail executable not run. Place indices below are CD indices, not the differing C++ initializer indices.",
+    "loader": "GAMEMAP.CPP:6412-6431; GameIcons table:580-608; drawing:7712-7735. Resource hash is the archive filename lookup key; iIconBitm is a transient runtime handle, not a stable artwork ID."
+  },
+  "resources": {
+    "UI/CASTLE1.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 5785884,
+      "offset": 1583571,
+      "decodedSha256": "a4063c085656d08a69429b5638127e522da0cfb03b3f5a366243723a913af072",
+      "width": 36,
+      "height": 34
+    },
+    "UI/CASTLE2.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 5988168,
+      "offset": 1584432,
+      "decodedSha256": "d90306c5c96ebb13e31874c30698d0d9d314e8f0e46c349126a9e0b8f60c8f52",
+      "width": 48,
+      "height": 40
+    },
+    "UI/CASTLE3.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 5919364,
+      "offset": 1585715,
+      "decodedSha256": "b9c8e15de9189013915f0745e0f6518020e1aecf367d47e0f689079d369a184c",
+      "width": 60,
+      "height": 44
+    },
+    "UI/CASTLE4.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 6124512,
+      "offset": 1587467,
+      "decodedSha256": "08af2b6728ca15122d85f6b720bfb503cbe346064e3b1b43a53137c56a0a9be2",
+      "width": 72,
+      "height": 48
+    },
+    "UI/FELLPORT.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 8368881,
+      "offset": 2348861,
+      "decodedSha256": "2d3256516c9739a8ce660ed546be25d2e30ca72062530e087604a00dd9bc4704",
+      "width": 92,
+      "height": 72
+    },
+    "UI/PORT.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 8128871,
+      "offset": 4484770,
+      "decodedSha256": "92526bf5773d6071e66f382efcffede27d0da2345b86f220b850297808c0f6bf",
+      "width": 48,
+      "height": 24
+    },
+    "UI/RHUANOCH.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 6408859,
+      "offset": 4946206,
+      "decodedSha256": "f2dbd159eb6d3ce603260e1cf3ae8c045a84a7dc036ca113208740f639e04900",
+      "width": 72,
+      "height": 96
+    },
+    "UI/SEAPORT.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 2826564,
+      "offset": 4983008,
+      "decodedSha256": "59b47d6d061cf3525d07373e76cbd26c709b02541f874c8384f614b6ae4a82e2",
+      "width": 52,
+      "height": 60
+    },
+    "UI/SEAPORT2.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 1662027,
+      "offset": 4984576,
+      "decodedSha256": "aed36a197ce49d39af650ca78a382b74c1e1e1be9bb031f7b5a16a123441d70e",
+      "width": 52,
+      "height": 60
+    },
+    "UI/SPIDERFL.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 7758158,
+      "offset": 5019768,
+      "decodedSha256": "1dca0ef85a555bdb93a68f0d508a4ec73c08b3417e27eafa7a02bbc6b2e0342e",
+      "width": 68,
+      "height": 56
+    },
+    "UI/VILLAGE.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 3762540,
+      "offset": 5252040,
+      "decodedSha256": "46ebb18addfe1343883166be9fb1548063eebe2b3ea167faa707076d0115ad26",
+      "width": 40,
+      "height": 40
+    },
+    "UI/WIZTOWER.PCX": {
+      "archive": "RESFILES/UI.RES",
+      "archiveHash": 8012262,
+      "offset": 5279062,
+      "decodedSha256": "5d3a02de4f30a458a2daa9b2bd62e56f602d5338686eb5183b795a5409a9da9c",
+      "width": 36,
+      "height": 56
+    }
+  },
+  "landmarks": [
+    {
+      "id": "spiderfell",
+      "sourceId": "anuire-place-108",
+      "provinceId": "anuire-province-025",
+      "original": {
+        "iconCode": 116,
+        "resolvedIconCode": 119,
+        "resourceKey": "UI/SPIDERFL.PCX",
+        "classification": "confirmed-dedicated"
+      },
+      "hd": {
+        "texture": "spiderfell-web",
+        "file": "landmark-spiderfell-web.png",
+        "width": 108,
+        "anchorY": 0.8
+      }
+    },
+    {
+      "id": "rhuobhe",
+      "sourceId": "anuire-place-194",
+      "provinceId": "anuire-province-045",
+      "original": {
+        "iconCode": 117,
+        "resolvedIconCode": 120,
+        "resourceKey": "UI/RHUANOCH.PCX",
+        "classification": "confirmed-dedicated"
+      },
+      "hd": {
+        "texture": "rhuanoch",
+        "file": "landmark-rhuanoch.png",
+        "width": 65.6,
+        "anchorY": 0.91
+      }
+    },
+    {
+      "id": "gorgon",
+      "sourceId": "anuire-place-573",
+      "provinceId": "anuire-province-125",
+      "original": {
+        "iconCode": 118,
+        "resolvedIconCode": 121,
+        "resourceKey": "UI/FELLPORT.PCX",
+        "classification": "confirmed-dedicated"
+      },
+      "hd": {
+        "texture": "fellport",
+        "file": "landmark-fellport.png",
+        "width": 94.4,
+        "anchorY": 0.88
+      }
+    },
+    {
+      "id": "imperial-city",
+      "sourceId": "anuire-place-468",
+      "provinceId": "anuire-province-100",
+      "original": {
+        "iconCode": 115,
+        "resolvedIconCode": 118,
+        "resourceKey": "UI/CASTLE4.PCX",
+        "classification": "shared-original-hd-enhancement"
+      },
+      "hd": {
+        "texture": "imperial-anuire",
+        "file": "landmark-imperial-anuire.png",
+        "width": 124,
+        "anchorY": 0.84,
+        "position": [550, 1570],
+        "placementReason": "Reviewed HD ground anchor on the native City of Anuire island; original icon-center 511,1568 and port 518,1557 lie outside its tiny recovered rings."
+      }
+    },
+    {
+      "id": "baruk-azhik",
+      "sourceId": "anuire-place-736",
+      "provinceId": "anuire-province-174",
+      "original": {
+        "iconCode": 115,
+        "resolvedIconCode": 118,
+        "resourceKey": "UI/CASTLE4.PCX",
+        "classification": "shared-original-hd-enhancement"
+      },
+      "hd": {
+        "texture": "dwarven-hall",
+        "file": "landmark-dwarven-hall.png",
+        "width": 48,
+        "anchorY": 0.88,
+        "position": [1680, 866],
+        "placementReason": "User-reviewed HD correction: halve the fortress and shift its ground anchor east into Rivenrock, away from elven Iseare. Native place center 1629,863 remains unchanged."
+      }
+    },
+    {
+      "id": "mur-kilad",
+      "sourceId": "anuire-place-682",
+      "provinceId": "anuire-province-162",
+      "original": {
+        "iconCode": 115,
+        "resolvedIconCode": 117,
+        "resourceKey": "UI/CASTLE3.PCX",
+        "classification": "shared-original-hd-enhancement"
+      },
+      "hd": {
+        "texture": "dwarven-hall",
+        "file": "landmark-dwarven-hall.png",
+        "width": 88,
+        "anchorY": 0.88
+      }
+    }
+  ],
+  "placementOverrides": [
+    {
+      "sourceId": "anuire-place-265",
+      "provinceId": "anuire-province-062",
+      "position": [372, 1324],
+      "reason": "Original wizard-tower icon center 362,1280 lies outside Vanilen; use the verified province center as an explicit HD ground anchor."
+    },
+    {
+      "sourceId": "anuire-place-480",
+      "provinceId": "anuire-province-100",
+      "position": [550, 1570],
+      "reason": "Retain the reviewed island ground anchor for the separate harbor when the imperial fort is absent; original icon-center 518,1557 is preserved in imported data."
+    }
+  ],
+  "notes": [
+    "Ordinary castle icon 115 uses level variants CASTLE1..4. Special castle codes 116..118 select icon+3, independent of level.",
+    "The Imperial City keeps its separate fort/port gameplay records; artwork may compose source places 468 and 480.",
+    "Dwarven variants are deliberate HD architectural enhancements for these two verified existing fortifications, not recovered unique dwarf sprites."
+  ],
+  "ordinaryCastles": {
+    "file": "castle-stages-atlas.png",
+    "columns": 3,
+    "rows": 1,
+    "tiers": [
+      {
+        "texture": "castle-small",
+        "minimumLevel": 1
+      },
+      {
+        "texture": "castle-medium",
+        "minimumLevel": 3
+      },
+      {
+        "texture": "castle-large",
+        "minimumLevel": 6
+      }
+    ],
+    "classification": "User-approved HD enhancement: three pale-gray stone architecture stages. Original selectors and their four CASTLE1..4 bitmap variants remain preserved separately."
+  }
+}

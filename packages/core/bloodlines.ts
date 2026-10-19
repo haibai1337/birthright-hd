@@ -1,7 +1,12 @@
 import type { Campaign, Scenario } from './schema';
+import { rulingRegent } from './regents';
 
-export function characterClasses(scenario: Scenario, realmId: string) {
-  const r = scenario.realms.find((r) => r.id === realmId)?.regent;
+export function characterClasses(
+  scenario: Scenario,
+  realmId: string,
+  state?: Pick<Campaign, 'realms'>,
+) {
+  const r = rulingRegent(scenario, realmId, state);
   if (!r) return [];
   if (r.classes) return r.classes;
   const type = (
@@ -13,17 +18,26 @@ export function characterClasses(scenario: Scenario, realmId: string) {
 export function bloodlineStrength(state: Campaign, scenario: Scenario, realmId: string): number {
   return (
     state.realms.find((r) => r.id === realmId)?.bloodlineStrength ??
-    scenario.realms.find((r) => r.id === realmId)?.regent.bloodline.strength ??
+    rulingRegent(scenario, realmId, state)?.bloodline.strength ??
     0
   );
 }
-export function casterProfile(scenario: Scenario, realmId: string, holding: 'source' | 'temple') {
-  return characterClasses(scenario, realmId).find((c) =>
+export function casterProfile(
+  scenario: Scenario,
+  realmId: string,
+  holding: 'source' | 'temple',
+  state?: Pick<Campaign, 'realms'>,
+) {
+  return characterClasses(scenario, realmId, state).find((c) =>
     holding === 'temple' ? c.type === 'priest' : ['wizard', 'magician', 'bard'].includes(c.type),
   );
 }
-export function isTrueWizard(scenario: Scenario, realmId: string) {
-  return characterClasses(scenario, realmId).some(
+export function isTrueWizard(
+  scenario: Scenario,
+  realmId: string,
+  state?: Pick<Campaign, 'realms'>,
+) {
+  return characterClasses(scenario, realmId, state).some(
     (c) => c.type === 'wizard' || c.type === 'magician',
   );
 }

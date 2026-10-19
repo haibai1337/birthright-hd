@@ -1,3 +1,4 @@
+import { rulingRegent } from './regents';
 import type { Campaign, Command, Scenario } from './schema';
 import { casterProfile, bloodlineStrength } from './bloodlines';
 import { availableSource } from './ley-lines';
@@ -70,6 +71,15 @@ export function magicQuote(state: Campaign, scenario: Scenario, actor: string, c
   }
   if (spell.effect === 'dispel')
     regency = state.effects.find((e) => e.id === cmd.effectId)?.regencyCost ?? 0;
+  // ACTNMENU: prospective Dispel protection adds DispelLvl + 1 RP per target.
+  regency += [...new Set(provinces)].reduce(
+    (n, id) =>
+      n +
+      state.effects
+        .filter((e) => e.provinceId === id && e.kind === 'antimagic' && e.expiresTurn > state.turn)
+        .reduce((m, e) => m + (e.resistance ?? 0) + 1, 0),
+    0,
+  );
   return { gold, regency, actions: 1 };
 }
 export function magicProblem(
@@ -85,18 +95,16 @@ export function magicProblem(
   if (spell.effect === 'ward') return 'This prototype spell belongs to the legacy scenario rules.';
   if (spell.implemented === false)
     return spell.unavailableReason ?? 'This spell is not yet supported.';
-  const caster = casterProfile(scenario, actor, spell.holding as 'source' | 'temple');
+  const caster = casterProfile(scenario, actor, spell.holding as 'source' | 'temple', state);
   if (!caster)
     return `A ${spell.holding === 'source' ? 'wizard or bard' : 'priest'} regent is required; owning a holding alone is insufficient.`;
   if (caster.level < (spell.casterLevel ?? 1))
     return `Caster level ${spell.casterLevel} is required.`;
   const realm = state.realms.find((r) => r.id === actor)!;
   if (
-    !(
-      realm.knownSpells ??
-      scenario.realms.find((r) => r.id === actor)?.regent.realmSpells ??
-      []
-    ).includes(spell.id)
+    !(realm.knownSpells ?? rulingRegent(scenario, actor, state)?.realmSpells ?? []).includes(
+      spell.id,
+    )
   )
     return 'The spell is not in this regent’s recovered or learned realm spell inventory.';
   const local = state.holdings.find(

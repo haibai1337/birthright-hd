@@ -1,7 +1,10 @@
+import { MilitaryCouncil } from './MilitaryCouncil';
+import { DiplomacyCouncil } from './DiplomacyCouncil';
 import { useEffect, useState } from 'react';
 import { EconomyCouncil } from './EconomyCouncil';
 import { MagicCouncil } from './MagicCouncil';
 import {
+  rulingRegent,
   commandCost,
   forecast,
   relation,
@@ -16,6 +19,8 @@ import {
   domainActionQuote,
   usesPCDomainActions,
   bloodlineStrength,
+  usesPCStrategy,
+  victoryScore,
   type Campaign,
   type Command,
   type Scenario,
@@ -33,6 +38,7 @@ import {
 } from '../../../packages/ui/strings';
 export type Panel = 'province' | 'military' | 'diplomacy' | 'chronicle' | 'realm';
 interface Props {
+  eventReports?: Record<string, string>;
   state: Campaign;
   scenario: Scenario;
   selected: string;
@@ -67,7 +73,9 @@ function Order({
       title={
         error
           ? (error.detail ?? errors[error.code])
-          : `${cost.gold} GB · ${cost.regency} RP · ${cost.actions} action`
+          : command.type === 'Fortify' && usesPCStrategy(scenario)
+            ? 'Castle construction: 8 GB per level, paid at 1d6 GB per season; one domain action.'
+            : `${cost.gold} GB · ${cost.regency} RP · ${cost.actions} action`
       }
       onClick={() => issue(command)}
     >
@@ -77,7 +85,10 @@ function Order({
       <span>
         <strong>{children}</strong>
         <small>
-          {cost.gold} GB {cost.regency > 0 && ` · ${cost.regency} RP`} ·{' '}
+          {command.type === 'Fortify' && usesPCStrategy(scenario)
+            ? '1d6 GB/season · 8 GB/level'
+            : `${cost.gold} GB`}{' '}
+          {cost.regency > 0 && ` · ${cost.regency} RP`} ·{' '}
           {cost.actions === 0 ? 'Free' : `${cost.actions} action`}
           {quote &&
             ` · ${quote.checks.map((c) => `${Math.max(0, Math.min(100, (21 - Math.max(1, c.threshold)) * 5))}%`).join(', ')} before opposition`}
@@ -87,7 +98,7 @@ function Order({
     </button>
   );
 }
-export function Sidebar({ state, scenario, selected, panel, select, issue }: Props) {
+export function Sidebar({ state, scenario, selected, panel, select, issue, eventReports }: Props) {
   const [armyId, setArmyId] = useState('');
   const [destination, setDestination] = useState('');
   const [regencyBid, setRegencyBid] = useState(0);
@@ -101,7 +112,10 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
   useEffect(() => setResponseRP(0), [pending]);
   const province = state.provinces.find((p) => p.id === selected);
   const def = scenario.provinces.find((p) => p.id === selected);
-  const player = scenario.realms.find((r) => r.id === state.playerRealm);
+  const definition = scenario.realms.find((r) => r.id === state.playerRealm);
+  const player = definition
+    ? { ...definition, regent: rulingRegent(scenario, definition.id, state)! }
+    : undefined;
   const owner = scenario.realms.find((r) => r.id === province?.owner);
   if (!province || !def || !player || !owner) return null;
   const owned =
@@ -558,173 +572,185 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
             </p>
           </>
         )}
-        {panel === 'military' && (
-          <>
-            <div className="panel-title">
-              <span className="eyebrow">THE MARSHAL’S COUNCIL</span>
-              <h2>Armies & mustering</h2>
-              <p>Raise the banners. Guard the borders.</p>
-            </div>
-            <div className="section-label">
-              <span>RECRUIT IN {def.name.toUpperCase()}</span>
-            </div>
-            {!controlled ? (
-              <p>Select one of your provinces on the map to recruit.</p>
-            ) : (
-              scenario.units
-                .filter((u) => u.recruitable !== false)
-                .map((u) =>
-                  order(
-                    { type: 'RecruitUnit', provinceId: selected, unitType: u.id },
-                    `${u.name} · ${u.upkeep} GB upkeep`,
-                    'sword',
-                  ),
-                )
-            )}
-            <div className="section-label">
-              <span>YOUR ARMIES</span>
-              <span>{armies.length}</span>
-            </div>
-            {armies.map((a) => (
-              <button
-                className={`army-card ${army?.id === a.id ? 'selected' : ''}`}
-                key={a.id}
-                onClick={() => {
-                  setArmyId(a.id);
-                  select(a.provinceId);
-                }}
-              >
-                <Icon name="sword" />
-                <span>
-                  <strong>{scenario.provinces.find((p) => p.id === a.provinceId)?.name}</strong>
-                  <small>
-                    {a.units.length} units · {a.moved ? 'March completed' : 'Ready to march'}
-                  </small>
-                </span>
-                <span className="unit-number">{a.units.length}</span>
-              </button>
-            ))}
-            {army && (
-              <>
-                <div className="unit-roster">
-                  {army.units.map((u) => (
-                    <span key={u.id}>
-                      {scenario.units.find((d) => d.id === u.type)?.name} <b>{u.strength}%</b>
-                    </span>
-                  ))}
-                </div>
-                <label className="select-label" htmlFor="destination">
-                  March to an adjacent province
-                </label>
-                <select
-                  id="destination"
-                  value={target}
-                  onChange={(e) => setDestination(e.target.value)}
+        {panel === 'military' &&
+          (usesPCStrategy(scenario) ? (
+            <MilitaryCouncil
+              state={state}
+              scenario={scenario}
+              selected={selected}
+              select={select}
+              order={order}
+            />
+          ) : (
+            <>
+              <div className="panel-title">
+                <span className="eyebrow">THE MARSHAL’S COUNCIL</span>
+                <h2>Armies & mustering</h2>
+                <p>Raise the banners. Guard the borders.</p>
+              </div>
+              <div className="section-label">
+                <span>RECRUIT IN {def.name.toUpperCase()}</span>
+              </div>
+              {!controlled ? (
+                <p>Select one of your provinces on the map to recruit.</p>
+              ) : (
+                scenario.units
+                  .filter((u) => u.recruitable !== false)
+                  .map((u) =>
+                    order(
+                      { type: 'RecruitUnit', provinceId: selected, unitType: u.id },
+                      `${u.name} · ${u.upkeep} GB upkeep`,
+                      'sword',
+                    ),
+                  )
+              )}
+              <div className="section-label">
+                <span>YOUR ARMIES</span>
+                <span>{armies.length}</span>
+              </div>
+              {armies.map((a) => (
+                <button
+                  className={`army-card ${army?.id === a.id ? 'selected' : ''}`}
+                  key={a.id}
+                  onClick={() => {
+                    setArmyId(a.id);
+                    select(a.provinceId);
+                  }}
                 >
-                  {neighbors.map((id) => (
-                    <option key={id} value={id}>
-                      {scenario.provinces.find((p) => p.id === id)?.name}
-                    </option>
-                  ))}
-                </select>
-                {order(
-                  { type: 'MoveArmy', armyId: army.id, destination: target },
-                  'Issue march order',
-                  'arrow',
-                )}
-                {validateCommand(state, scenario, state.playerRealm, {
-                  type: 'MoveArmy',
-                  armyId: army.id,
-                  destination: target,
-                }) && (
-                  <p className="council-note">
-                    {
-                      errors[
-                        validateCommand(state, scenario, state.playerRealm, {
-                          type: 'MoveArmy',
-                          armyId: army.id,
-                          destination: target,
-                        })?.code ?? 'INVALID_TARGET'
-                      ]
-                    }
-                  </p>
-                )}
-              </>
-            )}
-            <p className="council-note">
-              One march per army each season.{' '}
-              {pc ? 'Marching and mustering do not consume a domain action. ' : ''}War or an
-              alliance is required to enter foreign land. Battles compare troop strength, terrain,
-              forts, and wards; the stronger force prevails.
-            </p>
-          </>
-        )}
-        {panel === 'diplomacy' && (
-          <>
-            <div className="panel-title">
-              <span className="eyebrow">THE CHANCELLOR’S COUNCIL</span>
-              <h2>Oaths & rivalries</h2>
-              <p>A crown is never held alone.</p>
-            </div>
-            {scenario.realms
-              .filter((r) => r.id !== state.playerRealm && r.controller !== 'passive')
-              .map((r) => {
-                const treaty = relation(state, state.playerRealm, r.id);
-                return (
-                  <section className="diplomacy-card" key={r.id}>
-                    <div className="diplomacy-heading">
-                      <Herald realm={r} size={42} />
-                      <div>
-                        <h3>{r.name}</h3>
-                        <p>{r.regent.name}</p>
-                        <span className={`treaty-badge ${treaty?.kind}`}>
-                          {treaty?.kind ?? 'peace'} · Relations {signed(treaty?.opinion ?? 0)}
-                        </span>
-                        {treaty?.kind === 'war' && (
-                          <small>
-                            {mayInvade(state, state.playerRealm, r.id)
-                              ? 'Your army may invade.'
-                              : 'Defensive war: declare war to invade their lands.'}
-                          </small>
-                        )}
+                  <Icon name="sword" />
+                  <span>
+                    <strong>{scenario.provinces.find((p) => p.id === a.provinceId)?.name}</strong>
+                    <small>
+                      {a.units.length} units · {a.moved ? 'March completed' : 'Ready to march'}
+                    </small>
+                  </span>
+                  <span className="unit-number">{a.units.length}</span>
+                </button>
+              ))}
+              {army && (
+                <>
+                  <div className="unit-roster">
+                    {army.units.map((u) => (
+                      <span key={u.id}>
+                        {scenario.units.find((d) => d.id === u.type)?.name} <b>{u.strength}%</b>
+                      </span>
+                    ))}
+                  </div>
+                  <label className="select-label" htmlFor="destination">
+                    March to an adjacent province
+                  </label>
+                  <select
+                    id="destination"
+                    value={target}
+                    onChange={(e) => setDestination(e.target.value)}
+                  >
+                    {neighbors.map((id) => (
+                      <option key={id} value={id}>
+                        {scenario.provinces.find((p) => p.id === id)?.name}
+                      </option>
+                    ))}
+                  </select>
+                  {order(
+                    { type: 'MoveArmy', armyId: army.id, destination: target },
+                    'Issue march order',
+                    'arrow',
+                  )}
+                  {validateCommand(state, scenario, state.playerRealm, {
+                    type: 'MoveArmy',
+                    armyId: army.id,
+                    destination: target,
+                  }) && (
+                    <p className="council-note">
+                      {
+                        errors[
+                          validateCommand(state, scenario, state.playerRealm, {
+                            type: 'MoveArmy',
+                            armyId: army.id,
+                            destination: target,
+                          })?.code ?? 'INVALID_TARGET'
+                        ]
+                      }
+                    </p>
+                  )}
+                </>
+              )}
+              <p className="council-note">
+                One march per army each season.{' '}
+                {pc ? 'Marching and mustering do not consume a domain action. ' : ''}War or an
+                alliance is required to enter foreign land. Battles compare troop strength, terrain,
+                forts, and wards; the stronger force prevails.
+              </p>
+            </>
+          ))}
+        {panel === 'diplomacy' &&
+          (usesPCStrategy(scenario) ? (
+            <DiplomacyCouncil state={state} scenario={scenario} order={order} />
+          ) : (
+            <>
+              <div className="panel-title">
+                <span className="eyebrow">THE CHANCELLOR’S COUNCIL</span>
+                <h2>Oaths & rivalries</h2>
+                <p>A crown is never held alone.</p>
+              </div>
+              {scenario.realms
+                .filter((r) => r.id !== state.playerRealm && r.controller !== 'passive')
+                .map((r) => {
+                  const treaty = relation(state, state.playerRealm, r.id);
+                  return (
+                    <section className="diplomacy-card" key={r.id}>
+                      <div className="diplomacy-heading">
+                        <Herald realm={r} size={42} />
+                        <div>
+                          <h3>{r.name}</h3>
+                          <p>{rulingRegent(scenario, r.id, state)?.name}</p>
+                          <span className={`treaty-badge ${treaty?.kind}`}>
+                            {treaty?.kind ?? 'peace'} · Relations {signed(treaty?.opinion ?? 0)}
+                          </span>
+                          {treaty?.kind === 'war' && (
+                            <small>
+                              {mayInvade(state, state.playerRealm, r.id)
+                                ? 'Your army may invade.'
+                                : 'Defensive war: declare war to invade their lands.'}
+                            </small>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    {state.realms.find((s) => s.id === r.id)?.eliminated ? (
-                      <p>This realm has fallen.</p>
-                    ) : (
-                      (['pact', 'alliance', 'peace', 'war'] as const)
-                        .filter(
-                          (kind) =>
-                            kind !== treaty?.kind ||
-                            (kind === 'war' && !mayInvade(state, state.playerRealm, r.id)),
-                        )
-                        .map((kind) => (
-                          <div key={kind}>
-                            {order(
-                              { type: 'ProposeTreaty', target: r.id, kind },
-                              kind === 'war' ? 'Declare war' : `Propose ${kind}`,
-                              'diplomacy',
-                            )}
-                            {kind !== 'war' && (
-                              <small className="acceptance">
-                                {treatyAcceptance(state, scenario, state.playerRealm, r.id, kind)
-                                  ? 'Their council is willing to accept.'
-                                  : 'Their council is likely to decline.'}
-                              </small>
-                            )}
-                          </div>
-                        ))
-                    )}
-                  </section>
-                );
-              })}
-            <p className="council-note">
-              Alliances grant passage. A declaration permits only the declaring realm to invade; the
-              defender can liberate its own land. Classic declarations expire at season end.
-              Occupation persists while troops remain.
-            </p>
-          </>
-        )}
+                      {state.realms.find((s) => s.id === r.id)?.eliminated ? (
+                        <p>This realm has fallen.</p>
+                      ) : (
+                        (['pact', 'alliance', 'peace', 'war'] as const)
+                          .filter(
+                            (kind) =>
+                              kind !== treaty?.kind ||
+                              (kind === 'war' && !mayInvade(state, state.playerRealm, r.id)),
+                          )
+                          .map((kind) => (
+                            <div key={kind}>
+                              {order(
+                                { type: 'ProposeTreaty', target: r.id, kind },
+                                kind === 'war' ? 'Declare war' : `Propose ${kind}`,
+                                'diplomacy',
+                              )}
+                              {kind !== 'war' && (
+                                <small className="acceptance">
+                                  {treatyAcceptance(state, scenario, state.playerRealm, r.id, kind)
+                                    ? 'Their council is willing to accept.'
+                                    : 'Their council is likely to decline.'}
+                                </small>
+                              )}
+                            </div>
+                          ))
+                      )}
+                    </section>
+                  );
+                })}
+              <p className="council-note">
+                Alliances grant passage. A declaration permits only the declaring realm to invade;
+                the defender can liberate its own land. Classic declarations expire at season end.
+                Occupation persists while troops remain.
+              </p>
+            </>
+          ))}
         {panel === 'chronicle' && (
           <>
             <div className="panel-title">
@@ -747,7 +773,7 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
                       )}
                     </span>
                     <small>{season(e.turn)}</small>
-                    <p>{logText(e, scenario)}</p>
+                    <p>{logText(e, scenario, eventReports)}</p>
                   </article>
                 ))}
             </div>
@@ -825,6 +851,12 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
                     <dt>Court</dt>
                     <dd>−{income.court}</dd>
                   </div>
+                  {!!income.lieutenantSalaries && (
+                    <div>
+                      <dt>Lieutenant salaries</dt>
+                      <dd>−{income.lieutenantSalaries}</dd>
+                    </div>
+                  )}
                 </>
               )}
               <div>
@@ -866,7 +898,8 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
                     <p>
                       Claims {signed(r.lawClaims ?? 0)}; tribute +{r.tributeIn ?? 0} / −
                       {r.tributeOut ?? 0}. Treasury {r.opening} → {r.closing}. Unpaid costs{' '}
-                      {r.unpaid ?? 0} GB; army paid with {r.regencyUpkeep ?? 0} RP.
+                      {r.unpaid ?? 0} GB; army paid with {r.regencyUpkeep ?? 0} RP. Fealty RP
+                      received / paid: +{r.regencyTributeIn ?? 0} / −{r.regencyTributeOut ?? 0}.
                     </p>
                   )}
                 </div>
@@ -879,11 +912,13 @@ export function Sidebar({ state, scenario, selected, panel, select, issue }: Pro
               <span>YOUR OBJECTIVE</span>
             </div>
             <p>
-              {scenario.victory.metric === 'domain-power'
-                ? `Reach domain power ${scenario.victory.target}, or lead in domain power after ${scenario.victory.turns} seasons.`
-                : scenario.victory.metric === 'holding-levels'
-                  ? `Reach ${scenario.victory.target} holding levels, or lead after ${scenario.victory.turns} seasons.`
-                  : `Control ${scenario.victory.provinces} provinces, or hold the greatest total province level after ${scenario.victory.turns} seasons.`}
+              {scenario.victory.metric === 'empire-points'
+                ? `Empire points: ${victoryScore(state, scenario, state.playerRealm)} / ${scenario.victory.target}. Win through sovereignty, fealty and alliances. Relic/adventure points remain unavailable.`
+                : scenario.victory.metric === 'domain-power'
+                  ? `Reach domain power ${scenario.victory.target}, or lead in domain power after ${scenario.victory.turns} seasons.`
+                  : scenario.victory.metric === 'holding-levels'
+                    ? `Reach ${scenario.victory.target} holding levels, or lead after ${scenario.victory.turns} seasons.`
+                    : `Control ${scenario.victory.provinces} provinces, or hold the greatest total province level after ${scenario.victory.turns} seasons.`}
             </p>
             <p className="council-note">
               You hold {state.provinces.filter((p) => p.owner === state.playerRealm).length} of{' '}

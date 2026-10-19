@@ -817,3 +817,15 @@ export const originalMapIcons: readonly string[] = [
   'RHUANOCH',
   'FELLPORT',
 ];
+
+/** Source-supported strategic place lookup (not unit icons). The special castle
+ * records are NOT the similarly numbered ordinary level-variant bitmaps.
+ * See GAMEMAP.CPP's place-art loader and landmark-selections.json provenance.
+ */
+export function originalPlaceGraphicIndex(icon: number, level: number) {
+  if (!Number.isInteger(icon) || icon < 93 || icon > 118 || !Number.isFinite(level))
+    return undefined;
+  if (icon >= 116) return icon + 3;
+  if (icon <= 98) return icon;
+  return icon + Math.floor(Math.max(0, Math.min(7, level)) / 2);
+}

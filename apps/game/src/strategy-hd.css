@@ -1,4 +1,38 @@
 /* Main campaign only. Original menu and other dialogs retain their existing presentation. */
+.map-presentation {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid #bfa76a99;
+  border-radius: 3px;
+  background: #243833ed;
+  box-shadow: 0 2px 8px #0e1d1b55;
+}
+.hd-strategy .map-presentation button {
+  min-height: 34px;
+  padding: 5px 11px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #e4dcc3;
+  font:
+    15px/1.2 Georgia,
+    serif;
+}
+.hd-strategy .map-presentation button[aria-pressed='true'] {
+  background: #b9a16b;
+  border-color: #d9c48c;
+  color: #202a20;
+}
+.hd-strategy .map-presentation button:hover {
+  border-color: #c9b985;
+}
+.hd-strategy .map-wrap {
+  background: #304d53;
+}
 .hd-strategy {
   --council-width: 400px;
   --hd-ink: #30200f;

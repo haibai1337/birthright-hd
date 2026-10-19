@@ -12,6 +12,9 @@ import path from 'node:path';
 import { OriginalDisc } from '../packages/import-tools/disc.ts';
 import { decodeEconomicRecords } from '../packages/import-tools/economy.ts';
 import { extractMagicRecords } from '../packages/import-tools/magic.ts';
+import { extractStrategyRecords } from '../packages/import-tools/strategy.ts';
+import { extractMapLocations } from '../packages/import-tools/map-visuals.ts';
+import { decodeStrings } from '../packages/import-tools/strings.ts';
 import {
   decodeIndexedBitmap,
   decodeResourceDirectory,
@@ -24,6 +27,11 @@ import {
   inspectWave,
 } from '../packages/import-tools/original-art.ts';
 import { originalArtNames, originalMapIcons } from '../packages/import-tools/art-identities.ts';
+import {
+  originalAudioIdentity,
+  originalMusic,
+  originalEffects,
+} from '../packages/import-tools/audio.ts';
 
 const output = path.resolve('reference/assets');
 const image =
@@ -57,6 +65,8 @@ type RecordInfo = {
   frameMs?: number;
   animation?: string[];
   audio?: ReturnType<typeof inspectWave>;
+  audioId?: number;
+  audioRole?: string;
 };
 const records: RecordInfo[] = [],
   containers: { name: string; count: number; sha256: string }[] = [],
@@ -80,6 +90,29 @@ try {
     ) + '\n',
   );
   const campaignBytes = disc.file('RLMSTART.DAT');
+  put(
+    'relief/locations.json',
+    JSON.stringify(
+      extractMapLocations(
+        JSON.parse(readFileSync('reference/extracted/anuire/anuire.research.json', 'utf8')),
+        campaignBytes,
+        disc.file('RESFILES/UI.RES'),
+      ),
+      null,
+      2,
+    ) + '\n',
+  );
+  writeFileSync(
+    'reference/extracted/anuire/strategy.research.json',
+    JSON.stringify(
+      extractStrategyRecords(
+        JSON.parse(readFileSync('reference/extracted/anuire/anuire.research.json', 'utf8')),
+        campaignBytes,
+      ),
+      null,
+      2,
+    ) + '\n',
+  );
   writeFileSync(
     'reference/extracted/anuire/economy.research.json',
     JSON.stringify(
@@ -111,11 +144,12 @@ try {
         .map((e) => path.relative(output, path.join(e.parentPath, e.name)).replaceAll('\\', '/')),
     );
     const originalMusic = disc.entries.filter((e) => /^MUSIC\/[^/]+\.WAV$/.test(e.name));
-    const extraRealm = existsSync('reference/original/MUSIC/105.WAV');
     reuse =
       !process.argv.includes('--force') &&
       files.has('runtime.json') &&
-      prior.records.length === 9501 + Number(extraRealm) &&
+      prior.containers.every(
+        (c) => prior.records.filter((r) => r.source === c.name).length === c.count,
+      ) &&
       prior.records.every(
         (r) =>
           r.status === 'decoded' &&
@@ -129,13 +163,7 @@ try {
       prior.palettes.every((p) => files.has(p.file) && hash(disc.file(p.source)) === p.sha256) &&
       originalMusic.every((e) =>
         prior.records.some((r) => r.source === e.name && r.sha256 === hash(disc.file(e.name))),
-      ) &&
-      (!extraRealm ||
-        prior.records.some(
-          (r) =>
-            r.id === 'MUSIC/105.WAV' &&
-            r.sha256 === hash(readFileSync('reference/original/MUSIC/105.WAV')),
-        ));
+      );
   } catch {
     /* Missing or mismatched outputs need decoding below. */
   }
@@ -247,7 +275,7 @@ try {
         audio,
       });
     }
-    // Optional, explicitly identified user-supplied missing cues; never substitute silently.
+    // Retain a previously supplied extra recording; the disc's realm cue uses WAVE00/105.
     const cueFile = path.resolve('reference/original/MUSIC/105.WAV');
     try {
       const b = readFileSync(cueFile),
@@ -310,13 +338,8 @@ try {
       portraits,
       mapIcons: originalMapIcons,
       troopIcons,
-      music: {
-        menu: 'MUSIC/106.WAV',
-        campaign: assets['MUSIC/105.WAV'] ? 'MUSIC/105.WAV' : 'MUSIC/101.WAV',
-        campaignFallback: !assets['MUSIC/105.WAV'],
-        note: 'Original realm cue 105 and battle cue 102 are absent from this single-data-track image. Campaign uses recovered original 101 under an explicit alternate-cue policy until 105 is supplied; it is not the verified original realm cue.',
-      },
-      effects: { click: 'WAVE/8010.WAV', order: 'WAVE/8010.WAV', error: 'WAVE/8015.WAV' },
+      music: originalMusic,
+      effects: originalEffects,
     };
     put('manifest.json', JSON.stringify(manifest, null, 2));
     put(
@@ -345,6 +368,194 @@ try {
       records.filter((r) => r.status === 'decoded').length,
     );
   }
+  // Add streamed loose audio even when the expensive graphics/archive decode was reused.
+  // Preserve every source path and ID, including different IDs with identical sample bytes.
+  const manifest = JSON.parse(readFileSync(path.join(output, 'manifest.json'), 'utf8')) as {
+    records: RecordInfo[];
+    assets: Record<
+      string,
+      { file: string; frames?: string[]; frameMs?: number; width?: number; height?: number }
+    >;
+    music: typeof originalMusic;
+    effects: typeof originalEffects;
+    eventReports?: Record<string, string>;
+  };
+  const looseAudio = disc.entries.filter((e) =>
+    /^(?:MUSIC|WAVE00|WAVE10|WAVE20|WAVE30|WAVE384|WAVELOOP)\/[^/]+\.WAV$/.test(e.name),
+  );
+  for (const entry of looseAudio) {
+    try {
+      const bytes = disc.file(entry.name),
+        audio = inspectWave(bytes),
+        sha256 = hash(bytes);
+      if (audio.format !== 1) throw Error(`Unsupported WAV encoding ${audio.format}`);
+      const file = 'audio/' + entry.name;
+      if (
+        !existsSync(path.join(output, file)) ||
+        hash(readFileSync(path.join(output, file))) !== sha256
+      )
+        put(file, bytes);
+      const record: RecordInfo = {
+        id: entry.name,
+        source: entry.name,
+        offset: entry.extent * 2048,
+        packedSize: entry.bytes,
+        sha256,
+        file,
+        status: 'decoded',
+        audio,
+        ...originalAudioIdentity(entry.name),
+      };
+      const index = manifest.records.findIndex((r) => r.id === entry.name);
+      if (index < 0) manifest.records.push(record);
+      else manifest.records[index] = record;
+      manifest.assets[entry.name] = { file };
+    } catch (error) {
+      throw Error(`Audio recovery failed for ${entry.name}: ${String(error)}`, { cause: error });
+    }
+  }
+  for (const id of [
+    originalMusic.campaign,
+    originalMusic.battle,
+    originalMusic.credits,
+    ...Object.values(originalEffects),
+  ])
+    if (!manifest.assets[id]) throw Error(`Required original audio is missing: ${id}`);
+  manifest.music = originalMusic;
+  manifest.effects = originalEffects;
+  // Loose campaign movies were outside the WAD recovery pass. Reuse complete outputs.
+  for (const entry of disc.entries.filter((e) =>
+    /^(?:INTRO\/GORGON[234]\.FLC|TEXT\/GORGON[123]\.TXT)$/.test(e.name),
+  )) {
+    const bytes = disc.file(entry.name),
+      sha256 = hash(bytes);
+    const previous = manifest.records.find((r) => r.id === entry.name);
+    if (
+      previous?.sha256 === sha256 &&
+      previous.file &&
+      existsSync(path.join(output, previous.file)) &&
+      (!entry.name.endsWith('.FLC') ||
+        (previous.animation?.length === previous.frames &&
+          previous.animation.every((f) => existsSync(path.join(output, f)))))
+    )
+      continue;
+    const record: RecordInfo = {
+      id: entry.name,
+      source: entry.name,
+      offset: entry.extent * 2048,
+      packedSize: entry.bytes,
+      sha256,
+      category: 'campaign-cinematic',
+      status: 'decoded',
+    };
+    try {
+      if (entry.name.endsWith('.TXT'))
+        record.file = put('text/' + path.basename(entry.name), bytes);
+      else {
+        const paletteSource = 'GRAPHICS/' + path.basename(entry.name, '.FLC') + '.COL';
+        const header = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+        if (
+          header.getUint16(6, true) > 1000 ||
+          header.getUint16(6, true) * header.getUint16(8, true) * header.getUint16(10, true) >
+            128_000_000
+        )
+          throw Error('Campaign movie exceeds bounded frame budget');
+        const movie = decodeFlc(bytes, decodePalette(disc.file(paletteSource)), true);
+        record.width = movie.width;
+        record.height = movie.height;
+        record.frames = movie.frameCount;
+        record.frameMs = movie.frameMs;
+        record.palette = paletteSource;
+        record.animation = movie.frames.map((f, i) =>
+          put(
+            `images/${entry.name}.${i}.png`,
+            indexedPng(movie.width, movie.height, f.pixels, f.palette, false),
+          ),
+        );
+        record.file = record.animation[0];
+      }
+      manifest.assets[record.id] = {
+        file: record.file!,
+        frames: record.animation,
+        frameMs: record.frameMs,
+        width: record.width,
+        height: record.height,
+      };
+    } catch (error) {
+      record.status = `campaign fallback: ${String(error)}`;
+    }
+    const index = manifest.records.findIndex((r) => r.id === record.id);
+    if (index < 0) manifest.records.push(record);
+    else manifest.records[index] = record;
+  }
+  const stringBytes = disc.file('STRDAT.DAT'),
+    catalog = decodeStrings(stringBytes);
+  // STRENUM.H numeric IDs + REPORT.CPP immediate subjects. Private text stays in imported data.
+  const reportIds: Record<string, number> = {
+    4: 3155,
+    5: 3159,
+    6: 3163,
+    7: 3167,
+    8: 3176,
+    17: 3002,
+  };
+  for (let i = 9; i <= 16; i++) reportIds[i] = 3195;
+  manifest.eventReports = Object.fromEntries(
+    Object.entries(reportIds).map(([event, id]) => [event, catalog.entries[id]!.text]),
+  );
+  const reportFile = put(
+    'text/campaign-event-reports.json',
+    JSON.stringify(
+      {
+        source: 'STRDAT.DAT',
+        sha256: hash(stringBytes),
+        reports: Object.entries(reportIds).map(([eventId, stringId]) => ({
+          eventId: Number(eventId),
+          ...catalog.entries[stringId]!,
+        })),
+      },
+      null,
+      2,
+    ),
+  );
+  const reportRecord: RecordInfo = {
+    id: 'TEXT/CAMPAIGN-EVENT-REPORTS',
+    source: 'STRDAT.DAT',
+    offset: disc.entries.find((entry) => entry.name === 'STRDAT.DAT')!.extent * 2048,
+    packedSize: stringBytes.length,
+    sha256: hash(stringBytes),
+    category: 'campaign-event-reports',
+    file: reportFile,
+    status: 'decoded',
+  };
+  const priorReport = manifest.records.findIndex((r) => r.id === reportRecord.id);
+  if (priorReport < 0) manifest.records.push(reportRecord);
+  else manifest.records[priorReport] = reportRecord;
+  put('manifest.json', JSON.stringify(manifest, null, 2));
+  const runtime = JSON.parse(readFileSync(path.join(output, 'runtime.json'), 'utf8')) as {
+    assets: Record<string, { file: string }>;
+    music: typeof originalMusic;
+    effects: typeof originalEffects;
+    eventReports?: Record<string, string>;
+  };
+  for (const record of manifest.records.filter((r) => r.audio && r.file && r.status === 'decoded'))
+    runtime.assets[record.id] = manifest.assets[record.id]!;
+  for (const record of manifest.records.filter(
+    (r) => r.category === 'campaign-cinematic' && r.file && r.status === 'decoded',
+  ))
+    runtime.assets[record.id] = manifest.assets[record.id]!;
+  runtime.music = originalMusic;
+  runtime.effects = originalEffects;
+  runtime.eventReports = manifest.eventReports;
+  put('runtime.json', JSON.stringify(runtime));
+  console.log(
+    'Original audio:',
+    manifest.records.filter((r) => r.audio).length,
+    'recordings; realm',
+    originalMusic.campaign,
+    '; battle',
+    originalMusic.battle,
+  );
   put(
     'IMPORT_INFO.txt',
     'Original Birthright assets. Reproduce with npm run assets:import. All recovered assets are retained for future screens, battles and adventures.\n',

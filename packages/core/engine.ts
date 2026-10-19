@@ -6,6 +6,9 @@ import {
   type LogEntry,
   type RulesetId,
   type Scenario,
+  DEFAULT_CAMPAIGN_EVENTS,
+  type CampaignEventOptions,
+  type CampaignDifficulty,
 } from './schema';
 import { RULESETS } from './rules';
 import { randomInt } from './random';
@@ -31,8 +34,19 @@ import { initializeDomainTurn } from './domain-turn';
 import { settlePCEconomy } from './economy';
 import { refreshTradeRoutes } from './trade';
 import { bloodlineStrength } from './bloodlines';
+import { realmRegentCandidates } from './regents';
 import { applyRealmMagic } from './realm-magic';
 import { refreshLeyLines } from './ley-lines';
+import { usesPCStrategy, goldBars } from './military';
+import { empirePoints, breakAgreement, seasonalDiplomacy, declarePCWar } from './diplomacy';
+import {
+  strategicEvents,
+  synchronizeRebellions,
+  npcCampaignAdministration,
+  treasuryIncidents,
+} from './strategic-events';
+import { queueCastle, buildCastles } from './construction';
+import { applyFealtyOrder, playerControls } from './fealty';
 import {
   investProvince,
   matureOccupations,
@@ -54,16 +68,34 @@ export function createCampaign(
   seed = 1997,
   ruleset: RulesetId = 'ENHANCED',
   selectionMode: 'CLASSIC' | 'UNRESTRICTED' = scenario.selection?.mode ?? 'CLASSIC',
+  victoryTarget: 300 | 400 | 500 = 400,
+  regentId?: string,
+  difficulty: CampaignDifficulty = 'medium',
+  eventOptions: CampaignEventOptions = DEFAULT_CAMPAIGN_EVENTS,
+  unrestrictedDiplomacy = false,
 ): Campaign {
   if (!Number.isInteger(seed) || seed < 0 || seed > 4294967295)
     throw new Error('Seed must be a uint32');
   if (!scenario.realms.some((r) => r.id === playerRealm)) throw new Error('Unknown player realm');
   if (!realmSelectable(scenario, playerRealm, selectionMode))
     throw new Error('This domain is not available in the configured faction selection mode.');
+  const chosen = realmRegentCandidates(scenario, playerRealm).find(
+    (regent) =>
+      regent.id === (regentId ?? scenario.realms.find((r) => r.id === playerRealm)!.regent.id),
+  );
+  if (!chosen) throw new Error('This character is not a regent candidate for the chosen realm.');
   const state: Campaign = {
+    selectionMode,
+    unrestrictedDiplomacy,
+    difficulty,
+    eventOptions: { ...eventOptions },
+    gorgonPlotStage: 0,
+    eventHistory: [],
+    lastCampaignEventTurn: 1,
+    pendingGorgonScenes: [],
     scenarioId: scenario.id,
     scenarioRevision: scenario.revision,
-    ...(scenario.fingerprint ? { scenarioFingerprint: scenario.fingerprint, selectionMode } : {}),
+    ...(scenario.fingerprint ? { scenarioFingerprint: scenario.fingerprint } : {}),
     ruleset,
     seed,
     rng: seed,
@@ -72,6 +104,7 @@ export function createCampaign(
     nextId: 1,
     realms: scenario.realms.map((r) => ({
       id: r.id,
+      ...(r.id === playerRealm ? { regentId: chosen.id } : {}),
       treasury:
         scenario.initial.domains?.find((d) => d.id === r.id)?.treasury ?? scenario.initial.treasury,
       regency:
@@ -79,14 +112,15 @@ export function createCampaign(
       actions: RULESETS[ruleset].actions,
       ...(usesPCDomainActions(scenario)
         ? {
-            bloodlineStrength: r.regent.bloodline.strength,
-            knownSpells: [...(r.regent.realmSpells ?? [])],
+            bloodlineStrength: (r.id === playerRealm ? chosen : r.regent).bloodline.strength,
+            knownSpells: [...((r.id === playerRealm ? chosen : r.regent).realmSpells ?? [])],
           }
         : {}),
       ...(usesPCDomainActions(scenario)
         ? { court: scenario.initial.domains?.find((d) => d.id === r.id)?.court ?? 1 }
         : {}),
       eliminated: false,
+      ...(r.specialBehavior === 'monsters' ? { behavior: 'monsters' as const } : {}),
       ...(r.controller
         ? { controller: r.id === playerRealm ? ('player' as const) : r.controller }
         : {}),
@@ -122,7 +156,13 @@ export function createCampaign(
     history: [],
     pendingEvents: [],
     outcome: 'ongoing',
+    ...(usesPCStrategy(scenario) ? { victoryTarget } : {}),
   };
+  const candidates = realmRegentCandidates(scenario, playerRealm);
+  for (const character of state.characters ?? []) {
+    if (character.realmId === playerRealm && candidates.some((r) => r.id === character.regentId))
+      character.role = character.regentId === chosen.id ? 'regent' : 'lieutenant';
+  }
   log(state, 'campaign.started', playerRealm, { seed });
   if (usesPCDomainActions(scenario)) initializeDomainTurn(state, true);
   refreshLeyLines(state);
@@ -161,12 +201,14 @@ function checkOutcome(state: Campaign, scenario: Scenario) {
   if (state.realms.find((r) => r.id === state.playerRealm)?.eliminated) state.outcome = 'defeat';
   else if (
     scenario.victory.metric && scenario.victory.metric !== 'province-count'
-      ? victoryScore(state, scenario, state.playerRealm) >= (scenario.victory.target ?? Infinity)
+      ? !state.crowned &&
+        victoryScore(state, scenario, state.playerRealm) >=
+          (state.victoryTarget ?? scenario.victory.target ?? Infinity)
       : state.provinces.filter((p) => p.owner === state.playerRealm).length >=
         scenario.victory.provinces
   )
     state.outcome = 'victory';
-  else if (state.turn > scenario.victory.turns) {
+  else if (scenario.victory.metric !== 'empire-points' && state.turn > scenario.victory.turns) {
     const scores = state.realms
       .map((r) => ({
         id: r.id,
@@ -177,6 +219,7 @@ function checkOutcome(state: Campaign, scenario: Scenario) {
   }
 }
 export function victoryScore(state: Campaign, scenario: Scenario, id: string) {
+  if (scenario.victory.metric === 'empire-points') return empirePoints(state, scenario, id);
   if (scenario.victory.metric === 'domain-power') return domainPower(state, scenario, id);
   if (scenario.victory.metric === 'holding-levels')
     return state.holdings.filter((h) => h.realmId === id).reduce((n, h) => n + h.level, 0);
@@ -192,7 +235,7 @@ function execute(
   const realm = state.realms.find((r) => r.id === actor);
   if (!realm) throw new Error('Validated realm missing');
   const cost = commandCost(state, scenario, cmd, actor);
-  realm.treasury -= cost.gold;
+  realm.treasury = goldBars(realm.treasury - cost.gold);
   realm.regency -= cost.regency;
   realm.actions -= cost.actions;
   if (cost.gold || cost.regency)
@@ -201,7 +244,7 @@ function execute(
       gold: cost.gold - (cmd.type === 'TransferGold' ? cmd.amount : 0),
       regency: cost.regency,
     });
-  if (usesPCDomainActions(scenario) && isDomainAction(cmd)) {
+  if (usesPCDomainActions(scenario) && isDomainAction(cmd, scenario)) {
     beginDomainAction(state, scenario, actor, cmd);
     refreshOccupations(state, scenario);
     refreshTradeRoutes(state, scenario);
@@ -210,6 +253,40 @@ function execute(
     return;
   }
   switch (cmd.type) {
+    case 'SetFealtyRegency':
+    case 'DonateFealtyRegency':
+      applyFealtyOrder(state, actor, cmd);
+      break;
+    case 'ContinueCampaign':
+      state.crowned = true;
+      state.outcome = 'ongoing';
+      break;
+    case 'BreakTreaty':
+      breakAgreement(state, actor, cmd.target);
+      break;
+    case 'DisbandUnit': {
+      const army = state.armies.find((a) => a.id === cmd.armyId)!;
+      army.units = army.units.filter((u) => u.id !== cmd.unitId);
+      state.armies = state.armies.filter((a) => a.units.length);
+      log(state, 'unit.disbanded', actor, { unit: cmd.unitId, province: army.provinceId });
+      break;
+    }
+    case 'SplitArmy': {
+      const army = state.armies.find((a) => a.id === cmd.armyId)!;
+      const units = army.units.filter((u) => cmd.unitIds.includes(u.id));
+      army.units = army.units.filter((u) => !cmd.unitIds.includes(u.id));
+      state.armies.push({ ...army, id: `army-${state.nextId++}`, units });
+      break;
+    }
+    case 'JoinArmies': {
+      const army = state.armies.find((a) => a.id === cmd.armyId)!,
+        other = state.armies.find((a) => a.id === cmd.otherArmyId)!;
+      army.units.push(...other.units);
+      army.moved ||= other.moved;
+      army.retreatedTurn = Math.max(army.retreatedTurn ?? 0, other.retreatedTurn ?? 0);
+      state.armies = state.armies.filter((a) => a.id !== other.id);
+      break;
+    }
     case 'IncreaseBloodline':
       realm.bloodlineStrength = bloodlineStrength(state, scenario, actor) + 1;
       log(state, 'bloodline.increased', actor, { strength: realm.bloodlineStrength });
@@ -261,7 +338,10 @@ function execute(
     }
     case 'RecruitUnit': {
       let army = state.armies.find(
-        (a) => a.realmId === actor && a.provinceId === cmd.provinceId && !a.moved,
+        (a) =>
+          a.realmId === actor &&
+          a.provinceId === cmd.provinceId &&
+          (usesPCStrategy(scenario) ? a.units.length < 15 : !a.moved),
       );
       if (!army) {
         army = {
@@ -274,6 +354,11 @@ function execute(
         state.armies.push(army);
       }
       army.units.push({ id: `unit-${state.nextId++}`, type: cmd.unitType, strength: 100 });
+      if (usesPCStrategy(scenario)) {
+        const p = state.provinces.find((p) => p.id === cmd.provinceId)!;
+        p.musteredCount = (p.musteredTurn === state.turn ? (p.musteredCount ?? 0) : 0) + 1;
+        p.musteredTurn = state.turn;
+      }
       log(state, 'unit.recruited', actor, { province: cmd.provinceId, unit: cmd.unitType });
       break;
     }
@@ -305,6 +390,10 @@ function execute(
       break;
     }
     case 'Fortify': {
+      if (usesPCStrategy(scenario)) {
+        queueCastle(state, scenario, actor, cmd.provinceId);
+        break;
+      }
       const p = state.provinces.find((p) => p.id === cmd.provinceId);
       if (p) {
         p.fort++;
@@ -331,6 +420,10 @@ function execute(
       break;
     }
     case 'ProposeTreaty': {
+      if (usesPCStrategy(scenario) && cmd.kind === 'war') {
+        declarePCWar(state, scenario, actor, cmd.target);
+        break;
+      }
       let treaty = relation(state, actor, cmd.target);
       if (!treaty) {
         treaty = { a: actor, b: cmd.target, kind: 'peace', opinion: 0, since: state.turn };
@@ -491,6 +584,10 @@ function settleEconomy(state: Campaign, scenario: Scenario) {
   state.reports = state.reports.slice(-Math.max(60, state.realms.length * 4));
 }
 function generateEvents(state: Campaign, scenario: Scenario) {
+  if (usesPCStrategy(scenario)) {
+    strategicEvents(state, scenario);
+    return;
+  }
   for (const realm of [...state.realms].sort((a, b) => compareIds(a.id, b.id))) {
     if (realm.eliminated || realm.controller === 'passive') continue;
     const owned = state.provinces
@@ -519,7 +616,14 @@ function generateEvents(state: Campaign, scenario: Scenario) {
   }
 }
 function finishSeason(state: Campaign, scenario: Scenario) {
+  // Native counters expire at the boundary before report income is calculated.
+  if (usesPCStrategy(scenario))
+    state.effects = state.effects.filter((e) => e.expiresTurn > state.turn + 1);
   settleEconomy(state, scenario);
+  if (usesPCStrategy(scenario)) {
+    synchronizeRebellions(state);
+    buildCastles(state, scenario);
+  }
   refreshOccupations(state, scenario);
   resolveSieges(state, scenario);
   refreshOccupations(state, scenario);
@@ -527,13 +631,17 @@ function finishSeason(state: Campaign, scenario: Scenario) {
   for (const treaty of state.treaties)
     if (RULESETS[state.ruleset].warExpires && treaty.kind === 'war') treaty.kind = 'peace';
   if (RULESETS[state.ruleset].warExpires) state.warDeclarations = [];
+  if (usesPCStrategy(scenario)) seasonalDiplomacy(state, scenario);
   state.turn++;
+  if (usesPCStrategy(scenario)) treasuryIncidents(state, scenario);
   state.effects = state.effects.filter((e) => e.expiresTurn > state.turn);
   for (const r of state.realms) r.actions = RULESETS[state.ruleset].actions;
   for (const a of state.armies) a.moved = false;
   state.pendingEvents = [];
   checkOutcome(state, scenario);
   if (state.outcome === 'ongoing') generateEvents(state, scenario);
+  if (state.outcome === 'ongoing' && usesPCStrategy(scenario))
+    npcCampaignAdministration(state, scenario);
   if (usesPCDomainActions(scenario)) initializeDomainTurn(state);
   log(state, 'turn.started', state.playerRealm, { turn: state.turn });
 }
@@ -565,8 +673,9 @@ function advanceDomainSchedule(
       freeSteps = 0;
       continue;
     }
-    if (id === state.playerRealm && !phase.endingSeason) return;
-    const plan = id === state.playerRealm ? null : planNextAI(state, scenario, id);
+    const controlled = playerControls(state, scenario, id);
+    if (controlled && !phase.endingSeason) return;
+    const plan = controlled ? null : planNextAI(state, scenario, id);
     const command: Command = !plan || freeSteps >= 4 ? { type: 'HoldAction' } : plan.command;
     const cost = commandCost(state, scenario, command, id);
     const error = validateCommand(state, scenario, id, command);
@@ -577,7 +686,7 @@ function advanceDomainSchedule(
       turn: state.turn,
       source: 'ai',
     });
-    if (id !== state.playerRealm)
+    if (!controlled)
       log(state, 'ai.action', id, {
         reason: plan?.reason ?? 'hold',
         action: command.type,
@@ -608,8 +717,20 @@ export function applyCommand(
     actor,
     command: structuredClone(command),
     turn: state.turn,
-    source: actor === state.playerRealm ? 'player' : 'ai',
+    source: playerControls(state, scenario, actor) ? 'player' : 'ai',
   });
+  if (command.type === 'SetCampaignOptions') {
+    if (command.selectionMode) next.selectionMode = command.selectionMode;
+    if (command.unrestrictedDiplomacy !== undefined)
+      next.unrestrictedDiplomacy = command.unrestrictedDiplomacy;
+    if (command.eventOptions) next.eventOptions = { ...command.eventOptions };
+    if (command.difficulty) next.difficulty = command.difficulty;
+    return { ok: true, state: next };
+  }
+  if (command.type === 'AcknowledgeCampaignScene') {
+    next.pendingGorgonScenes.shift();
+    return { ok: true, state: next };
+  }
   if (usesPCDomainActions(scenario)) {
     if (!next.domainTurn)
       initializeDomainTurn(
