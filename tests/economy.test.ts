@@ -20,6 +20,7 @@ import {
   type Scenario,
   type Command,
 } from '../packages/core';
+import { initializeDomainTurn } from '../packages/core/domain-turn';
 import { developmentScenario } from './fixtures/scenario';
 import { decodeEconomicRecords } from '../packages/import-tools/economy';
 import { loadAnuireScenario } from '../packages/world-data/anuire-scenario';
@@ -32,6 +33,8 @@ function fixture() {
   scenario.policy!.conquest = 'occupation';
   scenario.victory = { provinces: 99, turns: 80 };
   const state = createCampaign(scenario, 'crownmere', 1997, 'CLASSIC');
+  state.seasonFlow = { phase: 'actions', transitionId: 'economy-test' };
+  initializeDomainTurn(state, true);
   for (const r of state.realms) {
     r.treasury = 500;
     r.regency = 500;
@@ -118,7 +121,17 @@ describe('M1B-3 economy and trade', () => {
         incomeRule: 'half-province-level',
       },
     ];
-    const next = issue(state, scenario, { type: 'EndTurn' });
+    const afterEnd = issue(state, scenario, { type: 'EndTurn' });
+    let afterCouncil = issue(afterEnd, scenario, { type: 'CompleteCouncil' });
+    while (afterCouncil.pendingGorgonScenes.length)
+      afterCouncil = issue(afterCouncil, scenario, {
+        type: 'AcknowledgeCampaignScene',
+        stage: afterCouncil.pendingGorgonScenes[0]!,
+      });
+    while (afterCouncil.pendingEvents.some((event) => event.realmId === afterCouncil.playerRealm))
+      afterCouncil = issue(afterCouncil, scenario, { type: 'ResolveEvent', choice: 'decline' });
+    const afterTaxes = issue(afterCouncil, scenario, { type: 'CollectTaxes' });
+    const next = issue(afterTaxes, scenario, { type: 'SelectActions' });
     const report = next.reports.find((r) => r.realmId === state.playerRealm)!;
     expect(report.trade).toBe(2.5);
     expect(report.closing! % 1).toBe(0.5);

@@ -13,6 +13,7 @@ import { assetUrl, type OriginalAssets } from './original-assets';
 import { MapPanel } from './MapPanel';
 import { Sidebar, type Panel } from './Sidebar';
 import { CouncilScreen } from './CouncilScreen';
+import { MaintenanceScreen } from './MaintenanceScreen';
 import type { MapOverlay } from '../../../packages/rendering/types';
 import type { Settings } from './storage';
 import { CouncilIcon, StrategicImage, strategicMaterials } from './StrategicArt';
@@ -141,7 +142,6 @@ export function ClassicCampaign({
   mainMenu,
 }: Props) {
   const [inspecting, setInspecting] = useState(false);
-  const [councilReturn, setCouncilReturn] = useState(false);
   useEffect(() => {
     if (state.pendingDomainAction) {
       setInspecting(true);
@@ -163,21 +163,14 @@ export function ClassicCampaign({
     provinceTroops = state.armies
       .filter((a) => a.provinceId === selected)
       .reduce((n, a) => n + a.units.length, 0);
+  const maintenanceMode = state.seasonFlow?.phase === 'maintenance';
   const show = (p: Panel) => {
-    setCouncilReturn(false);
     onPanel(p);
     setInspecting(true);
   };
   const showCouncil = () => {
-    setCouncilReturn(false);
     setInspecting(false);
     onCouncilOpen();
-  };
-  const openCouncilPanel = (p: Panel) => {
-    setCouncilReturn(true);
-    onPanel(p);
-    setInspecting(true);
-    onCouncilClose();
   };
   const select = (id: string) => {
     onSelect(id);
@@ -215,120 +208,134 @@ export function ClassicCampaign({
   ];
   return (
     <div
-      className="classic-game hd-strategy"
+      className={`classic-game hd-strategy ${maintenanceMode ? 'maintenance-active' : ''}`}
       style={strategicMaterials(pack)}
       data-testid="classic-layout"
     >
       <aside className="classic-council" aria-label="Regent and domain actions">
-        <button
-          className="classic-realm-name"
-          onClick={() => show('realm')}
-          title="Open the realm ledger"
-        >
-          {player.name}
-        </button>
-        <div className="classic-regent">
-          {portrait && (
-            <StrategicImage
-              pack={pack}
-              id={portrait}
-              alt={player.regent.name}
-              className="regent-portrait"
-            />
-          )}
-          <div
-            className="hd-regent-identity"
-            title={`${player.regent.bloodline.derivation} bloodline · Strength ${bloodlineStrength(state, scenario, player.id)}`}
-          >
-            <StrategicImage
-              pack={pack}
-              id="UI/DSHLD_IC.PCX"
-              className="hd-council-emblem"
-              alt="Council emblem"
-            />
-            <h2>{player.regent.name}</h2>
-            <span className="hd-regent-class">{player.regent.class} regent</span>
-            <span className="hd-bloodline">
-              {player.regent.bloodline.derivation} bloodline
-              <br />
-              Strength {bloodlineStrength(state, scenario, player.id)}
-            </span>
-          </div>
-        </div>
-        <dl className="classic-balances">
-          <div>
-            <dt>
-              <StrategicImage pack={pack} id="UI/GOLD03_A.PCX" className="hd-gold" />
-              <span>Treasury</span>
-            </dt>
-            <dd data-testid="treasury">
-              {realm.treasury}
-              <small>GB</small>
-            </dd>
-          </div>
-          <div>
-            <dt>
-              <StrategicImage pack={pack} id="UI/CROWN_TL.PCX" className="hd-regency" />
-              <span>Regency</span>
-            </dt>
-            <dd>
-              {realm.regency}
-              <small> RP</small>
-            </dd>
-          </div>
-        </dl>
-        <p className="classic-income" title="Expected seasonal balance">
-          <span className="hd-income-label">Seasonal forecast: </span>
-          {signed(income.net)} GB · +{income.regency} RP
-          <span className="hd-income-period"> / season</span>
-        </p>
-        <div className="classic-turn">
-          <strong>{season(state.turn)}</strong>
-          {realm.controller !== 'player' && (
-            <span role="status" data-testid="vassal-command">
-              Commanding {player.name} · own treasury and actions
-            </span>
-          )}
-          <span>
-            <span className="hd-turn-domain">DOMAIN </span>TURN {state.turn}
-            {state.domainTurn && ` · Round ${state.domainTurn.round}/3`}
-          </span>
-          <div className="hd-action-budget">
-            <span className="hd-action-seals" aria-hidden="true">
-              {[0, 1, 2].map((n) => (
-                <i key={n} className={n < realm.actions ? 'available' : ''} />
-              ))}
-            </span>
-            <strong data-testid="actions-left">{realm.actions} of 3 remaining</strong>
-          </div>
-        </div>
-        <button className="classic-council-entry" onClick={showCouncil}>
-          Council of advisors
-        </button>
-        <div className="hd-section-caption">Domain councils</div>
-        <nav className="classic-actions" aria-label="Council panels">
-          {actionRows.map(([id, label, row]) => (
+        {maintenanceMode ? (
+          <MaintenanceScreen
+            pack={pack}
+            state={state}
+            scenario={scenario}
+            selected={selected}
+            onSelect={select}
+            onCouncil={showCouncil}
+            issue={issue}
+          />
+        ) : (
+          <>
             <button
-              key={id}
-              aria-pressed={panel === id && inspecting}
-              onClick={() => show(id)}
-              title={`Open ${label.toLowerCase()} council`}
+              className="classic-realm-name"
+              onClick={() => show('realm')}
+              title="Open the realm ledger"
             >
-              <CouncilIcon pack={pack} row={row} />
-              <b>{label}</b>
-              <span className="hd-council-arrow" aria-hidden="true">
-                ›
-              </span>
+              {player.name}
             </button>
-          ))}
-        </nav>
-        <button
-          className="classic-end-season hd-council-end-season"
-          disabled={state.outcome !== 'ongoing'}
-          onClick={() => issue({ type: 'EndTurn' })}
-        >
-          End season <span aria-hidden="true">▸</span>
-        </button>
+            <div className="classic-regent">
+              {portrait && (
+                <StrategicImage
+                  pack={pack}
+                  id={portrait}
+                  alt={player.regent.name}
+                  className="regent-portrait"
+                />
+              )}
+              <div
+                className="hd-regent-identity"
+                title={`${player.regent.bloodline.derivation} bloodline · Strength ${bloodlineStrength(state, scenario, player.id)}`}
+              >
+                <StrategicImage
+                  pack={pack}
+                  id="UI/DSHLD_IC.PCX"
+                  className="hd-council-emblem"
+                  alt="Council emblem"
+                />
+                <h2>{player.regent.name}</h2>
+                <span className="hd-regent-class">{player.regent.class} regent</span>
+                <span className="hd-bloodline">
+                  {player.regent.bloodline.derivation} bloodline
+                  <br />
+                  Strength {bloodlineStrength(state, scenario, player.id)}
+                </span>
+              </div>
+            </div>
+            <dl className="classic-balances">
+              <div>
+                <dt>
+                  <StrategicImage pack={pack} id="UI/GOLD03_A.PCX" className="hd-gold" />
+                  <span>Treasury</span>
+                </dt>
+                <dd data-testid="treasury">
+                  {realm.treasury}
+                  <small>GB</small>
+                </dd>
+              </div>
+              <div>
+                <dt>
+                  <StrategicImage pack={pack} id="UI/CROWN_TL.PCX" className="hd-regency" />
+                  <span>Regency</span>
+                </dt>
+                <dd>
+                  {realm.regency}
+                  <small> RP</small>
+                </dd>
+              </div>
+            </dl>
+            <p className="classic-income" title="Expected seasonal balance">
+              <span className="hd-income-label">Seasonal forecast: </span>
+              {signed(income.net)} GB · +{income.regency} RP
+              <span className="hd-income-period"> / season</span>
+            </p>
+            <div className="classic-turn">
+              <strong>{season(state.turn)}</strong>
+              {realm.controller !== 'player' && (
+                <span role="status" data-testid="vassal-command">
+                  Commanding {player.name} · own treasury and actions
+                </span>
+              )}
+              <span>
+                <span className="hd-turn-domain">DOMAIN </span>TURN {state.turn}
+                {state.domainTurn && ` · Round ${state.domainTurn.round}/3`}
+              </span>
+              <div className="hd-action-budget">
+                <span className="hd-action-seals" aria-hidden="true">
+                  {[0, 1, 2].map((n) => (
+                    <i key={n} className={n < realm.actions ? 'available' : ''} />
+                  ))}
+                </span>
+                <strong data-testid="actions-left">{realm.actions} of 3 remaining</strong>
+              </div>
+            </div>
+            <button className="classic-council-entry" onClick={showCouncil}>
+              Council of advisors
+            </button>
+            <div className="hd-section-caption">Domain councils</div>
+            <nav className="classic-actions" aria-label="Council panels">
+              {actionRows.map(([id, label, row]) => (
+                <button
+                  key={id}
+                  aria-pressed={panel === id && inspecting}
+                  onClick={() => show(id)}
+                  title={`Open ${label.toLowerCase()} council`}
+                >
+                  <CouncilIcon pack={pack} row={row} />
+                  <b>{label}</b>
+                  <span className="hd-council-arrow" aria-hidden="true">
+                    ›
+                  </span>
+                </button>
+              ))}
+            </nav>
+            <button
+              className="classic-end-season hd-council-end-season"
+              disabled={state.outcome !== 'ongoing'}
+              onClick={() => issue({ type: 'EndTurn' })}
+            >
+              End season <span aria-hidden="true">▸</span>
+            </button>
+          </>
+        )}
       </aside>
       <section className="classic-map-area" aria-label="Strategic map">
         <div className="hd-map-heading">
@@ -405,16 +412,10 @@ export function ClassicCampaign({
                   ? scenario.provinces.find((p) => p.id === selected)?.name
                   : panel}
               </strong>
-              {councilReturn && (
-                <button className="council-return" onClick={showCouncil}>
-                  Return to Council
-                </button>
-              )}
               <button
                 aria-label="Close council window"
                 onClick={() => {
                   setInspecting(false);
-                  setCouncilReturn(false);
                 }}
               >
                 ×
@@ -501,7 +502,7 @@ export function ClassicCampaign({
         </div>
         <button
           className="classic-end-season hd-toolbar-end-season"
-          disabled={state.outcome !== 'ongoing'}
+          disabled={state.outcome !== 'ongoing' || state.seasonFlow?.phase !== 'actions'}
           onClick={() => issue({ type: 'EndTurn' })}
         >
           End season <span aria-hidden="true">▸</span>
@@ -553,10 +554,11 @@ export function ClassicCampaign({
       {councilOpen && (
         <CouncilScreen
           pack={pack}
+          state={state}
+          scenario={scenario}
           factionIndex={
             typeof definition.original?.index === 'number' ? definition.original.index : undefined
           }
-          onOpenPanel={openCouncilPanel}
           onDone={onCouncilClose}
         />
       )}

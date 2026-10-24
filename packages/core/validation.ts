@@ -161,7 +161,93 @@ export function validateCommand(
     return state.outcome === 'victory' && usesPCStrategy(scenario) && actor === state.playerRealm
       ? null
       : { code: 'GAME_OVER' };
+  if (
+    [
+      'CompleteCouncil',
+      'CollectTaxes',
+      'SelectActions',
+      'SetProvinceLawClaim',
+      'SetUnitPayroll',
+      'SetCastleSupport',
+    ].includes(cmd.type) &&
+    !usesPCDomainActions(scenario)
+  )
+    return {
+      code: 'PREREQUISITE',
+      detail: 'Maintenance transitions require the PC strategic rules.',
+    };
   if (state.outcome !== 'ongoing') return { code: 'GAME_OVER' };
+  if (usesPCDomainActions(scenario)) {
+    const phase = state.seasonFlow?.phase ?? 'actions';
+    if (phase === 'council' && cmd.type !== 'CompleteCouncil')
+      return { code: 'PREREQUISITE', detail: 'Complete the Council before realm management.' };
+    if (
+      phase === 'actions' &&
+      ['CompleteCouncil', 'CollectTaxes', 'SelectActions'].includes(cmd.type)
+    )
+      return { code: 'PREREQUISITE', detail: 'The Maintenance transition is not active.' };
+    if (
+      phase === 'actions' &&
+      ['SetProvinceLawClaim', 'SetUnitPayroll', 'SetCastleSupport'].includes(cmd.type)
+    )
+      return {
+        code: 'PREREQUISITE',
+        detail: 'This management choice is available during Maintenance.',
+      };
+    if (phase === 'maintenance') {
+      const allowed = [
+        'CollectTaxes',
+        'SelectActions',
+        'ChangeTaxPolicy',
+        'SetCourt',
+        'SetLawClaims',
+        'SetProvinceLawClaim',
+        'SetUnitPayroll',
+        'SetCastleSupport',
+        'IncreaseBloodline',
+        'ResolveEvent',
+      ];
+      if (!allowed.includes(cmd.type))
+        return {
+          code: 'PREREQUISITE',
+          detail: 'Only Maintenance decisions are available before selecting Domain Actions.',
+        };
+      if (
+        cmd.type === 'CollectTaxes' &&
+        (state.seasonFlow?.maintenance?.stage !== 'choices' ||
+          state.pendingGorgonScenes.length > 0 ||
+          state.pendingEvents.some((event) => event.realmId === state.playerRealm))
+      )
+        return {
+          code: 'PREREQUISITE',
+          detail: 'Resolve pending scenes and event decisions before collecting taxes.',
+        };
+      if (
+        cmd.type === 'SelectActions' &&
+        (state.seasonFlow?.maintenance?.stage !== 'collected' ||
+          state.pendingGorgonScenes.length > 0 ||
+          state.pendingEvents.some((event) => event.realmId === state.playerRealm))
+      )
+        return {
+          code: 'PREREQUISITE',
+          detail:
+            'Taxes must be collected and pending decisions resolved before selecting actions.',
+        };
+      if (
+        state.seasonFlow?.maintenance?.stage === 'collected' &&
+        ['ChangeTaxPolicy', 'SetLawClaims', 'SetProvinceLawClaim'].includes(cmd.type)
+      )
+        return {
+          code: 'PREREQUISITE',
+          detail: 'Tax and law-claim decisions are locked after Collect Taxes.',
+        };
+    }
+    if (
+      ['CompleteCouncil', 'CollectTaxes', 'SelectActions'].includes(cmd.type) &&
+      actor !== state.playerRealm
+    )
+      return { code: 'NOT_OWNER' };
+  }
   const realm = state.realms.find((r) => r.id === actor);
   if (!realm || realm.eliminated || realm.controller === 'passive')
     return { code: 'UNKNOWN_REALM' };
@@ -184,6 +270,35 @@ export function validateCommand(
     return { code: 'PREREQUISITE', detail: 'Wait for your domain action slot in this round.' };
   if (cmd.type === 'EndTurn')
     return !playerControls(state, scenario, actor) ? { code: 'INVALID_TARGET' } : null;
+  if (cmd.type === 'SetUnitPayroll') {
+    const unit = state.armies
+      .filter((army) => army.realmId === actor)
+      .flatMap((army) => army.units)
+      .find((unit) => unit.id === cmd.unitId);
+    return unit ? null : { code: 'NOT_OWNER' };
+  }
+  if (cmd.type === 'SetCastleSupport') {
+    const fort = state.fortifications?.find(
+      (item) => item.id === cmd.fortificationId && item.realmId === actor && item.level > 0,
+    );
+    return fort ? null : { code: 'NOT_OWNER' };
+  }
+  if (cmd.type === 'SetProvinceLawClaim') {
+    const province = state.provinces.find((item) => item.id === cmd.provinceId);
+    return province &&
+      !province.contested &&
+      state.holdings.some(
+        (holding) =>
+          holding.provinceId === province.id &&
+          holding.realmId === actor &&
+          holding.type === 'law' &&
+          holding.level > 0 &&
+          !holding.contested &&
+          !holding.destroyed,
+      )
+      ? null
+      : { code: 'NOT_OWNER' };
+  }
   if (cmd.type === 'SetFealtyRegency' || cmd.type === 'DonateFealtyRegency') {
     if (!usesPCStrategy(scenario))
       return { code: 'PREREQUISITE', detail: 'Fealty orders require the Anuire strategic rules.' };
@@ -564,6 +679,8 @@ type ReferenceState = Pick<
     | 'tributes'
     | 'leyLines'
     | 'gorgonAllyRealmId'
+    | 'seasonFlow'
+    | 'provinceLawClaims'
   >;
 export function validateStateReferences(state: ReferenceState, s: Scenario): void {
   if (state.gorgonAllyRealmId && !state.realms.some((r) => r.id === state.gorgonAllyRealmId))
@@ -581,6 +698,16 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
     'holding',
   );
   unique(
+    (state.provinceLawClaims ?? []).map((claim) => `${claim.provinceId}|${claim.realmId}`),
+    'province law claim',
+  );
+  for (const claim of state.provinceLawClaims ?? [])
+    if (
+      !state.provinces.some((province) => province.id === claim.provinceId) ||
+      !state.realms.some((realm) => realm.id === claim.realmId)
+    )
+      throw new Error('Invalid province law claim reference');
+  unique(
     state.armies.map((a) => a.id),
     'army',
   );
@@ -591,6 +718,29 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
   if (state.provinces.length !== s.provinces.length || state.realms.length !== s.realms.length)
     throw new Error('Incomplete world state');
   if (!s.realms.some((r) => r.id === state.playerRealm)) throw new Error('Unknown player');
+  if (state.seasonFlow) {
+    const flow = state.seasonFlow;
+    if (flow.phase !== 'actions' && state.domainTurn)
+      throw new Error('Council and Maintenance cannot contain an active domain-action schedule');
+    if (flow.phase === 'maintenance' && !flow.maintenance)
+      throw new Error('Maintenance phase is missing its transaction state');
+    if (flow.phase !== 'maintenance' && flow.maintenance)
+      throw new Error('Maintenance transaction exists outside Maintenance');
+    if (flow.maintenance?.stage === 'collected') {
+      const reports = flow.maintenance.actualIncome;
+      const active = state.realms.filter(
+        (realm) =>
+          !realm.eliminated && realm.controller !== 'passive' && realm.behavior !== 'monsters',
+      );
+      if (
+        !reports ||
+        reports.length !== active.length ||
+        new Set(reports.map((report) => report.realmId)).size !== active.length ||
+        reports.some((report) => !active.some((realm) => realm.id === report.realmId))
+      )
+        throw new Error('Collected Maintenance income ledger is incomplete');
+    }
+  }
   for (const r of state.realms) {
     if (!s.realms.some((d) => d.id === r.id)) throw new Error('Unknown realm');
     if (r.regentId && !realmRegentCandidates(s, r.id).some((g) => g.id === r.regentId))

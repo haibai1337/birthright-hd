@@ -169,7 +169,9 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     scenario.selection?.mode ?? 'CLASSIC',
   );
   const [diplomacyDefaults, setDiplomacyDefaults] = useState(false);
-  const selectionMode = state ? (state.selectionMode ?? scenario.selection?.mode ?? 'CLASSIC') : selectionDefaults;
+  const selectionMode = state
+    ? (state.selectionMode ?? scenario.selection?.mode ?? 'CLASSIC')
+    : selectionDefaults;
   const unrestrictedDiplomacy = state?.unrestrictedDiplomacy ?? diplomacyDefaults;
   useEffect(() => {
     if (state) {
@@ -255,7 +257,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
       }
   }
   function issue(command: Command) {
-    if (!state) return;
+    if (!state) return false;
     const result = applyCommand(
       state,
       scenario,
@@ -269,10 +271,10 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     if (!result.ok) {
       originalAudio.effect('error');
       notice(result.error.detail ?? errors[result.error.code], true);
-      return;
+      return false;
     }
     accept(result.state);
-    if (result.state.turn > state.turn && result.state.outcome === 'ongoing')
+    if (result.state.seasonFlow?.phase === 'council' && result.state.outcome === 'ongoing')
       setCouncilOpen(true);
     if (command.type === 'CastRealmSpell') originalAudio.effect('magic');
     if (command.type === 'MoveArmy') {
@@ -283,6 +285,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
       const last = playerJournal(result.state).at(-1);
       if (last) notice(logText(last, scenario, original.eventReports));
     }
+    return true;
   }
   function start() {
     const value = Number(seed);
@@ -312,7 +315,7 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
     try {
       const next = loadCampaign(scenario, automatic);
       setState(next);
-      setCouncilOpen(false);
+      setCouncilOpen(next.seasonFlow?.phase === 'council');
       setSelected(domainFocus(next));
       setDialog(null);
       notice('Your campaign has been restored.');
@@ -372,7 +375,11 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
           onOverlay={setOverlay}
           councilOpen={councilOpen}
           onCouncilOpen={() => setCouncilOpen(true)}
-          onCouncilClose={() => setCouncilOpen(false)}
+          onCouncilClose={() => {
+            if (state.seasonFlow?.phase === 'council') {
+              if (issue({ type: 'CompleteCouncil' })) setCouncilOpen(false);
+            } else setCouncilOpen(false);
+          }}
           issue={issue}
           save={save}
           open={setDialog}
@@ -395,15 +402,15 @@ function Game({ original, scenario }: { original: OriginalAssets; scenario: Scen
         state.pendingGorgonScenes[0] &&
         !dialog &&
         !councilOpen && (
-        <GorgonScene
-          key={state.pendingGorgonScenes[0]}
-          stage={state.pendingGorgonScenes[0]}
-          pack={original}
-          onContinue={() =>
-            issue({ type: 'AcknowledgeCampaignScene', stage: state.pendingGorgonScenes[0]! })
-          }
-        />
-      )}
+          <GorgonScene
+            key={state.pendingGorgonScenes[0]}
+            stage={state.pendingGorgonScenes[0]}
+            pack={original}
+            onContinue={() =>
+              issue({ type: 'AcknowledgeCampaignScene', stage: state.pendingGorgonScenes[0]! })
+            }
+          />
+        )}
       {dialog === 'menu' && (
         <ClassicMainMenu
           pack={original}

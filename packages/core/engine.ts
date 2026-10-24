@@ -31,7 +31,7 @@ import {
   usesPCDomainActions,
 } from './domain-actions';
 import { initializeDomainTurn } from './domain-turn';
-import { settlePCEconomy } from './economy';
+import { collectPCEconomy, finalizePCEconomy, settlePCEconomy } from './economy';
 import { refreshTradeRoutes } from './trade';
 import { bloodlineStrength } from './bloodlines';
 import { realmRegentCandidates } from './regents';
@@ -85,6 +85,7 @@ export function createCampaign(
   );
   if (!chosen) throw new Error('This character is not a regent candidate for the chosen realm.');
   const state: Campaign = {
+    settlementVersion: 2,
     selectionMode,
     unrestrictedDiplomacy,
     difficulty,
@@ -152,6 +153,9 @@ export function createCampaign(
         { actor: t.b, target: t.a, turn: 1 },
       ]),
     reports: [],
+    ...(usesPCDomainActions(scenario)
+      ? { seasonFlow: { phase: 'council' as const, transitionId: 'turn-1', initialCouncil: true } }
+      : {}),
     log: [],
     history: [],
     pendingEvents: [],
@@ -164,7 +168,6 @@ export function createCampaign(
       character.role = character.regentId === chosen.id ? 'regent' : 'lieutenant';
   }
   log(state, 'campaign.started', playerRealm, { seed });
-  if (usesPCDomainActions(scenario)) initializeDomainTurn(state, true);
   refreshLeyLines(state);
   validateStateReferences(state, scenario);
   return campaignSchema.parse(state);
@@ -299,6 +302,41 @@ function execute(
       realm.lawClaims = cmd.enabled;
       log(state, 'claims.changed', actor, { enabled: cmd.enabled });
       break;
+    case 'SetProvinceLawClaim': {
+      state.provinceLawClaims ??= [];
+      const existing = state.provinceLawClaims.find(
+        (claim) => claim.provinceId === cmd.provinceId && claim.realmId === actor,
+      );
+      if (existing) existing.enabled = cmd.enabled;
+      else
+        state.provinceLawClaims.push({
+          provinceId: cmd.provinceId,
+          realmId: actor,
+          enabled: cmd.enabled,
+        });
+      log(state, 'province.claim-changed', actor, {
+        province: cmd.provinceId,
+        enabled: cmd.enabled,
+      });
+      break;
+    }
+    case 'SetUnitPayroll': {
+      const unit = state.armies
+        .flatMap((army) => army.units)
+        .find((unit) => unit.id === cmd.unitId);
+      if (unit) unit.payroll = cmd.payroll;
+      log(state, 'unit.payroll-changed', actor, { unit: cmd.unitId, payroll: cmd.payroll });
+      break;
+    }
+    case 'SetCastleSupport': {
+      const fort = state.fortifications?.find((item) => item.id === cmd.fortificationId);
+      if (fort) fort.supported = cmd.supported;
+      log(state, 'castle.support-changed', actor, {
+        fortification: cmd.fortificationId,
+        supported: cmd.supported,
+      });
+      break;
+    }
     case 'TransferGold': {
       // The command cost includes the transfer plus the separately logged 1 GB diplomacy fee.
       state.realms.find((r) => r.id === cmd.target)!.treasury += cmd.amount;
@@ -615,11 +653,46 @@ function generateEvents(state: Campaign, scenario: Scenario) {
       });
   }
 }
-function finishSeason(state: Campaign, scenario: Scenario) {
+function finishSeasonLegacy(state: Campaign, scenario: Scenario) {
+  if (usesPCStrategy(scenario))
+    state.effects = state.effects.filter((effect) => effect.expiresTurn > state.turn + 1);
+  settleEconomy(state, scenario);
+  if (usesPCStrategy(scenario)) {
+    synchronizeRebellions(state);
+    buildCastles(state, scenario);
+  }
+  refreshOccupations(state, scenario);
+  resolveSieges(state, scenario);
+  refreshOccupations(state, scenario);
+  matureOccupations(state, scenario);
+  for (const treaty of state.treaties)
+    if (RULESETS[state.ruleset].warExpires && treaty.kind === 'war') treaty.kind = 'peace';
+  if (RULESETS[state.ruleset].warExpires) state.warDeclarations = [];
+  if (usesPCStrategy(scenario)) seasonalDiplomacy(state, scenario);
+  state.turn++;
+  if (usesPCStrategy(scenario)) treasuryIncidents(state, scenario);
+  state.effects = state.effects.filter((effect) => effect.expiresTurn > state.turn);
+  for (const realm of state.realms) realm.actions = RULESETS[state.ruleset].actions;
+  for (const army of state.armies) army.moved = false;
+  state.pendingEvents = [];
+  checkOutcome(state, scenario);
+  if (state.outcome === 'ongoing') generateEvents(state, scenario);
+  if (state.outcome === 'ongoing' && usesPCStrategy(scenario))
+    npcCampaignAdministration(state, scenario);
+  if (usesPCDomainActions(scenario)) initializeDomainTurn(state);
+  if (usesPCDomainActions(scenario))
+    state.seasonFlow = { phase: 'actions', transitionId: `legacy-${state.turn}` };
+  log(state, 'turn.started', state.playerRealm, { turn: state.turn });
+}
+function finishSeason(state: Campaign, scenario: Scenario, legacyReplay = false) {
+  if (legacyReplay) {
+    finishSeasonLegacy(state, scenario);
+    return;
+  }
   // Native counters expire at the boundary before report income is calculated.
   if (usesPCStrategy(scenario))
     state.effects = state.effects.filter((e) => e.expiresTurn > state.turn + 1);
-  settleEconomy(state, scenario);
+  if (!usesPCDomainActions(scenario)) settleEconomy(state, scenario);
   if (usesPCStrategy(scenario)) {
     synchronizeRebellions(state);
     buildCastles(state, scenario);
@@ -639,11 +712,18 @@ function finishSeason(state: Campaign, scenario: Scenario) {
   for (const a of state.armies) a.moved = false;
   state.pendingEvents = [];
   checkOutcome(state, scenario);
-  if (state.outcome === 'ongoing') generateEvents(state, scenario);
-  if (state.outcome === 'ongoing' && usesPCStrategy(scenario))
-    npcCampaignAdministration(state, scenario);
-  if (usesPCDomainActions(scenario)) initializeDomainTurn(state);
-  log(state, 'turn.started', state.playerRealm, { turn: state.turn });
+  if (usesPCDomainActions(scenario)) {
+    delete state.domainTurn;
+    state.seasonFlow = {
+      phase: 'council',
+      transitionId: `turn-${state.turn}`,
+    };
+  } else {
+    if (state.outcome === 'ongoing') generateEvents(state, scenario);
+    if (state.outcome === 'ongoing' && usesPCStrategy(scenario))
+      npcCampaignAdministration(state, scenario);
+    log(state, 'turn.started', state.playerRealm, { turn: state.turn });
+  }
 }
 /** One paid action per regent per round; free orders never advance the round cursor. */
 function advanceDomainSchedule(
@@ -651,6 +731,7 @@ function advanceDomainSchedule(
   scenario: Scenario,
   battle: BattleResolver,
   advance: boolean,
+  legacyReplay: boolean,
 ) {
   if (advance) state.domainTurn!.cursor++;
   let freeSteps = 0;
@@ -662,7 +743,10 @@ function advanceDomainSchedule(
         phase.round++;
         phase.cursor = 0;
         log(state, 'domain.round', state.playerRealm, { round: phase.round });
-      } else finishSeason(state, scenario);
+      } else {
+        finishSeason(state, scenario, legacyReplay);
+        return;
+      }
       freeSteps = 0;
       continue;
     }
@@ -702,12 +786,38 @@ function advanceDomainSchedule(
   if (state.outcome === 'ongoing' && !state.pendingDomainAction)
     throw new Error('Domain schedule did not reach the next player slot');
 }
+function completeCouncil(state: Campaign, scenario: Scenario) {
+  const flow = state.seasonFlow;
+  if (!flow || flow.phase !== 'council') throw new Error('Council phase is not active');
+  if (!flow.initialCouncil && state.outcome === 'ongoing') {
+    generateEvents(state, scenario);
+    if (state.outcome === 'ongoing' && usesPCStrategy(scenario))
+      npcCampaignAdministration(state, scenario);
+  }
+  state.seasonFlow = {
+    phase: 'maintenance',
+    transitionId: flow.transitionId,
+    ...(flow.initialCouncil ? { initialCouncil: true } : {}),
+    maintenance: { stage: 'choices' },
+  };
+}
+function selectActions(state: Campaign, scenario: Scenario) {
+  const flow = state.seasonFlow;
+  if (!flow || flow.phase !== 'maintenance' || flow.maintenance?.stage !== 'collected')
+    throw new Error('Taxes must be collected before selecting actions');
+  finalizePCEconomy(state, scenario, flow.maintenance.actualIncome ?? []);
+  checkOutcome(state, scenario);
+  state.seasonFlow = { phase: 'actions', transitionId: flow.transitionId };
+  if (state.outcome === 'ongoing') initializeDomainTurn(state, !!flow.initialCouncil);
+  log(state, 'turn.started', state.playerRealm, { turn: state.turn });
+}
 export function applyCommand(
   state: Campaign,
   scenario: Scenario,
   actor: string,
   input: unknown,
   battle: BattleResolver = autoResolve,
+  legacyReplay = false,
 ): CommandResult {
   const error = validateCommand(state, scenario, actor, input);
   if (error) return { ok: false, state, error };
@@ -731,6 +841,23 @@ export function applyCommand(
     next.pendingGorgonScenes.shift();
     return { ok: true, state: next };
   }
+  if (usesPCDomainActions(scenario) && command.type === 'CompleteCouncil') {
+    completeCouncil(next, scenario);
+    return { ok: true, state: next };
+  }
+  if (usesPCDomainActions(scenario) && command.type === 'CollectTaxes') {
+    const actualIncome = collectPCEconomy(next, scenario);
+    next.seasonFlow!.maintenance = { stage: 'collected', actualIncome };
+    return { ok: true, state: next };
+  }
+  if (usesPCDomainActions(scenario) && command.type === 'SelectActions') {
+    selectActions(next, scenario);
+    return { ok: true, state: next };
+  }
+  if (usesPCDomainActions(scenario) && next.seasonFlow?.phase === 'maintenance') {
+    execute(next, scenario, actor, command, battle);
+    return { ok: true, state: next };
+  }
   if (usesPCDomainActions(scenario)) {
     if (!next.domainTurn)
       initializeDomainTurn(
@@ -746,7 +873,7 @@ export function applyCommand(
       refreshLeyLines(next);
       if (!next.pendingDomainAction) {
         checkOutcome(next, scenario);
-        advanceDomainSchedule(next, scenario, battle, actions > 0);
+        advanceDomainSchedule(next, scenario, battle, actions > 0, legacyReplay);
       }
     } else if (command.type === 'EndTurn') {
       for (const event of [...next.pendingEvents].filter((e) => e.realmId === actor)) {
@@ -755,12 +882,12 @@ export function applyCommand(
         log(next, 'event.resolved', actor, { province: event.provinceId, choice: 'decline' });
       }
       next.domainTurn!.endingSeason = true;
-      advanceDomainSchedule(next, scenario, battle, false);
+      advanceDomainSchedule(next, scenario, battle, false, legacyReplay);
     } else {
       const cost = commandCost(next, scenario, command, actor);
       execute(next, scenario, actor, command, battle);
       if (!next.pendingDomainAction)
-        advanceDomainSchedule(next, scenario, battle, cost.actions > 0);
+        advanceDomainSchedule(next, scenario, battle, cost.actions > 0, legacyReplay);
     }
     return { ok: true, state: next };
   }
@@ -792,7 +919,7 @@ export function applyCommand(
       }
     }
     if (next.outcome === 'ongoing') {
-      finishSeason(next, scenario);
+      finishSeason(next, scenario, legacyReplay);
     }
   }
   return { ok: true, state: next };
@@ -803,8 +930,20 @@ export function replay(
   history: Campaign['history'],
 ): Campaign {
   let state = structuredClone(initial);
+  const legacyReplay = state.settlementVersion === 1;
+  if (legacyReplay && usesPCDomainActions(scenario)) {
+    state.seasonFlow = { phase: 'actions', transitionId: `legacy-${state.turn}` };
+    if (!state.domainTurn) initializeDomainTurn(state, true);
+  }
   for (const entry of history.filter((e) => e.source === 'player')) {
-    const result = applyCommand(state, scenario, entry.actor, entry.command);
+    const result = applyCommand(
+      state,
+      scenario,
+      entry.actor,
+      entry.command,
+      autoResolve,
+      legacyReplay,
+    );
     if (!result.ok) throw new Error(`Replay rejected: ${result.error.code}`);
     state = result.state;
   }

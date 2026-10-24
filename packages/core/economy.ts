@@ -225,25 +225,47 @@ export function militaryUpkeep(state: Campaign, scenario: Scenario, realmId: str
     .reduce(
       (n, a) =>
         n +
-        a.units.reduce((k, u) => k + (scenario.units.find((d) => d.id === u.type)?.upkeep ?? 0), 0),
+        a.units.reduce(
+          (k, u) =>
+            k +
+            (u.payroll === 'unpaid' || u.payroll === 'regency'
+              ? 0
+              : (scenario.units.find((d) => d.id === u.type)?.upkeep ?? 0)),
+          0,
+        ),
+      0,
+    );
+}
+function regencyPayroll(state: Campaign, scenario: Scenario, realmId: string) {
+  return state.armies
+    .filter((a) => a.realmId === realmId)
+    .reduce(
+      (total, army) =>
+        total +
+        army.units.reduce(
+          (sum, unit) =>
+            sum +
+            (unit.payroll === 'regency'
+              ? (scenario.units.find((definition) => definition.id === unit.type)?.upkeep ?? 0) * 5
+              : 0),
+          0,
+        ),
       0,
     );
 }
 /** A single shared calculation for forecasts and actual rolls. Claims redistribute existing GB. */
-function income(state: Campaign, scenario: Scenario, actual: boolean) {
+function income(state: Campaign, scenario: Scenario, actual: boolean, onlyProvinceId?: string) {
   const result = new Map(
     state.realms.map((r) => [r.id, { taxes: 0, holdings: 0, trade: 0, lawClaims: 0 }]),
   );
   const provincesById = new Map(state.provinces.map((p) => [p.id, p]));
-  const claiming = new Set(
-    state.realms
-      .filter((r) => r.lawClaims && !r.eliminated && r.controller !== 'passive')
-      .map((r) => r.id),
-  );
   const laws = new Map<string, Campaign['holdings']>();
   for (const h of state.holdings)
     if (
-      claiming.has(h.realmId) &&
+      (state.provinceLawClaims?.find(
+        (claim) => claim.provinceId === h.provinceId && claim.realmId === h.realmId,
+      )?.enabled ??
+        state.realms.find((realm) => realm.id === h.realmId)?.lawClaims) &&
       h.type === 'law' &&
       h.level > 0 &&
       !h.contested &&
@@ -257,6 +279,7 @@ function income(state: Campaign, scenario: Scenario, actual: boolean) {
   for (const p of actual
     ? [...state.provinces].sort((a, b) => a.id.localeCompare(b.id))
     : state.provinces) {
+    if (onlyProvinceId && p.id !== onlyProvinceId) continue;
     const owner = provinceController(p),
       row = result.get(owner);
     if (!row || !taxableBy(p, owner)) continue;
@@ -267,6 +290,7 @@ function income(state: Campaign, scenario: Scenario, actual: boolean) {
   for (const h of actual
     ? [...state.holdings].sort((a, b) => a.id.localeCompare(b.id))
     : state.holdings) {
+    if (onlyProvinceId && h.provinceId !== onlyProvinceId) continue;
     const row = result.get(h.realmId),
       p = provincesById.get(h.provinceId);
     if (!row || !p || h.destroyed || h.contested || !['guild', 'temple'].includes(h.type)) continue;
@@ -309,16 +333,27 @@ function income(state: Campaign, scenario: Scenario, actual: boolean) {
       remaining -= claim;
     }
   }
-  for (const route of state.tradeRoutes) {
-    const info = inspectTradeRoute(state, scenario, route);
-    const row = result.get(info.realmId);
-    if (row) row.trade += info.income;
-  }
-  for (const port of state.ports ?? []) {
-    const row = result.get(port.realmId);
-    if (row) row.trade += portIncome(state, port);
+  if (!onlyProvinceId) {
+    for (const route of state.tradeRoutes) {
+      const info = inspectTradeRoute(state, scenario, route);
+      const row = result.get(info.realmId);
+      if (row) row.trade += info.income;
+    }
+    for (const port of state.ports ?? []) {
+      const row = result.get(port.realmId);
+      if (row) row.trade += portIncome(state, port);
+    }
   }
   return result;
+}
+export function provinceIncomeForecast(
+  state: Campaign,
+  scenario: Scenario,
+  realmId: string,
+  provinceId: string,
+) {
+  const incomeRow = income(state, scenario, false, provinceId).get(realmId);
+  return incomeRow ?? { taxes: 0, holdings: 0, trade: 0, lawClaims: 0 };
 }
 function expenseReport(state: Campaign, scenario: Scenario, realmId: string): Report {
   const realm = state.realms.find((r) => r.id === realmId)!;
@@ -345,7 +380,9 @@ function expenseReport(state: Campaign, scenario: Scenario, realmId: string): Re
     ).length;
   const administration = domainMaintenance(count);
   const forts = state.fortifications
-    ? state.fortifications.filter((f) => f.realmId === realmId && f.level > 0).length
+    ? state.fortifications.filter(
+        (f) => f.realmId === realmId && f.level > 0 && f.supported !== false,
+      ).length
     : state.provinces.filter((p) => (p.fortOwner ?? p.owner) === realmId && p.fort > 0).length;
   const occupation = state.provinces.filter(
     (p) => p.occupiedBy === realmId && p.owner !== realmId,
@@ -373,6 +410,7 @@ function expenseReport(state: Campaign, scenario: Scenario, realmId: string): Re
       ? 0
       : militaryUpkeep(state, scenario, realmId),
     regency: 0,
+    regencyUpkeep: regencyPayroll(state, scenario, realmId),
     net: 0,
   };
 }
@@ -413,19 +451,18 @@ export function economicForecast(state: Campaign, scenario: Scenario, realmId: s
   finishReport(state, scenario, r);
   return r;
 }
-/** Actions are prepaid; one simultaneous seasonal collection, then tribute, upkeep, and RP. */
-export function settlePCEconomy(state: Campaign, scenario: Scenario) {
+/** Resolves actual seasonal receipts once; the returned ledger is persisted before expenses. */
+export function collectPCEconomy(state: Campaign, scenario: Scenario): Report[] {
   refreshTradeRoutes(state, scenario);
   const collected = income(state, scenario, true);
-  const reports = new Map<string, Report>();
   const active = [...state.realms]
     .filter((r) => !r.eliminated && r.controller !== 'passive' && r.behavior !== 'monsters')
     .sort((a, b) => a.id.localeCompare(b.id));
+  const reports = new Map<string, Report>();
   for (const realm of active) {
     const r = Object.assign(expenseReport(state, scenario, realm.id), collected.get(realm.id));
     r.opening = realm.treasury;
     r.unpaid = 0;
-    r.regencyUpkeep = 0;
     realm.treasury = goldBars(realm.treasury + r.taxes + r.holdings + r.trade + r.lawClaims!);
     reports.set(realm.id, r);
   }
@@ -448,6 +485,31 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
         realmId: a.id,
         data: { target: b.id, amount: t.amount, paid },
       });
+  }
+  return [...reports.values()].map((report) => structuredClone(report));
+}
+/** Applies expenses and seasonal consequences from a previously persisted receipt ledger. */
+export function finalizePCEconomy(state: Campaign, scenario: Scenario, actualIncome: Report[]) {
+  const receipts = new Map(actualIncome.map((report) => [report.realmId, report]));
+  const reports = new Map<string, Report>();
+  const active = [...state.realms]
+    .filter((r) => !r.eliminated && r.controller !== 'passive' && r.behavior !== 'monsters')
+    .sort((a, b) => a.id.localeCompare(b.id));
+  for (const realm of active) {
+    const receipt = receipts.get(realm.id);
+    if (!receipt) throw new Error(`Missing collected income for realm ${realm.id}`);
+    const r = Object.assign(expenseReport(state, scenario, realm.id), {
+      taxes: receipt.taxes,
+      holdings: receipt.holdings,
+      trade: receipt.trade,
+      lawClaims: receipt.lawClaims ?? 0,
+      tributeIn: receipt.tributeIn ?? 0,
+      tributeOut: receipt.tributeOut ?? 0,
+      opening: receipt.opening,
+      unpaid: 0,
+      regencyUpkeep: 0,
+    });
+    reports.set(realm.id, r);
   }
   const mutinies: Campaign['armies'] = [];
   const monsters = state.realms.find((r) => r.behavior === 'monsters' && !r.eliminated);
@@ -480,11 +542,17 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
       for (const f of state.fortifications
         .filter((f) => f.realmId === realm.id && f.level > 0)
         .sort((a, b) => a.id.localeCompare(b.id))) {
+        if (f.supported === false) {
+          f.level--;
+          delete f.supported;
+          continue;
+        }
         if (realm.treasury >= 1) r.forts += pay(1);
         else {
           f.level--;
           r.unpaid!++;
         }
+        delete f.supported;
       }
       for (const p of state.provinces) p.fort = fortLevel(state, p);
     } else
@@ -502,19 +570,24 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
       .filter((a) => a.realmId === realm.id)
       .sort((a, b) => a.id.localeCompare(b.id))) {
       a.units = a.units.filter((u) => {
-        const cost = npcPayrollExempt(state, scenario, realm.id)
+        const upkeep = npcPayrollExempt(state, scenario, realm.id)
           ? 0
           : (scenario.units.find((d) => d.id === u.type)?.upkeep ?? 0);
-        if (realm.treasury >= cost) {
-          r.military += pay(cost);
+        if (upkeep === 0) return true;
+        const payroll = u.payroll ?? 'auto';
+        const payWithGold = payroll === 'gold' || (payroll === 'auto' && realm.treasury >= upkeep);
+        const payWithRegency =
+          payroll === 'regency' || (payroll === 'auto' && realm.regency >= upkeep * 5);
+        if (payroll !== 'unpaid' && payWithGold && realm.treasury >= upkeep) {
+          r.military += pay(upkeep);
           return true;
         }
-        if (realm.regency >= cost * 5) {
-          realm.regency -= cost * 5;
-          r.regencyUpkeep! += cost * 5;
+        if (payroll !== 'unpaid' && payWithRegency && realm.regency >= upkeep * 5) {
+          realm.regency -= upkeep * 5;
+          r.regencyUpkeep! += upkeep * 5;
           return true;
         }
-        r.unpaid! += cost;
+        r.unpaid! += upkeep;
         const mercenary = scenario.units.find((d) => d.id === u.type)?.pc?.mercenary;
         if (mercenary && monsters) {
           let band = mutinies.find((b) => b.provinceId === a.provinceId && b.units.length < 15);
@@ -595,4 +668,8 @@ export function settlePCEconomy(state: Campaign, scenario: Scenario) {
     p.pendingTaxLoyalty = delta;
   }
   state.reports = state.reports.slice(-Math.max(60, state.realms.length * 4));
+}
+/** Compatibility wrapper for callers that still request a complete one-call settlement. */
+export function settlePCEconomy(state: Campaign, scenario: Scenario) {
+  finalizePCEconomy(state, scenario, collectPCEconomy(state, scenario));
 }

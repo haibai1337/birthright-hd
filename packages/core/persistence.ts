@@ -15,6 +15,9 @@ export function deserializeCampaign(text: string, scenario: Scenario): Campaign 
   const raw = JSON.parse(text);
   const save = saveSchema.parse(raw as unknown);
   const state = save.campaign;
+  // Legacy saves are already inside their current action turn; never backfill a season.
+  state.seasonFlow ??= { phase: 'actions', transitionId: `legacy-${state.turn}` };
+  state.settlementVersion ??= 1;
   // Old saves already completed their current post-report phase. Never backfill past events.
   if (raw.campaign.eventHistory === undefined) state.lastCampaignEventTurn = state.turn;
   if (usesPCStrategy(scenario)) {
@@ -84,7 +87,7 @@ export function deserializeCampaign(text: string, scenario: Scenario): Campaign 
       data: {},
     });
   }
-  if (usesPCDomainActions(scenario) && !state.domainTurn) {
+  if (usesPCDomainActions(scenario) && state.seasonFlow.phase === 'actions' && !state.domainTurn) {
     const remaining = state.realms.find((r) => r.id === state.playerRealm)!.actions;
     initializeDomainTurn(state, true, Math.min(3, 4 - remaining));
     state.log.push({

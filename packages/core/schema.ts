@@ -174,6 +174,7 @@ export const unitSchema = z.object({
   strength: integer.min(1).max(100),
   sourceId: idSchema.optional(),
   blessed: z.boolean().optional(),
+  payroll: z.enum(['auto', 'gold', 'regency', 'unpaid']).optional(),
   nativeTypeCode: integer.optional(),
   nativeIcon: integer.optional(),
 });
@@ -299,6 +300,7 @@ export const fortificationSchema = z.object({
   constructionTarget: integer.max(15).optional(),
   constructionSpent: integer.max(7).optional(),
   constructionPaidTurn: integer.optional(),
+  supported: z.boolean().optional(),
 });
 export const characterDeploymentSchema = z.object({
   id: idSchema,
@@ -405,6 +407,17 @@ export const commandSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('BuildRoad'), from: idSchema, to: idSchema }),
   z.object({ type: z.literal('SetCourt'), level: integer.max(4) }),
   z.object({ type: z.literal('SetLawClaims'), enabled: z.boolean() }),
+  z.object({ type: z.literal('SetProvinceLawClaim'), provinceId: idSchema, enabled: z.boolean() }),
+  z.object({
+    type: z.literal('SetUnitPayroll'),
+    unitId: idSchema,
+    payroll: z.enum(['auto', 'gold', 'regency', 'unpaid']),
+  }),
+  z.object({
+    type: z.literal('SetCastleSupport'),
+    fortificationId: idSchema,
+    supported: z.boolean(),
+  }),
   z.object({ type: z.literal('TransferGold'), target: idSchema, amount: integer.positive() }),
   z.object({ type: z.literal('SetTribute'), target: idSchema, amount: integer }),
   z.object({ type: z.literal('RecruitUnit'), provinceId: idSchema, unitType: idSchema }),
@@ -504,6 +517,9 @@ export const commandSchema = z.discriminatedUnion('type', [
     effectId: idSchema.optional(),
   }),
   z.object({ type: z.literal('ResolveEvent'), choice: z.enum(['relief', 'decline']) }),
+  z.object({ type: z.literal('CompleteCouncil') }),
+  z.object({ type: z.literal('CollectTaxes') }),
+  z.object({ type: z.literal('SelectActions') }),
   z.object({ type: z.literal('EndTurn') }),
   z.object({ type: z.literal('AcknowledgeCampaignScene'), stage: integer.min(1).max(3) }),
   z.object({
@@ -572,6 +588,7 @@ export const historySchema = z.object({
   source: z.enum(['player', 'ai']),
 });
 export const campaignSchema = z.object({
+  settlementVersion: integer.max(2).optional(),
   unrestrictedDiplomacy: z.boolean().default(false),
   difficulty: campaignDifficultySchema.default('medium'),
   eventOptions: campaignEventOptionsSchema.prefault({}),
@@ -605,6 +622,22 @@ export const campaignSchema = z.object({
       cursor: integer,
       endingSeason: z.boolean().optional(),
     })
+    .optional(),
+  seasonFlow: z
+    .object({
+      phase: z.enum(['council', 'maintenance', 'actions']),
+      transitionId: z.string().min(1).max(100),
+      initialCouncil: z.boolean().optional(),
+      maintenance: z
+        .object({
+          stage: z.enum(['choices', 'collected']),
+          actualIncome: z.array(reportSchema).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  provinceLawClaims: z
+    .array(z.object({ provinceId: idSchema, realmId: idSchema, enabled: z.boolean() }))
     .optional(),
   pendingDomainAction: z
     .object({

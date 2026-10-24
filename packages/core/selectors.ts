@@ -42,29 +42,51 @@ export function sourcePotential(scenario: Scenario, provinceId: string, level: n
     (scenario.provinces.find((p) => p.id === provinceId)?.magicPotential ?? 0) - level,
   );
 }
+function holdingPower(level: number, type: string, classes: Set<string>) {
+  if (
+    (type === 'law' &&
+      (classes.has('fighter') || classes.has('paladin') || classes.has('ranger'))) ||
+    (type === 'source' && classes.has('wizard')) ||
+    (type === 'temple' && (classes.has('priest') || classes.has('paladin'))) ||
+    (type === 'guild' && (classes.has('thief') || classes.has('ranger')))
+  )
+    return level;
+  if (
+    (type === 'law' && (classes.has('priest') || classes.has('thief'))) ||
+    (type === 'guild' && classes.has('bard'))
+  )
+    return Math.ceil(level / 2);
+  return 0;
+}
+export function provinceDomainPower(
+  state: Campaign,
+  scenario: Scenario,
+  realmId: string,
+  provinceId: string,
+) {
+  const classes = new Set(characterClasses(scenario, realmId, state).map((c) => c.type));
+  const province = state.provinces.find((item) => item.id === provinceId);
+  const provinceValue =
+    province?.owner === realmId && !province.occupiedBy && !province.contested ? province.level : 0;
+  const holdingValue = state.holdings
+    .filter(
+      (holding) =>
+        holding.provinceId === provinceId &&
+        holding.realmId === realmId &&
+        !holding.contested &&
+        !holding.destroyed,
+    )
+    .reduce((sum, holding) => sum + holdingPower(holding.level, holding.type, classes), 0);
+  return provinceValue + holdingValue;
+}
 export function domainPower(state: Campaign, scenario: Scenario, realmId: string): number {
   const classes = new Set(characterClasses(scenario, realmId, state).map((c) => c.type));
   const provinces = state.provinces
-    .filter((p) => p.owner === realmId && !p.occupiedBy && !p.contested)
-    .reduce((n, p) => n + p.level, 0);
+    .filter((province) => province.owner === realmId && !province.occupiedBy && !province.contested)
+    .reduce((sum, province) => sum + province.level, 0);
   const holdings = state.holdings
-    .filter((h) => h.realmId === realmId && !h.contested && !h.destroyed)
-    .reduce((n, h) => {
-      if (
-        (h.type === 'law' &&
-          (classes.has('fighter') || classes.has('paladin') || classes.has('ranger'))) ||
-        (h.type === 'source' && classes.has('wizard')) ||
-        (h.type === 'temple' && (classes.has('priest') || classes.has('paladin'))) ||
-        (h.type === 'guild' && (classes.has('thief') || classes.has('ranger')))
-      )
-        return n + h.level;
-      if (
-        (h.type === 'law' && (classes.has('priest') || classes.has('thief'))) ||
-        (h.type === 'guild' && classes.has('bard'))
-      )
-        return n + Math.ceil(h.level / 2);
-      return n;
-    }, 0);
+    .filter((holding) => holding.realmId === realmId && !holding.contested && !holding.destroyed)
+    .reduce((sum, holding) => sum + holdingPower(holding.level, holding.type, classes), 0);
   return provinces + holdings;
 }
 export function forecast(state: Campaign, scenario: Scenario, realmId: string): Report {
