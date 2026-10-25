@@ -12,6 +12,13 @@ import { playerControls } from './fealty';
 
 export const usesPCDomainActions = (s: Scenario) => s.policy?.domainActions === 'pc';
 type Check = NonNullable<Campaign['pendingDomainAction']>['checks'][number];
+/** Same d20/seed contract for legacy commands and the explicit quantity-safe 1.5 path. */
+export function rollDomainCheck(state: { rng: number }, threshold: number | bigint) {
+  const roll = randomInt(state, 1, 20),
+    target = typeof threshold === 'bigint' ? threshold : BigInt(threshold);
+  return { roll, success: BigInt(roll) >= (target < 1n ? 1n : target) };
+}
+export const domainResponseOrder = (ids: readonly string[]) => [...new Set(ids)].sort(compareIds);
 export interface DomainQuote {
   gold: number;
   regency: number;
@@ -280,8 +287,7 @@ function resolveCheck(state: Campaign, scenario: Scenario) {
   const cmd = pending.command;
   const defense = pending.opposition.reduce((n, o) => n + o.regency, 0);
   const threshold = Math.max(1, c.threshold + defense - pending.extraRegency);
-  const roll = randomInt(state, 1, 20);
-  const won = roll >= threshold;
+  const { roll, success: won } = rollDomainCheck(state, threshold);
   const p = state.provinces.find((p) => p.id === c.provinceId)!;
   const h = state.holdings.find((h) => h.id === c.holdingId);
   if (cmd.type === 'ProposeTreaty') applyDiplomacy(state, scenario, pending.actor, cmd, won);

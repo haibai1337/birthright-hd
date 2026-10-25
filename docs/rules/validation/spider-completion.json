@@ -1,0 +1,1240 @@
+{
+  "format": "birthright15-spider-completion-validation",
+  "version": 1,
+  "inputs": {
+    "reference/extracted/anuire/anuire.research.json": "e733f792ba10fa860de5cba02fc9305028a053d322c43fce3f6e98a33a01962c",
+    "reference/extracted/anuire/economy.research.json": "b714e290f264237a02a3b88b9f672e1bfbfc49238fe82eb73853c45118088025",
+    "reference/extracted/anuire/magic.research.json": "a1a866b14edb470fd1208f77a03349114c6e99842e752232e39aa5da331ef6d9",
+    "reference/extracted/anuire/strategy.research.json": "20539d151d10a12559df6960dbb5e8eecbff18708002efbbc3c7c31650843f1f",
+    "reference/extracted/anuire/initialization.research.json": "faf8a6b6cec44788ca7f28f9ecb4701328c4b0782b6a3d2f656ae2ec95742695"
+  },
+  "scenarioFingerprint": "5eb38539a4b8197ec040fac79f7d98316003b1d6dae561cc92deefd85c1c7970",
+  "previousOverlays": {
+    "characters": {
+      "version": "1.1.0",
+      "fingerprint": "9a22d7774bd2ec90a35e989f95fe8bbfd68c9aa822fbe1e99236b38baa48df95"
+    },
+    "handlers": {
+      "version": "1.1.0",
+      "fingerprint": "6e27435553bebea50c9478fbb16aa2a2e0c7aed2e82a00615de84f59f73ea58c"
+    }
+  },
+  "currentOverlays": {
+    "characters": {
+      "version": "1.2.0",
+      "fingerprint": "da991cb3f4f418b0b2ca342a68ceab58ecb3d1f53cde37c543e9ab9f124fdf55"
+    },
+    "handlers": {
+      "version": "1.2.0",
+      "fingerprint": "28fe78806a9cd92154d89082d664e4598ac51dd8c1f55ce9caa432d93543415f"
+    }
+  },
+  "preservedAuthoredRecords": 115,
+  "preservedCompiledRecords": 115,
+  "activeBloodline": {
+    "score": 95,
+    "derivation": "Azrai",
+    "grade": "true",
+    "abilities": ["blood-fear", "blood-regeneration"]
+  },
+  "rawBloodline": {
+    "grade": 2,
+    "derivation": 6,
+    "strength": 95
+  },
+  "derived": {
+    "level": 13,
+    "classLevels": {
+      "monstrous-humanoid": 13
+    },
+    "abilities": {
+      "strength": 13,
+      "dexterity": 18,
+      "constitution": 12,
+      "intelligence": 16,
+      "wisdom": 12,
+      "charisma": 16
+    },
+    "modifiers": {
+      "strength": 1,
+      "dexterity": 4,
+      "constitution": 1,
+      "intelligence": 3,
+      "wisdom": 1,
+      "charisma": 3
+    },
+    "hp": 68,
+    "hitDice": [8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8],
+    "combat": {
+      "baseAttack": 13,
+      "fortitude": 5,
+      "reflex": 12,
+      "will": 9,
+      "unarmoredAC": 22,
+      "touchAC": 13,
+      "flatFootedAC": 18,
+      "initiative": 8,
+      "melee": 13,
+      "ranged": 16,
+      "grapple": 18,
+      "sizeAttack": -1,
+      "sizeGrapple": 4,
+      "baseSaves": {
+        "fortitude": 4,
+        "reflex": 8,
+        "will": 8
+      },
+      "naturalAttacks": [
+        {
+          "weapon": "claw",
+          "primary": true,
+          "baseAttack": 13,
+          "strength": 1,
+          "size": -1,
+          "weaponFocus": 1,
+          "secondaryPenalty": 0,
+          "attack": 14,
+          "damage": {
+            "dice": 1,
+            "die": 10,
+            "bonus": 1
+          },
+          "poison": false
+        },
+        {
+          "weapon": "claw",
+          "primary": true,
+          "baseAttack": 13,
+          "strength": 1,
+          "size": -1,
+          "weaponFocus": 1,
+          "secondaryPenalty": 0,
+          "attack": 14,
+          "damage": {
+            "dice": 1,
+            "die": 10,
+            "bonus": 1
+          },
+          "poison": false
+        },
+        {
+          "weapon": "bite",
+          "primary": false,
+          "baseAttack": 13,
+          "strength": 1,
+          "size": -1,
+          "weaponFocus": 0,
+          "secondaryPenalty": -2,
+          "attack": 11,
+          "damage": {
+            "dice": 1,
+            "die": 6,
+            "bonus": 0
+          },
+          "poison": true
+        }
+      ],
+      "poisonDC": 19
+    },
+    "ranks": {
+      "warcraft": 9,
+      "lead": 7,
+      "intimidate": 9,
+      "bluff": 6,
+      "diplomacy": 3,
+      "hide": 8,
+      "moveSilently": 8,
+      "climb": 8,
+      "spot": 8,
+      "listen": 7,
+      "senseMotive": 4,
+      "knowledge:nature": 3
+    },
+    "skillPointBudget": 80,
+    "traits": [
+      "large",
+      "darkvision-60ft",
+      "natural-weapon-proficiency",
+      "simple-weapons",
+      "no-armor-proficiency",
+      "eat-sleep-breathe"
+    ],
+    "features": [
+      "poison",
+      "web",
+      "leap",
+      "regeneration",
+      "spiderInfluence",
+      "fear",
+      "spellResistance",
+      "vulnerableAbdomen"
+    ],
+    "classBonusFeats": [],
+    "movement": {
+      "ground": 40,
+      "climb": 20
+    },
+    "capabilities": {
+      "poison": {
+        "kind": "extraordinary",
+        "delivery": "bite",
+        "initialEffect": "Death on failed Fortitude save;20 poison HP damage on success. Explicit prospective 3.5 adaptation of the exceptionally lethal 2e bite, not ordinary SRD poison equivalence.",
+        "secondaryEffect": null,
+        "source": "TSR3100 Spider card; https://www.completecompendium.com/appendix/thespide/ (archival transcription)",
+        "conversion": "DC=10+floor(racial HD/2)+Con modifier+Ability Focus(Poison). No invented delayed secondary damage.",
+        "execution": "deferred"
+      },
+      "web": {
+        "kind": "extraordinary",
+        "creation": true,
+        "binding": "Web-spell-like entanglement/immobilization; revised saves, Escape Artist and Strength escape values require tactical conversion.",
+        "sourceVolumeFeet": [40, 40, 40],
+        "sourceDurationDays": [1, 2],
+        "burnable": false,
+        "reflexDC": null,
+        "escapeArtistDC": null,
+        "strengthDC": null,
+        "source": "TSR3100 Spider card; https://www.completecompendium.com/appendix/thespide/ (archival transcription)",
+        "status": "conversion-partial",
+        "execution": "deferred"
+      },
+      "leap": {
+        "sourceHighFeet": 30,
+        "sourceLongFeet": 50,
+        "sourceResolution": "Original card attack-roll resolution; no automatic substitution of a 3.5 Jump DC.",
+        "convertedExceptionalCheck": null,
+        "source": "TSR3100 Spider card; https://www.completecompendium.com/appendix/thespide/ (archival transcription)",
+        "execution": "deferred"
+      },
+      "regeneration": {
+        "rate": 1,
+        "period": "round",
+        "damageModel": "nonlethal-unless-lethal-exception",
+        "lethalExceptions": null,
+        "sourceFinalDestruction": "Dismember remains, burn and salt the ashes/earth (2e card); not a general immortality flag.",
+        "source": "TSR3100 Spider card; https://www.completecompendium.com/appendix/thespide/ (archival transcription); CD INV item224; CD help Spider King uses per-turn wording",
+        "status": "lethal-conversion-provisional",
+        "execution": "deferred"
+      },
+      "spiderInfluence": {
+        "entitlement": "Communicate with/influence natural spiders; historical extent is uncertain, no automatic diplomatic or territorial authority.",
+        "extent": "unestablished",
+        "source": "TSR3100 Spider card; https://www.completecompendium.com/appendix/thespide/ (archival transcription)",
+        "execution": "deferred"
+      },
+      "fear": {
+        "originalItemId": 218,
+        "kind": "blood-ability",
+        "execution": "deferred"
+      },
+      "spellResistance": {
+        "sourcePercent": 15,
+        "proposedValue": 17,
+        "status": "provisional",
+        "reason": "No established one-to-one conversion from 2e percentage magic resistance to 3.5 spell resistance.",
+        "execution": "deferred"
+      },
+      "vulnerableAbdomen": {
+        "proposedAC": 16,
+        "status": "future-candidate",
+        "execution": "deferred"
+      }
+    },
+    "executionActive": false
+  },
+  "ranks": {
+    "warcraft": 9,
+    "lead": 7,
+    "intimidate": 9,
+    "bluff": 6,
+    "diplomacy": 3,
+    "hide": 8,
+    "moveSilently": 8,
+    "climb": 8,
+    "spot": 8,
+    "listen": 7,
+    "senseMotive": 4,
+    "knowledge:nature": 3
+  },
+  "ratingQuotes": {
+    "province": {
+      "rating": {
+        "raw": 12,
+        "bracket": 12,
+        "percent": 100,
+        "review": "authored-checked"
+      },
+      "eligibility": {
+        "eligible": true,
+        "percent": 100,
+        "reason": "qualified",
+        "rating": {
+          "raw": 12,
+          "bracket": 12,
+          "percent": 100,
+          "review": "authored-checked"
+        }
+      }
+    },
+    "law": {
+      "rating": {
+        "raw": 16,
+        "bracket": 16,
+        "percent": 100,
+        "review": "authored-checked"
+      },
+      "eligibility": {
+        "eligible": true,
+        "percent": 100,
+        "reason": "qualified",
+        "rating": {
+          "raw": 16,
+          "bracket": 16,
+          "percent": 100,
+          "review": "authored-checked"
+        }
+      }
+    },
+    "guild": {
+      "rating": {
+        "raw": 5.5,
+        "bracket": 5,
+        "percent": 0,
+        "review": "authored-checked"
+      },
+      "eligibility": {
+        "eligible": true,
+        "percent": 0,
+        "reason": "qualified",
+        "rating": {
+          "raw": 5.5,
+          "bracket": 5,
+          "percent": 0,
+          "review": "authored-checked"
+        }
+      }
+    },
+    "temple": {
+      "rating": {
+        "raw": 7,
+        "bracket": 7,
+        "percent": 40,
+        "review": "authored-checked"
+      },
+      "eligibility": {
+        "eligible": false,
+        "percent": 0,
+        "reason": "spellcasting-gate"
+      }
+    },
+    "source": {
+      "rating": {
+        "raw": 3,
+        "bracket": 3,
+        "percent": 0,
+        "review": "authored-checked"
+      },
+      "eligibility": {
+        "eligible": false,
+        "percent": 0,
+        "reason": "spellcasting-gate"
+      }
+    }
+  },
+  "administrate": {
+    "ranks": 0,
+    "unconditionalBonus": 1,
+    "total": 1,
+    "conditionalTraits": [],
+    "equipmentBonusesVerified": false
+  },
+  "spells": {
+    "kind": "sierra-monster-inventory",
+    "review": "user-approved",
+    "effectiveCastingLevel": 13,
+    "inventory": {
+      "member": "SCENES/ID1056.INV",
+      "sha256": "ebc621b97670f8eab8c3dce6286ee1bf184657d28dd21c9b00b498ddcb916de5"
+    },
+    "spells": [
+      {
+        "originalItemId": 139,
+        "id": "shocking-grasp",
+        "name": "Shocking Grasp",
+        "scope": "adventure",
+        "sierraSpellLevel": 1,
+        "inventoryLine": 5,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 145,
+        "id": "poison-arrow",
+        "name": "Morelf's Poison Arrow",
+        "scope": "adventure",
+        "sierraSpellLevel": 2,
+        "inventoryLine": 6,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 147,
+        "id": "fireball",
+        "name": "Fireball",
+        "scope": "adventure",
+        "sierraSpellLevel": 3,
+        "inventoryLine": 7,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 153,
+        "id": "ice-storm",
+        "name": "Ice Storm",
+        "scope": "adventure",
+        "sierraSpellLevel": 4,
+        "inventoryLine": 8,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 156,
+        "id": "cone-of-cold",
+        "name": "Cone of Cold",
+        "scope": "adventure",
+        "sierraSpellLevel": 5,
+        "inventoryLine": 9,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 157,
+        "id": "disintegrate",
+        "name": "Disintegrate",
+        "scope": "adventure",
+        "sierraSpellLevel": 5,
+        "inventoryLine": 10,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 162,
+        "id": "flesh-to-stone",
+        "name": "Flesh to Stone",
+        "scope": "adventure",
+        "sierraSpellLevel": 6,
+        "inventoryLine": 11,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 193,
+        "id": "death-plague",
+        "name": "Death Plague",
+        "scope": "realm",
+        "sierraSpellLevel": null,
+        "inventoryLine": 22,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 196,
+        "id": "legion-of-the-dead",
+        "name": "Legion of the Dead",
+        "scope": "realm",
+        "sierraSpellLevel": null,
+        "inventoryLine": 23,
+        "requirements": "birthright15-magic-requirements"
+      },
+      {
+        "originalItemId": 197,
+        "id": "mass-destruction",
+        "name": "Mass Destruction",
+        "scope": "realm",
+        "sierraSpellLevel": null,
+        "inventoryLine": 24,
+        "requirements": "birthright15-magic-requirements"
+      }
+    ]
+  },
+  "oldRPQuote": {
+    "status": "unknown",
+    "qualifiedRP": null,
+    "collectionRP": null,
+    "upperBound": "5"
+  },
+  "newNPCForecast": {
+    "regency": {
+      "quote": {
+        "realmId": "anuire-realm-29",
+        "characterId": "anuire-regent-057",
+        "seasonIndex": 1,
+        "originalScore": "95",
+        "currentScore": "95",
+        "reviewedRuler": true,
+        "status": "eligible",
+        "reason": "qualified",
+        "categories": [
+          {
+            "kind": "province",
+            "levels": "5",
+            "rating": 12,
+            "percent": 100,
+            "eligible": true,
+            "reason": "qualified",
+            "sourceIds": ["anuire-province-025"]
+          },
+          {
+            "kind": "law",
+            "levels": "0",
+            "rating": 16,
+            "percent": 100,
+            "eligible": true,
+            "reason": "qualified",
+            "sourceIds": ["anuire-holding-109"]
+          },
+          {
+            "kind": "guild",
+            "levels": "0",
+            "rating": 5.5,
+            "percent": 0,
+            "eligible": true,
+            "reason": "qualified",
+            "sourceIds": []
+          },
+          {
+            "kind": "temple",
+            "levels": "0",
+            "rating": 7,
+            "percent": 0,
+            "eligible": false,
+            "reason": "spellcasting-gate",
+            "sourceIds": []
+          },
+          {
+            "kind": "source",
+            "levels": "0",
+            "rating": 3,
+            "percent": 0,
+            "eligible": false,
+            "reason": "spellcasting-gate",
+            "sourceIds": []
+          }
+        ],
+        "qualifiedRP": "5",
+        "collectibleRP": "5",
+        "knownWeightedHundredths": "500",
+        "conditionalUpperRP": "0",
+        "openingRP": "50"
+      },
+      "resources": {
+        "stored": "50",
+        "reserved": "0",
+        "committed": "0",
+        "available": "50",
+        "goldAvailable": "1800",
+        "unreservedKnownPledges": "0",
+        "availableForNewObligations": "50"
+      },
+      "actualReceipt": null,
+      "forecastNewRP": "5",
+      "projectedUncommittedRP": "55",
+      "projectedAvailableAfterKnownObligations": "55",
+      "knownPledges": [],
+      "receivedTransfers": "0",
+      "spent": "0",
+      "sacrificeGain": "0",
+      "growthSpent": "0",
+      "payrollSpent": "0",
+      "growth": {
+        "characterId": "anuire-regent-057",
+        "currentScore": "95",
+        "price": "96",
+        "requiredFreeReserve": "97",
+        "freeReserve": "50",
+        "observedStreak": 0,
+        "lastQualifiedBoundary": null,
+        "streakAtBoundary": 0,
+        "year": 0,
+        "growthCount": 0,
+        "unreservedKnownPledges": "0",
+        "qualifies": false,
+        "eligible": false,
+        "reason": "no-open-boundary"
+      },
+      "executionScope": "explicit-regency-only",
+      "payroll": {
+        "status": "quote-only",
+        "bills": [
+          {
+            "unitId": "anuire-unit-0025",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0026",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0027",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0028",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0029",
+            "amount": "120",
+            "regular": true,
+            "waived": "120"
+          }
+        ],
+        "regularPayable": "0",
+        "maximumAllRegularRPCost": "0",
+        "selected": {
+          "rpGold": "0",
+          "goldCost": "0",
+          "rpCost": "0"
+        },
+        "alreadyAllocated": false,
+        "paidByRP": "0",
+        "paidByGold": "0",
+        "actualRPSpent": "0",
+        "remainingRegularPayroll": "0",
+        "fundedNow": true,
+        "projectedRPAfterSelectedAllocation": "50",
+        "createsSpendableGB": false
+      },
+      "projectedRPAfterSelectedOperations": "55",
+      "projectedClosingAfterRecordedPayroll": "2160"
+    },
+    "kind": "birthright-1.5-forecast",
+    "realmId": "anuire-realm-29",
+    "turn": 1,
+    "accounting": "ordinary",
+    "openingTreasury": "1800",
+    "lines": [
+      {
+        "key": "[1,\"anuire-realm-29\",\"income\",\"province\",[\"anuire-province-025\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "province",
+        "direction": "income",
+        "sourceIds": ["anuire-province-025"],
+        "assetIds": ["anuire-province-025"],
+        "amount": "600",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "P plus explicitly authorized modifier"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"income\",\"law\",[\"anuire-holding-109\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "law",
+        "direction": "income",
+        "sourceIds": ["anuire-holding-109"],
+        "assetIds": ["anuire-holding-109"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Aggregated active level 0; inactive records retained"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0025\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0025", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0025"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0026\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0026", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0026"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0027\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0027", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0027"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0028\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0028", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0028"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0029\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0029", "pc-unit-20"],
+        "assetIds": ["anuire-unit-0029"],
+        "amount": "120",
+        "waiver": "120",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-20; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"fort\",[\"anuire-fort-108\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "fort",
+        "direction": "expense",
+        "sourceIds": ["anuire-place-108"],
+        "assetIds": ["anuire-fort-108"],
+        "amount": "120",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "One supported asset, independent of level"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"court\",[\"anuire-realm-29\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "court",
+        "direction": "expense",
+        "sourceIds": ["anuire-realm-29"],
+        "assetIds": ["anuire-realm-29"],
+        "amount": "120",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Current derived court, opening tier 1 maps to 1"
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0025", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0026", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0027", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0028", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      }
+    ],
+    "income": {
+      "province": "600",
+      "law": "0",
+      "guild": "0",
+      "temple": "0",
+      "virtualGuild": "0",
+      "ports": "0",
+      "contracted": "0",
+      "ordinary": "600"
+    },
+    "conditional": {
+      "virtualGuild": "0",
+      "virtualMaximum": "0",
+      "handlerIds": ["anuire-regent-057"],
+      "unpaidIncomingContracts": "0",
+      "unpricedSourceIds": []
+    },
+    "expenses": {
+      "militaryGross": "120",
+      "npcPayrollWaiver": "120",
+      "militaryPayable": "0",
+      "forts": "120",
+      "court": "120",
+      "infrastructure": "0",
+      "occupation": "0",
+      "commitments": "0",
+      "transfers": "0",
+      "gross": "360",
+      "reductions": "0",
+      "payable": "240"
+    },
+    "administrate": {
+      "realmId": "anuire-realm-29",
+      "characterId": null,
+      "eligibleBase": "120",
+      "dcUnits": "1320",
+      "modifier": null,
+      "die": null,
+      "potentialSaving": "0",
+      "discount": "0",
+      "eligible": false,
+      "success": null,
+      "reason": "no-nominated-reviewed-actor",
+      "allocations": []
+    },
+    "result": {
+      "income": "600",
+      "netOperating": "360",
+      "projectedClosing": "2160",
+      "cashAfterQuotedTransfersAndOtherBills": "2160",
+      "unfundedObligations": "0",
+      "unfundedTransfers": "0",
+      "otherCashShortfall": "0"
+    }
+  },
+  "newPlayerForecast": {
+    "regency": {
+      "quote": {
+        "realmId": "anuire-realm-29",
+        "characterId": "anuire-regent-057",
+        "seasonIndex": 1,
+        "originalScore": "95",
+        "currentScore": "95",
+        "reviewedRuler": true,
+        "status": "eligible",
+        "reason": "qualified",
+        "categories": [
+          {
+            "kind": "province",
+            "levels": "5",
+            "rating": 12,
+            "percent": 100,
+            "eligible": true,
+            "reason": "qualified",
+            "sourceIds": ["anuire-province-025"]
+          },
+          {
+            "kind": "law",
+            "levels": "0",
+            "rating": 16,
+            "percent": 100,
+            "eligible": true,
+            "reason": "qualified",
+            "sourceIds": ["anuire-holding-109"]
+          },
+          {
+            "kind": "guild",
+            "levels": "0",
+            "rating": 5.5,
+            "percent": 0,
+            "eligible": true,
+            "reason": "qualified",
+            "sourceIds": []
+          },
+          {
+            "kind": "temple",
+            "levels": "0",
+            "rating": 7,
+            "percent": 0,
+            "eligible": false,
+            "reason": "spellcasting-gate",
+            "sourceIds": []
+          },
+          {
+            "kind": "source",
+            "levels": "0",
+            "rating": 3,
+            "percent": 0,
+            "eligible": false,
+            "reason": "spellcasting-gate",
+            "sourceIds": []
+          }
+        ],
+        "qualifiedRP": "5",
+        "collectibleRP": "5",
+        "knownWeightedHundredths": "500",
+        "conditionalUpperRP": "0",
+        "openingRP": "50"
+      },
+      "resources": {
+        "stored": "50",
+        "reserved": "0",
+        "committed": "0",
+        "available": "50",
+        "goldAvailable": "1800",
+        "unreservedKnownPledges": "0",
+        "availableForNewObligations": "50"
+      },
+      "actualReceipt": null,
+      "forecastNewRP": "5",
+      "projectedUncommittedRP": "55",
+      "projectedAvailableAfterKnownObligations": "55",
+      "knownPledges": [],
+      "receivedTransfers": "0",
+      "spent": "0",
+      "sacrificeGain": "0",
+      "growthSpent": "0",
+      "payrollSpent": "0",
+      "growth": {
+        "characterId": "anuire-regent-057",
+        "currentScore": "95",
+        "price": "96",
+        "requiredFreeReserve": "97",
+        "freeReserve": "50",
+        "observedStreak": 0,
+        "lastQualifiedBoundary": null,
+        "streakAtBoundary": 0,
+        "year": 0,
+        "growthCount": 0,
+        "unreservedKnownPledges": "0",
+        "qualifies": false,
+        "eligible": false,
+        "reason": "no-open-boundary"
+      },
+      "executionScope": "explicit-regency-only",
+      "payroll": {
+        "status": "quote-only",
+        "bills": [
+          {
+            "unitId": "anuire-unit-0025",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0026",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0027",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0028",
+            "amount": "0",
+            "regular": true,
+            "waived": "0"
+          },
+          {
+            "unitId": "anuire-unit-0029",
+            "amount": "120",
+            "regular": true,
+            "waived": "0"
+          }
+        ],
+        "regularPayable": "120",
+        "maximumAllRegularRPCost": "5",
+        "selected": {
+          "rpGold": "0",
+          "goldCost": "0",
+          "rpCost": "0"
+        },
+        "alreadyAllocated": false,
+        "paidByRP": "0",
+        "paidByGold": "0",
+        "actualRPSpent": "0",
+        "remainingRegularPayroll": "120",
+        "fundedNow": true,
+        "projectedRPAfterSelectedAllocation": "50",
+        "createsSpendableGB": false
+      },
+      "projectedRPAfterSelectedOperations": "55",
+      "projectedClosingAfterRecordedPayroll": "2040"
+    },
+    "kind": "birthright-1.5-forecast",
+    "realmId": "anuire-realm-29",
+    "turn": 1,
+    "accounting": "ordinary",
+    "openingTreasury": "1800",
+    "lines": [
+      {
+        "key": "[1,\"anuire-realm-29\",\"income\",\"province\",[\"anuire-province-025\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "province",
+        "direction": "income",
+        "sourceIds": ["anuire-province-025"],
+        "assetIds": ["anuire-province-025"],
+        "amount": "600",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "P plus explicitly authorized modifier"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"income\",\"law\",[\"anuire-holding-109\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "law",
+        "direction": "income",
+        "sourceIds": ["anuire-holding-109"],
+        "assetIds": ["anuire-holding-109"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Aggregated active level 0; inactive records retained"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0025\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0025", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0025"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0026\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0026", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0026"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0027\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0027", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0027"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0028\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0028", "pc-unit-27"],
+        "assetIds": ["anuire-unit-0028"],
+        "amount": "0",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-27; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"military\",[\"anuire-unit-0029\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "military",
+        "direction": "expense",
+        "sourceIds": ["anuire-unit-0029", "pc-unit-20"],
+        "assetIds": ["anuire-unit-0029"],
+        "amount": "120",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Native profile pc-unit-20; payable owner anuire-realm-29"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"fort\",[\"anuire-fort-108\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "fort",
+        "direction": "expense",
+        "sourceIds": ["anuire-place-108"],
+        "assetIds": ["anuire-fort-108"],
+        "amount": "120",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "One supported asset, independent of level"
+      },
+      {
+        "key": "[1,\"anuire-realm-29\",\"expense\",\"court\",[\"anuire-realm-29\"]]",
+        "realmId": "anuire-realm-29",
+        "stream": "court",
+        "direction": "expense",
+        "sourceIds": ["anuire-realm-29"],
+        "assetIds": ["anuire-realm-29"],
+        "amount": "120",
+        "waiver": "0",
+        "reduction": "0",
+        "quotedPayment": null,
+        "unfundedQuote": null,
+        "counterparty": null,
+        "status": "priced",
+        "note": "Current derived court, opening tier 1 maps to 1"
+      }
+    ],
+    "diagnostics": [
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0025", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0026", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0027", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "costless-monster-profile",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0028", "pc-unit-27"],
+        "detail": "Recorded zero native upkeep; uncertain profile, not an inferred general monster exemption."
+      },
+      {
+        "code": "lieutenant-salary-unknown",
+        "realmId": "anuire-realm-29",
+        "sourceIds": ["anuire-unit-0292"],
+        "detail": "No recorded salary amount; no invented obligation."
+      }
+    ],
+    "income": {
+      "province": "600",
+      "law": "0",
+      "guild": "0",
+      "temple": "0",
+      "virtualGuild": "0",
+      "ports": "0",
+      "contracted": "0",
+      "ordinary": "600"
+    },
+    "conditional": {
+      "virtualGuild": "0",
+      "virtualMaximum": "0",
+      "handlerIds": ["anuire-regent-057"],
+      "unpaidIncomingContracts": "0",
+      "unpricedSourceIds": ["anuire-unit-0292"]
+    },
+    "expenses": {
+      "militaryGross": "120",
+      "npcPayrollWaiver": "0",
+      "militaryPayable": "120",
+      "forts": "120",
+      "court": "120",
+      "infrastructure": "0",
+      "occupation": "0",
+      "commitments": "0",
+      "transfers": "0",
+      "gross": "360",
+      "reductions": "0",
+      "payable": "360"
+    },
+    "administrate": {
+      "realmId": "anuire-realm-29",
+      "characterId": null,
+      "eligibleBase": "120",
+      "dcUnits": "1320",
+      "modifier": null,
+      "die": null,
+      "potentialSaving": "0",
+      "discount": "0",
+      "eligible": false,
+      "success": null,
+      "reason": "no-nominated-reviewed-actor",
+      "allocations": []
+    },
+    "result": {
+      "income": "600",
+      "netOperating": "240",
+      "projectedClosing": "2040",
+      "cashAfterQuotedTransfersAndOtherBills": "2040",
+      "unfundedObligations": "0",
+      "unfundedTransfers": "0",
+      "otherCashShortfall": "0"
+    }
+  },
+  "algebraicallyUpdatedAnuireTotals": {
+    "certifiedSeasonalRP": "912",
+    "knownQuotes": 49,
+    "unknownQuotes": 0,
+    "note": "Algebraic update of the frozen Increment4 baseline; only Spiderfell forecasts rerun."
+  }
+}

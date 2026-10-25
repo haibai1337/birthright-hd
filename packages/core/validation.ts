@@ -4,7 +4,9 @@ import {
   type Campaign,
   type Command,
   type Scenario,
+  type StoredCampaign,
 } from './schema';
+import { assertLegacyDomainRules, BIRTHRIGHT15_NOT_ACTIVE, domainRulesOf } from './domain-rules';
 import { RULESETS } from './rules';
 import { magicProblem, magicQuote, bloodlineProblem } from './realm-magic';
 import { bloodlineStrength } from './bloodlines';
@@ -54,6 +56,7 @@ export function commandCost(
   command: Command,
   actor = state.playerRealm,
 ): Cost {
+  assertLegacyDomainRules(state);
   if (usesPCDomainActions(scenario)) {
     const quote = domainActionQuote(state, scenario, actor, command);
     if (quote) return quote;
@@ -148,6 +151,8 @@ export function validateCommand(
   actor: string,
   input: unknown,
 ): RuleError | null {
+  if (domainRulesOf(state).id !== 'birthright-hd-legacy')
+    return { code: 'PREREQUISITE', detail: BIRTHRIGHT15_NOT_ACTIVE };
   const parsed = commandSchema.safeParse(input);
   if (!parsed.success) return { code: 'INVALID_COMMAND' };
   const cmd = parsed.data;
@@ -656,7 +661,7 @@ export function validateScenario(input: unknown): Scenario {
   return s;
 }
 type ReferenceState = Pick<
-  Campaign,
+  StoredCampaign,
   | 'provinces'
   | 'realms'
   | 'holdings'
@@ -668,7 +673,7 @@ type ReferenceState = Pick<
   | 'playerRealm'
 > &
   Pick<
-    Campaign,
+    StoredCampaign,
     | 'fortifications'
     | 'characters'
     | 'warDeclarations'
@@ -903,7 +908,7 @@ export function validateStateReferences(state: ReferenceState, s: Scenario): voi
     if (
       w.actor === w.target ||
       ![w.actor, w.target].every((id) => state.realms.some((r) => r.id === id)) ||
-      relation(state as Campaign, w.actor, w.target)?.kind !== 'war'
+      relation<StoredCampaign['treaties'][number]>(state, w.actor, w.target)?.kind !== 'war'
     )
       throw new Error('Invalid war declaration');
   unique(

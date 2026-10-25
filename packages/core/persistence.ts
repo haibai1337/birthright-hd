@@ -1,5 +1,15 @@
 import { rulingRegent } from './regents';
-import { saveSchema, type Campaign, type Scenario } from './schema';
+import { z } from 'zod';
+import {
+  saveSchema,
+  legacySaveSchema,
+  birthright15SaveCodec,
+  type Campaign,
+  type Birthright15Campaign,
+  type StoredCampaign,
+  type Scenario,
+} from './schema';
+import { type DomainOverlays, domainOverlaysSchema } from './domain-rules';
 import { validateStateReferences } from './validation';
 import { fortLevel } from './domains';
 import { initializeDomainTurn } from './domain-turn';
@@ -7,16 +17,81 @@ import { usesPCDomainActions } from './domain-actions';
 import { portIncomeRule } from './ports';
 import { refreshLeyLines } from './ley-lines';
 import { usesPCStrategy } from './military';
-export function serializeCampaign(campaign: Campaign): string {
-  return JSON.stringify(saveSchema.parse({ format: 'birthright-hd', version: 1, campaign }));
+import { validateCharacterOverlays35, type CharacterOverlays35 } from './character-sheets';
+import { validateRegencyState15 } from './regency15';
+import { validateCourtActions15 } from './court-actions15';
+export function serializeCampaign(campaign: StoredCampaign): string {
+  if (isBirthright15(campaign)) {
+    validateRegencyState15(campaign);
+    validateCourtActions15(campaign);
+    return JSON.stringify(
+      z.encode(birthright15SaveCodec, { format: 'birthright-hd', version: 2, campaign }),
+    );
+  }
+  return JSON.stringify(legacySaveSchema.parse({ format: 'birthright-hd', version: 1, campaign }));
 }
-export function deserializeCampaign(text: string, scenario: Scenario): Campaign {
+function isBirthright15(campaign: StoredCampaign): campaign is Birthright15Campaign {
+  return campaign.domainRules?.id === 'birthright-1.5';
+}
+export function deserializeCampaign(text: string, scenario: Scenario): Campaign;
+export function deserializeCampaign(
+  text: string,
+  scenario: Scenario,
+  options: {
+    domainRules: 'birthright-1.5';
+    expectedOverlays?: DomainOverlays;
+    overlayContent?: CharacterOverlays35;
+  },
+): Birthright15Campaign;
+export function deserializeCampaign(
+  text: string,
+  scenario: Scenario,
+  options?: {
+    domainRules: 'birthright-1.5';
+    expectedOverlays?: DomainOverlays;
+    overlayContent?: CharacterOverlays35;
+  },
+): StoredCampaign {
   if (text.length > 10_000_000) throw new Error('Save is too large');
   const raw = JSON.parse(text);
   const save = saveSchema.parse(raw as unknown);
+  if (save.version === 2) {
+    if (options?.domainRules !== 'birthright-1.5')
+      throw new Error(
+        'Birthright 1.5 foundation save: explicit 1.5 loading is required; gameplay is not active.',
+      );
+    if (options.expectedOverlays) {
+      const expected = domainOverlaysSchema.parse(options.expectedOverlays);
+      for (const key of ['characters', 'handlers'] as const) {
+        const actual = save.campaign.domainRules.overlays[key];
+        if (
+          actual?.version !== expected[key]?.version ||
+          actual?.fingerprint !== expected[key]?.fingerprint
+        )
+          throw new Error(`Birthright 1.5 ${key} overlay version/fingerprint mismatch`);
+      }
+    }
+    validateScenarioIdentity(save.campaign, scenario);
+    const attached = save.campaign.domainRules.overlays;
+    if (attached.characters || attached.handlers || options.overlayContent)
+      validateCharacterOverlays35(
+        options.overlayContent ?? { characters: null, handlers: null },
+        scenario,
+        attached,
+      );
+    validateLoadedState(save.campaign, scenario);
+    validateRegencyState15(save.campaign, scenario, false, options.overlayContent);
+    if (save.campaign.courtActions15 && !options.overlayContent)
+      throw new Error('Court/action saves require their exact overlay content');
+    validateCourtActions15(save.campaign, scenario, options.overlayContent);
+    return save.campaign;
+  }
+  if (options?.domainRules === 'birthright-1.5')
+    throw new Error('Legacy saves are not automatically converted to Birthright 1.5.');
   const state = save.campaign;
   // Legacy saves are already inside their current action turn; never backfill a season.
-  state.seasonFlow ??= { phase: 'actions', transitionId: `legacy-${state.turn}` };
+  if (usesPCDomainActions(scenario))
+    state.seasonFlow ??= { phase: 'actions', transitionId: `legacy-${state.turn}` };
   state.settlementVersion ??= 1;
   // Old saves already completed their current post-report phase. Never backfill past events.
   if (raw.campaign.eventHistory === undefined) state.lastCampaignEventTurn = state.turn;
@@ -59,10 +134,7 @@ export function deserializeCampaign(text: string, scenario: Scenario): Campaign 
       r.knownSpells ??= [...(rulingRegent(scenario, r.id, state)!.realmSpells ?? [])];
     }
   }
-  if (state.scenarioId !== scenario.id || state.scenarioRevision !== scenario.revision)
-    throw new Error('This save requires a different scenario version');
-  if (state.scenarioFingerprint !== scenario.fingerprint)
-    throw new Error('Load the same private Anuire dataset and adapter version used by this save.');
+  validateScenarioIdentity(state, scenario);
   // Additive v1 extension. Old saves had reciprocal wars and no occupation timing.
   // Preserve all entities/resources; require a newly observed boundary for investiture.
   if (!state.warDeclarations) {
@@ -87,7 +159,7 @@ export function deserializeCampaign(text: string, scenario: Scenario): Campaign 
       data: {},
     });
   }
-  if (usesPCDomainActions(scenario) && state.seasonFlow.phase === 'actions' && !state.domainTurn) {
+  if (usesPCDomainActions(scenario) && state.seasonFlow?.phase === 'actions' && !state.domainTurn) {
     const remaining = state.realms.find((r) => r.id === state.playerRealm)!.actions;
     initializeDomainTurn(state, true, Math.min(3, 4 - remaining));
     state.log.push({
@@ -97,6 +169,18 @@ export function deserializeCampaign(text: string, scenario: Scenario): Campaign 
       data: { remaining },
     });
   }
+  validateLoadedState(state, scenario);
+  return state;
+}
+
+function validateScenarioIdentity(state: StoredCampaign, scenario: Scenario) {
+  if (state.scenarioId !== scenario.id || state.scenarioRevision !== scenario.revision)
+    throw new Error('This save requires a different scenario version');
+  if (state.scenarioFingerprint !== scenario.fingerprint)
+    throw new Error('Load the same private Anuire dataset and adapter version used by this save.');
+}
+
+function validateLoadedState(state: StoredCampaign, scenario: Scenario) {
   validateStateReferences(state, scenario);
   const ids = [
     ...state.armies.map((a) => a.id),
@@ -117,5 +201,4 @@ export function deserializeCampaign(text: string, scenario: Scenario): Campaign 
     )
   )
     throw new Error('Invalid ID sequence');
-  return state;
 }

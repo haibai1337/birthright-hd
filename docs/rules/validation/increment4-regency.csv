@@ -1,0 +1,50 @@
+realmId,name,characterId,status,reason,originalA,currentS,openingRP,provinceLevels,provinceRating,provincePercent,provinceEligible,lawLevels,lawRating,lawPercent,lawEligible,guildLevels,guildRating,guildPercent,guildEligible,templeLevels,templeRating,templePercent,templeEligible,sourceLevels,sourceRating,sourcePercent,sourceEligible,qualifiedBeforeCap,seasonalRP,unknownNewRP,conditionalUpperRP,eligibleRegularPayrollGB,allRegularRPCost,hypotheticalRPCoveredPayrollGB,hypotheticalPayrollRPCost,originalAllGBNet,hypotheticalCashNetGB
+anuire-realm-01,Aerenwe,anuire-regent-001,eligible,qualified,37,37,50,20,16,100,true,20,18,100,true,0,6.125,20,true,0,7,0,false,0,0,0,false,40,37,false,0,3,15,3,15,74/3,83/3
+anuire-realm-02,Alamie,anuire-regent-003,eligible,qualified,46,46,50,22,4,0,true,12,2,0,true,0,1.875,0,true,0,1,0,false,0,0,0,false,0,0,false,0,12,60,10,50,25/2,45/2
+anuire-realm-03,Anuire,anuire-regent-005,eligible,qualified,64,64,50,10,19,100,true,3,14,100,true,0,11.875,100,true,0,10,100,true,0,3,0,false,13,13,false,0,4,20,4,20,15,19
+anuire-realm-04,Avanil,anuire-regent-007,eligible,qualified,70,70,50,37,17,100,true,67,21,100,true,37,6.625,20,true,58,9,0,false,0,0,0,false,111,70,false,0,34,170,24,120,257/3,329/3
+anuire-realm-05,Baruk-Azhik,anuire-regent-009,eligible,qualified,38,38,50,19,6.5,20,true,19,8,60,true,30,2.125,0,true,0,10,100,true,0,1,0,false,15,15,false,0,16,80,13,65,82/3,121/3
+anuire-realm-06,Boeruine,anuire-regent-011,eligible,qualified,60,60,50,36,18,100,true,43,22,100,true,26,6.875,20,true,2,9,0,false,23,0,0,false,84,60,false,0,28,140,22,110,43,65
+anuire-realm-07,Brosengae,anuire-regent-013,eligible,qualified,41,41,50,12,10,100,true,6,4,0,true,23,8.5,60,true,4,5,0,false,0,2,0,false,25,25,false,0,3,15,3,15,31,34
+anuire-realm-08,Cariele,anuire-regent-015,eligible,qualified,20,20,50,13,8,60,true,14,10,100,true,41,2.75,0,true,0,4,0,false,0,0,0,false,21,20,false,0,5,25,5,25,38,43
+anuire-realm-09,Chimaeron,anuire-regent-017,eligible,qualified,38,38,50,10,5,0,true,9,5,0,true,8,3,0,true,0,2,0,false,27,13,100,true,27,27,false,0,5,25,5,25,17,22
+anuire-realm-10,Coeranys,anuire-regent-019,eligible,qualified,23,23,50,20,2,0,true,13,1,0,true,0,1,0,true,30,0,0,false,0,0.5,0,false,0,0,false,0,4,20,4,20,121/3,133/3
+anuire-realm-11,Dhoesone,anuire-regent-021,eligible,qualified,46,46,50,22,9,80,true,16,4,0,true,0,8.75,60,true,0,4,0,false,49,2,0,false,17,17,false,0,10,50,10,50,55/3,85/3
+anuire-realm-12,Diemed,anuire-regent-023,eligible,qualified,42,42,50,23,12,100,true,18,15,100,true,0,4.875,0,true,0,6,0,false,0,0,0,false,41,41,false,0,9,45,9,45,22,31
+anuire-realm-13,Elinie,anuire-regent-025,eligible,qualified,47,47,50,20,11,100,true,11,12,100,true,0,2.625,0,true,0,6,20,true,0,2,0,false,31,31,false,0,9,45,9,45,38/3,65/3
+anuire-realm-14,Endier,anuire-regent-027,eligible,qualified,30,30,50,6,8,60,true,8,4,0,true,31,8,60,true,0,4,0,false,27,0,0,false,22,22,false,0,3,15,3,15,82/3,91/3
+anuire-realm-15,Five Peaks,anuire-regent-029,eligible,qualified,45,45,50,21,7,40,true,0,4,0,true,0,4.625,0,true,0,2,0,false,0,10,100,true,8,8,false,0,0,0,0,0,19,19
+anuire-realm-16,Ghoere,anuire-regent-031,eligible,qualified,49,49,50,40,16,100,true,34,18,100,true,46,6.375,20,true,4,7,0,false,23,2,0,false,83,49,false,0,24,120,99/5,99,331/6,2249/30
+anuire-realm-17,Gorgon's Crown,anuire-regent-033,eligible,qualified,100,100,50,33,7,40,true,52,14,100,true,29,13.875,100,true,0,9,0,false,96,4,0,true,94,94,false,0,0,0,0,0,230/3,230/3
+anuire-realm-18,Ilien,anuire-regent-035,eligible,qualified,21,21,50,7,1,0,true,7,0,0,true,0,1.75,0,true,0,1,0,false,14,8,60,true,8,8,false,0,2,10,2,10,37/3,43/3
+anuire-realm-19,Markazor,anuire-regent-037,eligible,qualified,2,2,50,22,2,0,true,7,4,0,true,0,2,0,true,0,2,0,false,0,0,0,false,0,0,false,0,0,0,0,0,67/3,67/3
+anuire-realm-20,Medoere,anuire-regent-039,eligible,qualified,32,32,50,9,4.5,0,true,4,2.5,0,true,0,3.25,0,true,10,3,0,true,0,2,0,false,0,0,false,0,6,30,6,30,12,18
+anuire-realm-21,Mhoried,anuire-regent-041,eligible,qualified,46,46,50,31,6.5,20,true,26,6.5,20,true,25,2.75,0,true,0,2,0,true,23,5,0,false,11,11,false,0,23,115,61/5,61,191/6,1321/30
+anuire-realm-24,Mur-Kilad,anuire-regent-047,eligible,qualified,5,5,50,8,6,20,true,3,10,100,true,0,1.5,0,true,0,8.5,0,false,0,0,0,false,4,4,false,0,0,0,0,0,6,6
+anuire-realm-25,Osoerde,anuire-regent-049,eligible,qualified,36,36,50,20,12,100,true,13,15,100,true,0,4.875,0,true,0,6,0,false,0,0,0,false,33,33,false,0,4,20,4,20,49/3,61/3
+anuire-realm-26,Rhuobhe,anuire-regent-051,eligible,qualified,95,95,50,2,4,0,true,2,8,60,true,0,8.25,60,true,0,6,0,false,16,4,0,true,1,1,false,0,0,0,0,0,14/3,14/3
+anuire-realm-27,Roesone,anuire-regent-053,eligible,qualified,24,24,56,21,6,20,true,9,5,0,true,0,3.75,0,true,0,3,0,false,0,0,0,false,4,4,false,0,10,50,10,50,15,25
+anuire-realm-28,Sielwode,anuire-regent-055,eligible,qualified,42,42,50,27,0,0,true,27,0,0,true,0,2.25,0,true,0,2,0,false,52,25,100,true,52,42,false,0,8,40,8,40,107/3,131/3
+anuire-realm-29,Spiderfell,anuire-regent-057,unknown,missing-skill-ledger,95,95,50,5,,,false,0,,,false,0,,,false,0,,0,false,0,,0,false,,,true,5,0,0,0,0,3,3
+anuire-realm-30,Taeghas,anuire-regent-059,eligible,qualified,33,33,50,23,3,0,true,3,2,0,true,0,2,0,true,0,2,0,false,49,8.5,60,true,29,29,false,0,3,15,3,15,26,29
+anuire-realm-31,Talinie,anuire-regent-061,eligible,qualified,33,33,50,18,7.5,40,true,10,5.5,0,true,0,4.25,0,true,33,4,0,true,32,1,0,false,7,7,false,0,5,25,5,25,215/6,245/6
+anuire-realm-32,Thurazor,anuire-regent-063,eligible,qualified,24,24,50,18,9,80,true,14,12,100,true,0,3.25,0,true,0,10.5,0,false,0,0,0,false,28,24,false,0,9,45,9,45,32/3,59/3
+anuire-realm-33,Tuarhievel,anuire-regent-065,eligible,qualified,55,55,50,22,7,40,true,13,3,0,true,7,3.25,0,true,0,3,0,false,29,2,0,true,8,8,false,0,13,65,58/5,58,58/3,464/15
+anuire-realm-34,Tuornen,anuire-regent-067,eligible,qualified,35,35,50,23,7,40,true,9,4,0,true,2,6.5,20,true,0,5,0,false,0,2,0,false,9,9,false,0,7,35,7,35,125/6,167/6
+anuire-realm-35,N. Import and Export,anuire-regent-069,eligible,qualified,17,17,50,0,6,20,true,2,2,0,true,16,9.75,80,true,0,2,0,false,0,0,0,false,12,12,false,0,0,0,0,0,31/3,31/3
+anuire-realm-36,Impregnable Heart,anuire-regent-081,eligible,qualified,27,27,50,0,11.5,100,true,0,8.5,60,true,0,6.5,20,true,25,6,20,true,0,2,0,false,5,5,false,0,0,0,0,0,47/3,47/3
+anuire-realm-37,S. Anuire Shipping,anuire-regent-086,eligible,qualified,8,8,50,0,6,20,true,0,1,0,true,13,9.25,80,true,0,1,0,false,4,0,0,false,10,8,false,0,0,0,0,0,23/3,23/3
+anuire-realm-38,High Mage Aelies,anuire-regent-070,eligible,qualified,36,36,50,0,0,0,true,0,0,0,true,0,1.75,0,true,0,2,0,false,26,22,100,true,26,26,false,0,0,0,0,0,1/3,1/3
+anuire-realm-39,Port of Call Exchg.,anuire-regent-074,eligible,qualified,10,10,50,0,6,20,true,0,2,0,true,25,9.25,80,true,0,2,0,false,0,0,0,false,20,10,false,0,0,0,0,0,47/3,47/3
+anuire-realm-40,Orth. Imp. Temple,anuire-regent-083,eligible,qualified,20,20,50,0,8.5,60,true,0,6.5,20,true,0,4.5,0,true,23,4,0,true,0,1,0,false,0,0,false,0,0,0,0,0,43/3,43/3
+anuire-realm-41,Wizard Hermedhie,anuire-regent-080,eligible,qualified,24,24,50,0,2,0,true,0,0,0,true,0,3.25,0,true,0,1,0,false,13,14,100,true,13,13,false,0,0,0,0,0,-1,-1
+anuire-realm-42,Jewel of Sarimie,anuire-regent-091,eligible,qualified,18,18,50,0,3,0,true,0,3,0,true,0,3,0,true,28,8,60,true,0,1,0,false,16,16,false,0,0,0,0,0,53/3,53/3
+anuire-realm-43,Temple of Cuiraecen,anuire-regent-084,eligible,qualified,23,23,50,0,7,40,true,0,9,80,true,0,4.5,0,true,20,16,100,true,0,2,0,false,20,20,false,0,0,0,0,0,37/3,37/3
+anuire-realm-44,Upper Anuire Traders,anuire-regent-078,eligible,qualified,12,12,50,0,6,20,true,4,2,0,true,21,9.5,80,true,0,2,0,false,0,0,0,false,16,12,false,0,0,0,0,0,43/3,43/3
+anuire-realm-45,Haelyn's Aegis,anuire-regent-071,eligible,qualified,18,18,50,0,4,0,true,3,4,0,true,0,3.75,0,true,32,11,100,true,0,1,0,false,32,18,false,0,0,0,0,0,64/3,64/3
+anuire-realm-46,Militant Order,anuire-regent-077,eligible,qualified,17,17,50,0,3,0,true,0,4,0,true,0,0.875,0,true,44,7,40,true,0,0,0,false,17,17,false,0,0,0,0,0,85/3,85/3
+anuire-realm-47,Points East Trading,anuire-regent-075,eligible,qualified,25,25,50,0,4,0,true,0,1,0,true,21,6,20,true,6,1,0,false,0,0,0,false,4,4,false,0,0,0,0,0,17,17
+anuire-realm-48,Second Swamp Mage,anuire-regent-090,eligible,qualified,15,15,50,0,0,0,true,0,0,0,true,0,1.75,0,true,0,2,0,false,28,20,100,true,28,15,false,0,0,0,0,0,1,1
+anuire-realm-49,N. Reformed Church,anuire-regent-082,eligible,qualified,32,32,50,0,7.5,40,true,0,5.5,0,true,0,5.75,0,true,22,5,0,true,0,1,0,false,0,0,false,0,0,0,0,0,41/3,41/3
+anuire-realm-50,Wizard Eyeless One,anuire-regent-076,eligible,qualified,35,35,50,0,3,0,true,0,0,0,true,0,4,0,true,0,2,0,false,18,16,100,true,18,18,false,0,0,0,0,0,-1,-1
+anuire-realm-51,Ruarch Rockhammer,anuire-regent-089,eligible,qualified,41,41,50,0,11.5,100,true,0,8.5,60,true,0,6.5,20,true,24,6,20,true,0,2,0,false,4,4,false,0,0,0,0,0,15,15

@@ -1,8 +1,16 @@
 import { rulingRegent } from './regents';
 import type { Campaign, Command, Scenario, Report } from './schema';
 
-type Domains = Pick<Campaign, 'realms' | 'treaties' | 'playerRealm'>;
-export function fealtyTo(state: Pick<Campaign, 'treaties'>, vassal: string) {
+type FealtyIdentity = Pick<Campaign['treaties'][number], 'a' | 'b' | 'kind' | 'vassal'>;
+type Domains = {
+  playerRealm: string;
+  realms: ReadonlyArray<Pick<Campaign['realms'][number], 'id' | 'eliminated' | 'controller'>>;
+  treaties: readonly FealtyIdentity[];
+};
+export function fealtyTo<T extends FealtyIdentity>(
+  state: { treaties: readonly T[] },
+  vassal: string,
+) {
   const t = state.treaties.find((t) => t.kind === 'vassal' && t.vassal === vassal);
   return t ? { treaty: t, liege: t.a === vassal ? t.b : t.a } : null;
 }

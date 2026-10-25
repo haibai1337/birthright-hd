@@ -3,7 +3,16 @@ import { randomInt } from './random';
 import { compareIds } from './order';
 
 /** MAPAI::DoNPCAdmin chooses a seasonal order, reused by all three action rounds. */
-export function initializeDomainTurn(state: Campaign, preserveOpening = false, round = 1) {
+export function initializeDomainTurn(
+  state: {
+    realms: ReadonlyArray<Pick<Campaign['realms'][number], 'id' | 'eliminated' | 'controller'>>;
+    playerRealm: string;
+    rng: number;
+    domainTurn?: Campaign['domainTurn'];
+  },
+  preserveOpening = false,
+  round = 1,
+) {
   const order = state.realms
     .filter((r) => r.id === state.playerRealm || (!r.eliminated && r.controller !== 'passive'))
     .map((r) => r.id)
@@ -18,4 +27,12 @@ export function initializeDomainTurn(state: Campaign, preserveOpening = false, r
     order.push(...order.splice(0, i));
   }
   state.domainTurn = { round, order, cursor: 0 };
+}
+
+/** Shared three-round boundary. Does not run AI, Maintenance, Council or advance a season. */
+export function nextDomainRound(phase: NonNullable<Campaign['domainTurn']>): boolean {
+  if (phase.cursor < phase.order.length || phase.round >= 3) return false;
+  phase.round++;
+  phase.cursor = 0;
+  return true;
 }

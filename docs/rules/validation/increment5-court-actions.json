@@ -1,0 +1,5556 @@
+{
+  "format": "birthright15-increment5-court-actions-validation",
+  "version": 1,
+  "moneyUnitsPerGB": "120",
+  "scenarioFingerprint": "5eb38539a4b8197ec040fac79f7d98316003b1d6dae561cc92deefd85c1c7970",
+  "overlays": {
+    "characters": {
+      "version": "1.2.0",
+      "fingerprint": "da991cb3f4f418b0b2ca342a68ceab58ecb3d1f53cde37c543e9ab9f124fdf55"
+    },
+    "handlers": {
+      "version": "1.2.0",
+      "fingerprint": "28fe78806a9cd92154d89082d664e4598ac51dd8c1f55ce9caa432d93543415f"
+    }
+  },
+  "inputs": {
+    "reference/extracted/anuire/anuire.research.json": "e733f792ba10fa860de5cba02fc9305028a053d322c43fce3f6e98a33a01962c",
+    "reference/extracted/anuire/economy.research.json": "b714e290f264237a02a3b88b9f672e1bfbfc49238fe82eb73853c45118088025",
+    "reference/extracted/anuire/magic.research.json": "a1a866b14edb470fd1208f77a03349114c6e99842e752232e39aa5da331ef6d9",
+    "reference/extracted/anuire/strategy.research.json": "20539d151d10a12559df6960dbb5e8eecbff18708002efbbc3c7c31650843f1f",
+    "reference/extracted/anuire/initialization.research.json": "faf8a6b6cec44788ca7f28f9ecb4701328c4b0782b6a3d2f656ae2ec95742695"
+  },
+  "unchangedCharacterFiles": {
+    "packages/world-data/anuire-characters15.json": "c66bbbb576aea3b50ef3a803a7b48e3b75b2c6acb3d4fc91d25756d8e934a572",
+    "reference/extracted/anuire/birthright15.characters.json": "21ac0805e1bb910bebda7009a7f92f9964ab3758749f35275325280837912b12"
+  },
+  "unchangedFinancialBaselines": {
+    "docs/rules/validation/increment3-economy.json": "ea93427aa57e9b61a758543fe5d38ecf0f22ff0ef875f478a1ef3e151e1ac5ab",
+    "docs/rules/validation/character-finalization-economy.json": "b3ad214b148d70cf9e81adc98480639685de5d03ec78dee6f425ba9255621968",
+    "docs/rules/validation/increment4-regency.json": "1d58ba7640ba246f114f9a18bb5a6c62f4e526efbd2d0a8fbe8d38e770764693",
+    "docs/rules/validation/spider-completion.json": "f7fb706b8aa2b497ed543686f7ca405340902f05c250f62a7bf0d8c991adbb2d"
+  },
+  "coverage": {
+    "originalCharacters": 116,
+    "unchangedCharacters": 116,
+    "unchangedOtherCharacters": 115,
+    "rhuobheUnchanged": true,
+    "ordinaryDomains": 49,
+    "knownRPQuotes": 49,
+    "totalRP": "912",
+    "openingPalaces": 0,
+    "inventedSeats": 0
+  },
+  "courts": [
+    {
+      "realmId": "anuire-realm-01",
+      "name": "Aerenwe",
+      "characterId": "anuire-regent-001",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-008",
+        "anuire-province-009",
+        "anuire-province-010",
+        "anuire-province-011",
+        "anuire-province-012",
+        "anuire-province-013",
+        "anuire-province-014"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-02",
+      "name": "Alamie",
+      "characterId": "anuire-regent-003",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-091",
+        "anuire-province-092",
+        "anuire-province-093",
+        "anuire-province-094",
+        "anuire-province-095",
+        "anuire-province-096",
+        "anuire-province-097",
+        "anuire-province-098",
+        "anuire-province-099"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-03",
+      "name": "Anuire",
+      "characterId": "anuire-regent-005",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-100"],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-04",
+      "name": "Avanil",
+      "characterId": "anuire-regent-007",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-054",
+        "anuire-province-055",
+        "anuire-province-056",
+        "anuire-province-057",
+        "anuire-province-058",
+        "anuire-province-059",
+        "anuire-province-060",
+        "anuire-province-061",
+        "anuire-province-062"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-017",
+        "anuire-province-019",
+        "anuire-province-043",
+        "anuire-province-044",
+        "anuire-province-046",
+        "anuire-province-047",
+        "anuire-province-048",
+        "anuire-province-049",
+        "anuire-province-050",
+        "anuire-province-051",
+        "anuire-province-052",
+        "anuire-province-053",
+        "anuire-province-084",
+        "anuire-province-086",
+        "anuire-province-087",
+        "anuire-province-088",
+        "anuire-province-089",
+        "anuire-province-090",
+        "anuire-province-091",
+        "anuire-province-092",
+        "anuire-province-095",
+        "anuire-province-097",
+        "anuire-province-099",
+        "anuire-province-100",
+        "anuire-province-108"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-05",
+      "name": "Baruk-Azhik",
+      "characterId": "anuire-regent-009",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-170",
+        "anuire-province-171",
+        "anuire-province-172",
+        "anuire-province-173",
+        "anuire-province-174"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-183",
+        "anuire-province-184",
+        "anuire-province-185",
+        "anuire-province-186",
+        "anuire-province-188",
+        "anuire-province-189",
+        "anuire-province-193",
+        "anuire-province-194",
+        "anuire-province-195"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-06",
+      "name": "Boeruine",
+      "characterId": "anuire-regent-011",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-026",
+        "anuire-province-027",
+        "anuire-province-028",
+        "anuire-province-029",
+        "anuire-province-030",
+        "anuire-province-031",
+        "anuire-province-032",
+        "anuire-province-033",
+        "anuire-province-034"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-038",
+        "anuire-province-039",
+        "anuire-province-085",
+        "anuire-province-086",
+        "anuire-province-100"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-07",
+      "name": "Brosengae",
+      "characterId": "anuire-regent-013",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-042", "anuire-province-043", "anuire-province-044"],
+      "hostConsentRequiredSites": [
+        "anuire-province-054",
+        "anuire-province-056",
+        "anuire-province-059",
+        "anuire-province-086",
+        "anuire-province-088"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-08",
+      "name": "Cariele",
+      "characterId": "anuire-regent-015",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-145", "anuire-province-146", "anuire-province-147"],
+      "hostConsentRequiredSites": [
+        "anuire-province-083",
+        "anuire-province-085",
+        "anuire-province-087",
+        "anuire-province-091",
+        "anuire-province-092",
+        "anuire-province-093",
+        "anuire-province-096",
+        "anuire-province-097",
+        "anuire-province-119",
+        "anuire-province-120",
+        "anuire-province-138",
+        "anuire-province-139",
+        "anuire-province-141"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-09",
+      "name": "Chimaeron",
+      "characterId": "anuire-regent-017",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-175",
+        "anuire-province-176",
+        "anuire-province-177",
+        "anuire-province-178",
+        "anuire-province-179",
+        "anuire-province-180",
+        "anuire-province-181"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-10",
+      "name": "Coeranys",
+      "characterId": "anuire-regent-019",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-182",
+        "anuire-province-183",
+        "anuire-province-184",
+        "anuire-province-185",
+        "anuire-province-186",
+        "anuire-province-187",
+        "anuire-province-188"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-063",
+        "anuire-province-066",
+        "anuire-province-070",
+        "anuire-province-100",
+        "anuire-province-101",
+        "anuire-province-103",
+        "anuire-province-105",
+        "anuire-province-106",
+        "anuire-province-107"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-11",
+      "name": "Dhoesone",
+      "characterId": "anuire-regent-021",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-109",
+        "anuire-province-110",
+        "anuire-province-111",
+        "anuire-province-112",
+        "anuire-province-113",
+        "anuire-province-114",
+        "anuire-province-115",
+        "anuire-province-116",
+        "anuire-province-117",
+        "anuire-province-118",
+        "anuire-province-119",
+        "anuire-province-120"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-138",
+        "anuire-province-140",
+        "anuire-province-141"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-12",
+      "name": "Diemed",
+      "characterId": "anuire-regent-023",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-015",
+        "anuire-province-016",
+        "anuire-province-017",
+        "anuire-province-018",
+        "anuire-province-019",
+        "anuire-province-020"
+      ],
+      "hostConsentRequiredSites": ["anuire-province-100"]
+    },
+    {
+      "realmId": "anuire-realm-13",
+      "name": "Elinie",
+      "characterId": "anuire-regent-025",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-101",
+        "anuire-province-102",
+        "anuire-province-103",
+        "anuire-province-104",
+        "anuire-province-105",
+        "anuire-province-106",
+        "anuire-province-107"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-14",
+      "name": "Endier",
+      "characterId": "anuire-regent-027",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-108"],
+      "hostConsentRequiredSites": [
+        "anuire-province-017",
+        "anuire-province-019",
+        "anuire-province-020",
+        "anuire-province-024",
+        "anuire-province-025",
+        "anuire-province-068",
+        "anuire-province-069",
+        "anuire-province-071",
+        "anuire-province-083",
+        "anuire-province-084",
+        "anuire-province-088",
+        "anuire-province-090",
+        "anuire-province-092",
+        "anuire-province-094",
+        "anuire-province-095",
+        "anuire-province-099",
+        "anuire-province-100"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-15",
+      "name": "Five Peaks",
+      "characterId": "anuire-regent-029",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-148",
+        "anuire-province-149",
+        "anuire-province-150",
+        "anuire-province-151",
+        "anuire-province-152",
+        "anuire-province-153",
+        "anuire-province-154"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-16",
+      "name": "Ghoere",
+      "characterId": "anuire-regent-031",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-063",
+        "anuire-province-064",
+        "anuire-province-065",
+        "anuire-province-066",
+        "anuire-province-067",
+        "anuire-province-068",
+        "anuire-province-069",
+        "anuire-province-070",
+        "anuire-province-071",
+        "anuire-province-072"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-076",
+        "anuire-province-078",
+        "anuire-province-080",
+        "anuire-province-091",
+        "anuire-province-094",
+        "anuire-province-098",
+        "anuire-province-102",
+        "anuire-province-105",
+        "anuire-province-106",
+        "anuire-province-182",
+        "anuire-province-183",
+        "anuire-province-190",
+        "anuire-province-191",
+        "anuire-province-194"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-17",
+      "name": "Gorgon's Crown",
+      "characterId": "anuire-regent-033",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-121",
+        "anuire-province-122",
+        "anuire-province-123",
+        "anuire-province-124",
+        "anuire-province-125",
+        "anuire-province-126",
+        "anuire-province-127",
+        "anuire-province-128",
+        "anuire-province-129",
+        "anuire-province-130",
+        "anuire-province-131",
+        "anuire-province-132",
+        "anuire-province-133",
+        "anuire-province-134",
+        "anuire-province-135",
+        "anuire-province-136",
+        "anuire-province-137"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-155",
+        "anuire-province-156",
+        "anuire-province-157",
+        "anuire-province-158",
+        "anuire-province-159",
+        "anuire-province-160",
+        "anuire-province-161",
+        "anuire-province-162",
+        "anuire-province-163",
+        "anuire-province-206"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-18",
+      "name": "Ilien",
+      "characterId": "anuire-regent-035",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-021"],
+      "hostConsentRequiredSites": [
+        "anuire-province-001",
+        "anuire-province-003",
+        "anuire-province-004",
+        "anuire-province-008",
+        "anuire-province-012",
+        "anuire-province-013",
+        "anuire-province-014",
+        "anuire-province-022"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-19",
+      "name": "Markazor",
+      "characterId": "anuire-regent-037",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-155",
+        "anuire-province-156",
+        "anuire-province-157",
+        "anuire-province-158",
+        "anuire-province-159",
+        "anuire-province-160",
+        "anuire-province-161",
+        "anuire-province-206"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-20",
+      "name": "Medoere",
+      "characterId": "anuire-regent-039",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-022", "anuire-province-023", "anuire-province-024"],
+      "hostConsentRequiredSites": ["anuire-province-003"]
+    },
+    {
+      "realmId": "anuire-realm-21",
+      "name": "Mhoried",
+      "characterId": "anuire-regent-041",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-073",
+        "anuire-province-074",
+        "anuire-province-075",
+        "anuire-province-076",
+        "anuire-province-077",
+        "anuire-province-078",
+        "anuire-province-079",
+        "anuire-province-080",
+        "anuire-province-081",
+        "anuire-province-082"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-064",
+        "anuire-province-066",
+        "anuire-province-068",
+        "anuire-province-069",
+        "anuire-province-100",
+        "anuire-province-174"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-24",
+      "name": "Mur-Kilad",
+      "characterId": "anuire-regent-047",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-162", "anuire-province-163"],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-25",
+      "name": "Osoerde",
+      "characterId": "anuire-regent-049",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-189",
+        "anuire-province-190",
+        "anuire-province-191",
+        "anuire-province-192",
+        "anuire-province-193",
+        "anuire-province-194",
+        "anuire-province-195",
+        "anuire-province-196"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-26",
+      "name": "Rhuobhe",
+      "characterId": "anuire-regent-051",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-045"],
+      "hostConsentRequiredSites": ["anuire-province-087", "anuire-province-089"]
+    },
+    {
+      "realmId": "anuire-realm-27",
+      "name": "Roesone",
+      "characterId": "anuire-regent-053",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-001",
+        "anuire-province-002",
+        "anuire-province-003",
+        "anuire-province-004",
+        "anuire-province-005",
+        "anuire-province-006",
+        "anuire-province-007"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-28",
+      "name": "Sielwode",
+      "characterId": "anuire-regent-055",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-197",
+        "anuire-province-198",
+        "anuire-province-199",
+        "anuire-province-200",
+        "anuire-province-201",
+        "anuire-province-202",
+        "anuire-province-203",
+        "anuire-province-204",
+        "anuire-province-205"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-29",
+      "name": "Spiderfell",
+      "characterId": "anuire-regent-057",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": ["anuire-province-025"],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-30",
+      "name": "Taeghas",
+      "characterId": "anuire-regent-059",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-046",
+        "anuire-province-047",
+        "anuire-province-048",
+        "anuire-province-049",
+        "anuire-province-050",
+        "anuire-province-051",
+        "anuire-province-052",
+        "anuire-province-053"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-055",
+        "anuire-province-056",
+        "anuire-province-058",
+        "anuire-province-059",
+        "anuire-province-060",
+        "anuire-province-061",
+        "anuire-province-062"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-31",
+      "name": "Talinie",
+      "characterId": "anuire-regent-061",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-035",
+        "anuire-province-036",
+        "anuire-province-037",
+        "anuire-province-038",
+        "anuire-province-039",
+        "anuire-province-040",
+        "anuire-province-041"
+      ],
+      "hostConsentRequiredSites": [
+        "anuire-province-027",
+        "anuire-province-029",
+        "anuire-province-032",
+        "anuire-province-033",
+        "anuire-province-034",
+        "anuire-province-164",
+        "anuire-province-165",
+        "anuire-province-166"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-32",
+      "name": "Thurazor",
+      "characterId": "anuire-regent-063",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-164",
+        "anuire-province-165",
+        "anuire-province-166",
+        "anuire-province-167",
+        "anuire-province-168",
+        "anuire-province-169"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-33",
+      "name": "Tuarhievel",
+      "characterId": "anuire-regent-065",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-138",
+        "anuire-province-139",
+        "anuire-province-140",
+        "anuire-province-141",
+        "anuire-province-142",
+        "anuire-province-143",
+        "anuire-province-144"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-34",
+      "name": "Tuornen",
+      "characterId": "anuire-regent-067",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [
+        "anuire-province-083",
+        "anuire-province-084",
+        "anuire-province-085",
+        "anuire-province-086",
+        "anuire-province-087",
+        "anuire-province-088",
+        "anuire-province-089",
+        "anuire-province-090"
+      ],
+      "hostConsentRequiredSites": []
+    },
+    {
+      "realmId": "anuire-realm-35",
+      "name": "N. Import and Export",
+      "characterId": "anuire-regent-069",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-110",
+        "anuire-province-116",
+        "anuire-province-117",
+        "anuire-province-119",
+        "anuire-province-140",
+        "anuire-province-141",
+        "anuire-province-164",
+        "anuire-province-166",
+        "anuire-province-167",
+        "anuire-province-168"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-36",
+      "name": "Impregnable Heart",
+      "characterId": "anuire-regent-081",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-001",
+        "anuire-province-002",
+        "anuire-province-003",
+        "anuire-province-004",
+        "anuire-province-005",
+        "anuire-province-006",
+        "anuire-province-007",
+        "anuire-province-021",
+        "anuire-province-189",
+        "anuire-province-191",
+        "anuire-province-193"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-37",
+      "name": "S. Anuire Shipping",
+      "characterId": "anuire-regent-086",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-001",
+        "anuire-province-002",
+        "anuire-province-015",
+        "anuire-province-018",
+        "anuire-province-019",
+        "anuire-province-022",
+        "anuire-province-023"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-38",
+      "name": "High Mage Aelies",
+      "characterId": "anuire-regent-070",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-001",
+        "anuire-province-002",
+        "anuire-province-005",
+        "anuire-province-006",
+        "anuire-province-007",
+        "anuire-province-008",
+        "anuire-province-012",
+        "anuire-province-013",
+        "anuire-province-014"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-39",
+      "name": "Port of Call Exchg.",
+      "characterId": "anuire-regent-074",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-003",
+        "anuire-province-004",
+        "anuire-province-005",
+        "anuire-province-015",
+        "anuire-province-016",
+        "anuire-province-017",
+        "anuire-province-021",
+        "anuire-province-022"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-40",
+      "name": "Orth. Imp. Temple",
+      "characterId": "anuire-regent-083",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-015",
+        "anuire-province-016",
+        "anuire-province-017",
+        "anuire-province-018",
+        "anuire-province-019",
+        "anuire-province-020"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-41",
+      "name": "Wizard Hermedhie",
+      "characterId": "anuire-regent-080",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-015",
+        "anuire-province-016",
+        "anuire-province-018",
+        "anuire-province-020",
+        "anuire-province-023",
+        "anuire-province-024"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-42",
+      "name": "Jewel of Sarimie",
+      "characterId": "anuire-regent-091",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-054",
+        "anuire-province-056",
+        "anuire-province-057",
+        "anuire-province-058",
+        "anuire-province-059",
+        "anuire-province-091",
+        "anuire-province-093",
+        "anuire-province-094",
+        "anuire-province-096",
+        "anuire-province-098",
+        "anuire-province-100",
+        "anuire-province-108"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-43",
+      "name": "Temple of Cuiraecen",
+      "characterId": "anuire-regent-084",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-026",
+        "anuire-province-028",
+        "anuire-province-030",
+        "anuire-province-031",
+        "anuire-province-033",
+        "anuire-province-034",
+        "anuire-province-153",
+        "anuire-province-167",
+        "anuire-province-168"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-44",
+      "name": "Upper Anuire Traders",
+      "characterId": "anuire-regent-078",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-028",
+        "anuire-province-030",
+        "anuire-province-032",
+        "anuire-province-074",
+        "anuire-province-075",
+        "anuire-province-081",
+        "anuire-province-082",
+        "anuire-province-111",
+        "anuire-province-118",
+        "anuire-province-165",
+        "anuire-province-167",
+        "anuire-province-168",
+        "anuire-province-169"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-45",
+      "name": "Haelyn's Aegis",
+      "characterId": "anuire-regent-071",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-063",
+        "anuire-province-064",
+        "anuire-province-065",
+        "anuire-province-067",
+        "anuire-province-068",
+        "anuire-province-069",
+        "anuire-province-071",
+        "anuire-province-074",
+        "anuire-province-075",
+        "anuire-province-076",
+        "anuire-province-079",
+        "anuire-province-082",
+        "anuire-province-101",
+        "anuire-province-102",
+        "anuire-province-104",
+        "anuire-province-183",
+        "anuire-province-188"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-46",
+      "name": "Militant Order",
+      "characterId": "anuire-regent-077",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-064",
+        "anuire-province-065",
+        "anuire-province-067",
+        "anuire-province-068",
+        "anuire-province-069",
+        "anuire-province-071",
+        "anuire-province-072",
+        "anuire-province-073",
+        "anuire-province-074",
+        "anuire-province-078",
+        "anuire-province-080",
+        "anuire-province-083",
+        "anuire-province-084",
+        "anuire-province-085",
+        "anuire-province-086",
+        "anuire-province-089",
+        "anuire-province-100"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-47",
+      "name": "Points East Trading",
+      "characterId": "anuire-regent-075",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-101",
+        "anuire-province-102",
+        "anuire-province-103",
+        "anuire-province-104",
+        "anuire-province-105",
+        "anuire-province-106",
+        "anuire-province-107",
+        "anuire-province-170",
+        "anuire-province-171",
+        "anuire-province-187",
+        "anuire-province-188"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-48",
+      "name": "Second Swamp Mage",
+      "characterId": "anuire-regent-090",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-103",
+        "anuire-province-104",
+        "anuire-province-107",
+        "anuire-province-182",
+        "anuire-province-191",
+        "anuire-province-192",
+        "anuire-province-193",
+        "anuire-province-194",
+        "anuire-province-196"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-49",
+      "name": "N. Reformed Church",
+      "characterId": "anuire-regent-082",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-113",
+        "anuire-province-116",
+        "anuire-province-119",
+        "anuire-province-120",
+        "anuire-province-145",
+        "anuire-province-146",
+        "anuire-province-147"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-50",
+      "name": "Wizard Eyeless One",
+      "characterId": "anuire-regent-076",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-148",
+        "anuire-province-149",
+        "anuire-province-150",
+        "anuire-province-151",
+        "anuire-province-152",
+        "anuire-province-153",
+        "anuire-province-154",
+        "anuire-province-164",
+        "anuire-province-166",
+        "anuire-province-167",
+        "anuire-province-168",
+        "anuire-province-169"
+      ]
+    },
+    {
+      "realmId": "anuire-realm-51",
+      "name": "Ruarch Rockhammer",
+      "characterId": "anuire-regent-089",
+      "paidLevel": 1,
+      "effectiveLevel": 1,
+      "seat": null,
+      "legalSeat": false,
+      "capacity": 1,
+      "fundedPalaceLevel": 0,
+      "extraActions": 0,
+      "upkeep": "120",
+      "nextSeasonUpkeep": "120",
+      "grandfather": true,
+      "ownedSeatCandidates": [],
+      "hostConsentRequiredSites": [
+        "anuire-province-162",
+        "anuire-province-163",
+        "anuire-province-170",
+        "anuire-province-171",
+        "anuire-province-172",
+        "anuire-province-173",
+        "anuire-province-174"
+      ]
+    }
+  ],
+  "rp": [
+    {
+      "realmId": "anuire-realm-01",
+      "characterId": "anuire-regent-001",
+      "seasonIndex": 1,
+      "originalScore": "37",
+      "currentScore": "37",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "20",
+          "rating": 16,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-008",
+            "anuire-province-009",
+            "anuire-province-010",
+            "anuire-province-011",
+            "anuire-province-012",
+            "anuire-province-013",
+            "anuire-province-014"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "20",
+          "rating": 18,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-036",
+            "anuire-holding-040",
+            "anuire-holding-043",
+            "anuire-holding-045",
+            "anuire-holding-047",
+            "anuire-holding-050",
+            "anuire-holding-053"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 6.125,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 7,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "40",
+      "collectibleRP": "37",
+      "knownWeightedHundredths": "4000",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-02",
+      "characterId": "anuire-regent-003",
+      "seasonIndex": 1,
+      "originalScore": "46",
+      "currentScore": "46",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "22",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-091",
+            "anuire-province-092",
+            "anuire-province-093",
+            "anuire-province-094",
+            "anuire-province-095",
+            "anuire-province-096",
+            "anuire-province-097",
+            "anuire-province-098",
+            "anuire-province-099"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "12",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-432",
+            "anuire-holding-438",
+            "anuire-holding-443",
+            "anuire-holding-446",
+            "anuire-holding-451",
+            "anuire-holding-463"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 1.875,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "0",
+      "collectibleRP": "0",
+      "knownWeightedHundredths": "0",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-03",
+      "characterId": "anuire-regent-005",
+      "seasonIndex": 1,
+      "originalScore": "64",
+      "currentScore": "64",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "10",
+          "rating": 19,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-100"]
+        },
+        {
+          "kind": "law",
+          "levels": "3",
+          "rating": 14,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-469"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 11.875,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 10,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "13",
+      "collectibleRP": "13",
+      "knownWeightedHundredths": "1300",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-04",
+      "characterId": "anuire-regent-007",
+      "seasonIndex": 1,
+      "originalScore": "70",
+      "currentScore": "70",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "37",
+          "rating": 17,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-054",
+            "anuire-province-055",
+            "anuire-province-056",
+            "anuire-province-057",
+            "anuire-province-058",
+            "anuire-province-059",
+            "anuire-province-060",
+            "anuire-province-061",
+            "anuire-province-062"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "67",
+          "rating": 21,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-078",
+            "anuire-holding-186",
+            "anuire-holding-190",
+            "anuire-holding-197",
+            "anuire-holding-200",
+            "anuire-holding-204",
+            "anuire-holding-207",
+            "anuire-holding-209",
+            "anuire-holding-212",
+            "anuire-holding-216",
+            "anuire-holding-219",
+            "anuire-holding-223",
+            "anuire-holding-229",
+            "anuire-holding-233",
+            "anuire-holding-239",
+            "anuire-holding-245",
+            "anuire-holding-250",
+            "anuire-holding-256",
+            "anuire-holding-260",
+            "anuire-holding-266",
+            "anuire-holding-386",
+            "anuire-holding-415",
+            "anuire-holding-427",
+            "anuire-holding-433",
+            "anuire-holding-470"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "37",
+          "rating": 6.625,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-226",
+            "anuire-holding-231",
+            "anuire-holding-237",
+            "anuire-holding-242",
+            "anuire-holding-248",
+            "anuire-holding-253",
+            "anuire-holding-258",
+            "anuire-holding-262",
+            "anuire-holding-268",
+            "anuire-holding-393",
+            "anuire-holding-420",
+            "anuire-holding-425",
+            "anuire-holding-430",
+            "anuire-holding-478"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "58",
+          "rating": 9,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-059",
+            "anuire-holding-070",
+            "anuire-holding-202",
+            "anuire-holding-205",
+            "anuire-holding-213",
+            "anuire-holding-220",
+            "anuire-holding-224",
+            "anuire-holding-230",
+            "anuire-holding-235",
+            "anuire-holding-240",
+            "anuire-holding-247",
+            "anuire-holding-252",
+            "anuire-holding-257",
+            "anuire-holding-261",
+            "anuire-holding-267",
+            "anuire-holding-388",
+            "anuire-holding-403",
+            "anuire-holding-411",
+            "anuire-holding-417",
+            "anuire-holding-429",
+            "anuire-holding-439",
+            "anuire-holding-453",
+            "anuire-holding-459",
+            "anuire-holding-465",
+            "anuire-holding-473",
+            "anuire-holding-513"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "111",
+      "collectibleRP": "70",
+      "knownWeightedHundredths": "11140",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-05",
+      "characterId": "anuire-regent-009",
+      "seasonIndex": 1,
+      "originalScore": "38",
+      "currentScore": "38",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "19",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-170",
+            "anuire-province-171",
+            "anuire-province-172",
+            "anuire-province-173",
+            "anuire-province-174"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "19",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-722",
+            "anuire-holding-726",
+            "anuire-holding-730",
+            "anuire-holding-733",
+            "anuire-holding-737"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "30",
+          "rating": 2.125,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-725",
+            "anuire-holding-729",
+            "anuire-holding-732",
+            "anuire-holding-735",
+            "anuire-holding-740",
+            "anuire-holding-766",
+            "anuire-holding-769",
+            "anuire-holding-772",
+            "anuire-holding-775",
+            "anuire-holding-784",
+            "anuire-holding-788",
+            "anuire-holding-798",
+            "anuire-holding-803",
+            "anuire-holding-807"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 10,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "15",
+      "collectibleRP": "15",
+      "knownWeightedHundredths": "1520",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-06",
+      "characterId": "anuire-regent-011",
+      "seasonIndex": 1,
+      "originalScore": "60",
+      "currentScore": "60",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "36",
+          "rating": 18,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-026",
+            "anuire-province-027",
+            "anuire-province-028",
+            "anuire-province-029",
+            "anuire-province-030",
+            "anuire-province-031",
+            "anuire-province-032",
+            "anuire-province-033",
+            "anuire-province-034"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "43",
+          "rating": 22,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-111",
+            "anuire-holding-115",
+            "anuire-holding-120",
+            "anuire-holding-126",
+            "anuire-holding-130",
+            "anuire-holding-135",
+            "anuire-holding-141",
+            "anuire-holding-147",
+            "anuire-holding-152",
+            "anuire-holding-173",
+            "anuire-holding-198",
+            "anuire-holding-210",
+            "anuire-holding-395",
+            "anuire-holding-401",
+            "anuire-holding-410",
+            "anuire-holding-423",
+            "anuire-holding-471"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "26",
+          "rating": 6.875,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-113",
+            "anuire-holding-118",
+            "anuire-holding-124",
+            "anuire-holding-128",
+            "anuire-holding-137",
+            "anuire-holding-143",
+            "anuire-holding-150",
+            "anuire-holding-155"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "2",
+          "rating": 9,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": ["anuire-holding-171", "anuire-holding-221"]
+        },
+        {
+          "kind": "source",
+          "levels": "23",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-114",
+            "anuire-holding-119",
+            "anuire-holding-125",
+            "anuire-holding-129",
+            "anuire-holding-133",
+            "anuire-holding-139",
+            "anuire-holding-145",
+            "anuire-holding-151",
+            "anuire-holding-156"
+          ]
+        }
+      ],
+      "qualifiedRP": "84",
+      "collectibleRP": "60",
+      "knownWeightedHundredths": "8420",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-07",
+      "characterId": "anuire-regent-013",
+      "seasonIndex": 1,
+      "originalScore": "41",
+      "currentScore": "41",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "12",
+          "rating": 10,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-042", "anuire-province-043", "anuire-province-044"]
+        },
+        {
+          "kind": "law",
+          "levels": "6",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-183", "anuire-holding-187", "anuire-holding-191"]
+        },
+        {
+          "kind": "guild",
+          "levels": "23",
+          "rating": 8.5,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-184",
+            "anuire-holding-189",
+            "anuire-holding-193",
+            "anuire-holding-227",
+            "anuire-holding-236",
+            "anuire-holding-254",
+            "anuire-holding-263",
+            "anuire-holding-404",
+            "anuire-holding-419"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "4",
+          "rating": 5,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": ["anuire-holding-188", "anuire-holding-192"]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "25",
+      "collectibleRP": "25",
+      "knownWeightedHundredths": "2580",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-08",
+      "characterId": "anuire-regent-015",
+      "seasonIndex": 1,
+      "originalScore": "20",
+      "currentScore": "20",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "13",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-145", "anuire-province-146", "anuire-province-147"]
+        },
+        {
+          "kind": "law",
+          "levels": "14",
+          "rating": 10,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-554",
+            "anuire-holding-560",
+            "anuire-holding-626",
+            "anuire-holding-631",
+            "anuire-holding-637"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "41",
+          "rating": 2.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-389",
+            "anuire-holding-398",
+            "anuire-holding-406",
+            "anuire-holding-413",
+            "anuire-holding-436",
+            "anuire-holding-440",
+            "anuire-holding-445",
+            "anuire-holding-457",
+            "anuire-holding-460",
+            "anuire-holding-556",
+            "anuire-holding-562",
+            "anuire-holding-602",
+            "anuire-holding-605",
+            "anuire-holding-617",
+            "anuire-holding-629",
+            "anuire-holding-634",
+            "anuire-holding-639"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "21",
+      "collectibleRP": "20",
+      "knownWeightedHundredths": "2180",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-09",
+      "characterId": "anuire-regent-017",
+      "seasonIndex": 1,
+      "originalScore": "38",
+      "currentScore": "38",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "10",
+          "rating": 5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-175",
+            "anuire-province-176",
+            "anuire-province-177",
+            "anuire-province-178",
+            "anuire-province-179",
+            "anuire-province-180",
+            "anuire-province-181"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "9",
+          "rating": 5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-741",
+            "anuire-holding-743",
+            "anuire-holding-746",
+            "anuire-holding-748",
+            "anuire-holding-751",
+            "anuire-holding-754",
+            "anuire-holding-757"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "8",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-744",
+            "anuire-holding-747",
+            "anuire-holding-749",
+            "anuire-holding-752",
+            "anuire-holding-755"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "27",
+          "rating": 13,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-742",
+            "anuire-holding-745",
+            "anuire-holding-750",
+            "anuire-holding-756",
+            "anuire-holding-758"
+          ]
+        }
+      ],
+      "qualifiedRP": "27",
+      "collectibleRP": "27",
+      "knownWeightedHundredths": "2700",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-10",
+      "characterId": "anuire-regent-019",
+      "seasonIndex": 1,
+      "originalScore": "23",
+      "currentScore": "23",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "20",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-182",
+            "anuire-province-183",
+            "anuire-province-184",
+            "anuire-province-185",
+            "anuire-province-186",
+            "anuire-province-187",
+            "anuire-province-188"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "13",
+          "rating": 1,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-759",
+            "anuire-holding-763",
+            "anuire-holding-767",
+            "anuire-holding-770",
+            "anuire-holding-773",
+            "anuire-holding-776",
+            "anuire-holding-780"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "30",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-272",
+            "anuire-holding-289",
+            "anuire-holding-315",
+            "anuire-holding-474",
+            "anuire-holding-484",
+            "anuire-holding-491",
+            "anuire-holding-500",
+            "anuire-holding-504",
+            "anuire-holding-508",
+            "anuire-holding-760",
+            "anuire-holding-768",
+            "anuire-holding-771",
+            "anuire-holding-774",
+            "anuire-holding-777",
+            "anuire-holding-782"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0.5,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "0",
+      "collectibleRP": "0",
+      "knownWeightedHundredths": "0",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-11",
+      "characterId": "anuire-regent-021",
+      "seasonIndex": 1,
+      "originalScore": "46",
+      "currentScore": "46",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "22",
+          "rating": 9,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-109",
+            "anuire-province-110",
+            "anuire-province-111",
+            "anuire-province-112",
+            "anuire-province-113",
+            "anuire-province-114",
+            "anuire-province-115",
+            "anuire-province-116",
+            "anuire-province-117",
+            "anuire-province-118",
+            "anuire-province-119",
+            "anuire-province-120"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "16",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-518",
+            "anuire-holding-520",
+            "anuire-holding-527",
+            "anuire-holding-529",
+            "anuire-holding-533",
+            "anuire-holding-535",
+            "anuire-holding-537",
+            "anuire-holding-543",
+            "anuire-holding-549",
+            "anuire-holding-553",
+            "anuire-holding-559",
+            "anuire-holding-600",
+            "anuire-holding-608",
+            "anuire-holding-615"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 8.75,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "49",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-519",
+            "anuire-holding-523",
+            "anuire-holding-526",
+            "anuire-holding-528",
+            "anuire-holding-531",
+            "anuire-holding-534",
+            "anuire-holding-536",
+            "anuire-holding-541",
+            "anuire-holding-547",
+            "anuire-holding-551",
+            "anuire-holding-558",
+            "anuire-holding-563",
+            "anuire-holding-630",
+            "anuire-holding-640"
+          ]
+        }
+      ],
+      "qualifiedRP": "17",
+      "collectibleRP": "17",
+      "knownWeightedHundredths": "1760",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-12",
+      "characterId": "anuire-regent-023",
+      "seasonIndex": 1,
+      "originalScore": "42",
+      "currentScore": "42",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "23",
+          "rating": 12,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-015",
+            "anuire-province-016",
+            "anuire-province-017",
+            "anuire-province-018",
+            "anuire-province-019",
+            "anuire-province-020"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "18",
+          "rating": 15,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-057",
+            "anuire-holding-064",
+            "anuire-holding-068",
+            "anuire-holding-073",
+            "anuire-holding-077",
+            "anuire-holding-082",
+            "anuire-holding-472"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4.875,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 6,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "41",
+      "collectibleRP": "41",
+      "knownWeightedHundredths": "4100",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-13",
+      "characterId": "anuire-regent-025",
+      "seasonIndex": 1,
+      "originalScore": "47",
+      "currentScore": "47",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "20",
+          "rating": 11,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-101",
+            "anuire-province-102",
+            "anuire-province-103",
+            "anuire-province-104",
+            "anuire-province-105",
+            "anuire-province-106",
+            "anuire-province-107"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "11",
+          "rating": 12,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-482",
+            "anuire-holding-486",
+            "anuire-holding-490",
+            "anuire-holding-494",
+            "anuire-holding-499",
+            "anuire-holding-503",
+            "anuire-holding-507"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 2.625,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "31",
+      "collectibleRP": "31",
+      "knownWeightedHundredths": "3100",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-14",
+      "characterId": "anuire-regent-027",
+      "seasonIndex": 1,
+      "originalScore": "30",
+      "currentScore": "30",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "6",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-108"]
+        },
+        {
+          "kind": "law",
+          "levels": "8",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-104",
+            "anuire-holding-447",
+            "anuire-holding-452",
+            "anuire-holding-464",
+            "anuire-holding-511"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "31",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-072",
+            "anuire-holding-080",
+            "anuire-holding-084",
+            "anuire-holding-106",
+            "anuire-holding-303",
+            "anuire-holding-312",
+            "anuire-holding-321",
+            "anuire-holding-454",
+            "anuire-holding-466",
+            "anuire-holding-477",
+            "anuire-holding-514"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "27",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-110",
+            "anuire-holding-390",
+            "anuire-holding-394",
+            "anuire-holding-407",
+            "anuire-holding-421",
+            "anuire-holding-431",
+            "anuire-holding-441",
+            "anuire-holding-450",
+            "anuire-holding-455",
+            "anuire-holding-467",
+            "anuire-holding-515"
+          ]
+        }
+      ],
+      "qualifiedRP": "22",
+      "collectibleRP": "22",
+      "knownWeightedHundredths": "2220",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-15",
+      "characterId": "anuire-regent-029",
+      "seasonIndex": 1,
+      "originalScore": "45",
+      "currentScore": "45",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "21",
+          "rating": 7,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-148",
+            "anuire-province-149",
+            "anuire-province-150",
+            "anuire-province-151",
+            "anuire-province-152",
+            "anuire-province-153",
+            "anuire-province-154"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4.625,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 10,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "8",
+      "collectibleRP": "8",
+      "knownWeightedHundredths": "840",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-16",
+      "characterId": "anuire-regent-031",
+      "seasonIndex": 1,
+      "originalScore": "49",
+      "currentScore": "49",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "40",
+          "rating": 16,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-063",
+            "anuire-province-064",
+            "anuire-province-065",
+            "anuire-province-066",
+            "anuire-province-067",
+            "anuire-province-068",
+            "anuire-province-069",
+            "anuire-province-070",
+            "anuire-province-071",
+            "anuire-province-072"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "34",
+          "rating": 18,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-270",
+            "anuire-holding-276",
+            "anuire-holding-282",
+            "anuire-holding-287",
+            "anuire-holding-293",
+            "anuire-holding-298",
+            "anuire-holding-307",
+            "anuire-holding-314",
+            "anuire-holding-318",
+            "anuire-holding-324",
+            "anuire-holding-347",
+            "anuire-holding-357",
+            "anuire-holding-368"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "46",
+          "rating": 6.375,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-273",
+            "anuire-holding-279",
+            "anuire-holding-285",
+            "anuire-holding-296",
+            "anuire-holding-302",
+            "anuire-holding-311",
+            "anuire-holding-316",
+            "anuire-holding-322",
+            "anuire-holding-327",
+            "anuire-holding-350",
+            "anuire-holding-371",
+            "anuire-holding-449",
+            "anuire-holding-761",
+            "anuire-holding-790",
+            "anuire-holding-793",
+            "anuire-holding-802"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "4",
+          "rating": 7,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": ["anuire-holding-435", "anuire-holding-765"]
+        },
+        {
+          "kind": "source",
+          "levels": "23",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-274",
+            "anuire-holding-281",
+            "anuire-holding-286",
+            "anuire-holding-292",
+            "anuire-holding-297",
+            "anuire-holding-304",
+            "anuire-holding-313",
+            "anuire-holding-317",
+            "anuire-holding-323",
+            "anuire-holding-329",
+            "anuire-holding-352",
+            "anuire-holding-373",
+            "anuire-holding-462",
+            "anuire-holding-489",
+            "anuire-holding-502",
+            "anuire-holding-506"
+          ]
+        }
+      ],
+      "qualifiedRP": "83",
+      "collectibleRP": "49",
+      "knownWeightedHundredths": "8320",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-17",
+      "characterId": "anuire-regent-033",
+      "seasonIndex": 1,
+      "originalScore": "100",
+      "currentScore": "100",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "33",
+          "rating": 7,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-121",
+            "anuire-province-122",
+            "anuire-province-123",
+            "anuire-province-124",
+            "anuire-province-125",
+            "anuire-province-126",
+            "anuire-province-127",
+            "anuire-province-128",
+            "anuire-province-129",
+            "anuire-province-130",
+            "anuire-province-131",
+            "anuire-province-132",
+            "anuire-province-133",
+            "anuire-province-134",
+            "anuire-province-135",
+            "anuire-province-136",
+            "anuire-province-137"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "52",
+          "rating": 14,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-564",
+            "anuire-holding-566",
+            "anuire-holding-568",
+            "anuire-holding-570",
+            "anuire-holding-574",
+            "anuire-holding-576",
+            "anuire-holding-578",
+            "anuire-holding-580",
+            "anuire-holding-582",
+            "anuire-holding-584",
+            "anuire-holding-586",
+            "anuire-holding-588",
+            "anuire-holding-590",
+            "anuire-holding-592",
+            "anuire-holding-594",
+            "anuire-holding-596",
+            "anuire-holding-598",
+            "anuire-holding-652",
+            "anuire-holding-656",
+            "anuire-holding-660",
+            "anuire-holding-665",
+            "anuire-holding-669",
+            "anuire-holding-674",
+            "anuire-holding-678",
+            "anuire-holding-683",
+            "anuire-holding-689",
+            "anuire-holding-829"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "29",
+          "rating": 13.875,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-654",
+            "anuire-holding-658",
+            "anuire-holding-662",
+            "anuire-holding-667",
+            "anuire-holding-671",
+            "anuire-holding-676",
+            "anuire-holding-680",
+            "anuire-holding-686",
+            "anuire-holding-692",
+            "anuire-holding-830"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 9,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "96",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-565",
+            "anuire-holding-567",
+            "anuire-holding-569",
+            "anuire-holding-571",
+            "anuire-holding-575",
+            "anuire-holding-577",
+            "anuire-holding-579",
+            "anuire-holding-581",
+            "anuire-holding-583",
+            "anuire-holding-585",
+            "anuire-holding-587",
+            "anuire-holding-589",
+            "anuire-holding-591",
+            "anuire-holding-593",
+            "anuire-holding-595",
+            "anuire-holding-597",
+            "anuire-holding-599",
+            "anuire-holding-655",
+            "anuire-holding-659",
+            "anuire-holding-663",
+            "anuire-holding-668",
+            "anuire-holding-672",
+            "anuire-holding-677",
+            "anuire-holding-681",
+            "anuire-holding-687",
+            "anuire-holding-693",
+            "anuire-holding-831"
+          ]
+        }
+      ],
+      "qualifiedRP": "94",
+      "collectibleRP": "94",
+      "knownWeightedHundredths": "9420",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-18",
+      "characterId": "anuire-regent-035",
+      "seasonIndex": 1,
+      "originalScore": "21",
+      "currentScore": "21",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "7",
+          "rating": 1,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-021"]
+        },
+        {
+          "kind": "law",
+          "levels": "7",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-087"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 1.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "14",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-006",
+            "anuire-holding-019",
+            "anuire-holding-023",
+            "anuire-holding-038",
+            "anuire-holding-049",
+            "anuire-holding-052",
+            "anuire-holding-055",
+            "anuire-holding-090",
+            "anuire-holding-096"
+          ]
+        }
+      ],
+      "qualifiedRP": "8",
+      "collectibleRP": "8",
+      "knownWeightedHundredths": "840",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-19",
+      "characterId": "anuire-regent-037",
+      "seasonIndex": 1,
+      "originalScore": "2",
+      "currentScore": "2",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "22",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-155",
+            "anuire-province-156",
+            "anuire-province-157",
+            "anuire-province-158",
+            "anuire-province-159",
+            "anuire-province-160",
+            "anuire-province-161",
+            "anuire-province-206"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "7",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-653",
+            "anuire-holding-657",
+            "anuire-holding-661",
+            "anuire-holding-666",
+            "anuire-holding-670",
+            "anuire-holding-675",
+            "anuire-holding-679"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "0",
+      "collectibleRP": "0",
+      "knownWeightedHundredths": "0",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-20",
+      "characterId": "anuire-regent-039",
+      "seasonIndex": 1,
+      "originalScore": "32",
+      "currentScore": "32",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "9",
+          "rating": 4.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-022", "anuire-province-023", "anuire-province-024"]
+        },
+        {
+          "kind": "law",
+          "levels": "4",
+          "rating": 2.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-092", "anuire-holding-099"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 3.25,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "10",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-016",
+            "anuire-holding-093",
+            "anuire-holding-100",
+            "anuire-holding-105"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "0",
+      "collectibleRP": "0",
+      "knownWeightedHundredths": "0",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-21",
+      "characterId": "anuire-regent-041",
+      "seasonIndex": 1,
+      "originalScore": "46",
+      "currentScore": "46",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "31",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-073",
+            "anuire-province-074",
+            "anuire-province-075",
+            "anuire-province-076",
+            "anuire-province-077",
+            "anuire-province-078",
+            "anuire-province-079",
+            "anuire-province-080",
+            "anuire-province-081",
+            "anuire-province-082"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "26",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-288",
+            "anuire-holding-299",
+            "anuire-holding-308",
+            "anuire-holding-325",
+            "anuire-holding-330",
+            "anuire-holding-335",
+            "anuire-holding-341",
+            "anuire-holding-346",
+            "anuire-holding-354",
+            "anuire-holding-358",
+            "anuire-holding-363",
+            "anuire-holding-367",
+            "anuire-holding-377",
+            "anuire-holding-380"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "25",
+          "rating": 2.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-280",
+            "anuire-holding-291",
+            "anuire-holding-328",
+            "anuire-holding-332",
+            "anuire-holding-338",
+            "anuire-holding-343",
+            "anuire-holding-351",
+            "anuire-holding-355",
+            "anuire-holding-361",
+            "anuire-holding-365",
+            "anuire-holding-372",
+            "anuire-holding-383",
+            "anuire-holding-479",
+            "anuire-holding-739"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "23",
+          "rating": 5,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-333",
+            "anuire-holding-340",
+            "anuire-holding-345",
+            "anuire-holding-353",
+            "anuire-holding-356",
+            "anuire-holding-362",
+            "anuire-holding-366",
+            "anuire-holding-374",
+            "anuire-holding-379",
+            "anuire-holding-384",
+            "anuire-holding-498"
+          ]
+        }
+      ],
+      "qualifiedRP": "11",
+      "collectibleRP": "11",
+      "knownWeightedHundredths": "1140",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-24",
+      "characterId": "anuire-regent-047",
+      "seasonIndex": 1,
+      "originalScore": "5",
+      "currentScore": "5",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "8",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-162", "anuire-province-163"]
+        },
+        {
+          "kind": "law",
+          "levels": "3",
+          "rating": 10,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-684", "anuire-holding-690"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 1.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 8.5,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "4",
+      "collectibleRP": "4",
+      "knownWeightedHundredths": "460",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-25",
+      "characterId": "anuire-regent-049",
+      "seasonIndex": 1,
+      "originalScore": "36",
+      "currentScore": "36",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "20",
+          "rating": 12,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-189",
+            "anuire-province-190",
+            "anuire-province-191",
+            "anuire-province-192",
+            "anuire-province-193",
+            "anuire-province-194",
+            "anuire-province-195",
+            "anuire-province-196"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "13",
+          "rating": 15,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-786",
+            "anuire-holding-789",
+            "anuire-holding-791",
+            "anuire-holding-795",
+            "anuire-holding-801",
+            "anuire-holding-806"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4.875,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 6,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "33",
+      "collectibleRP": "33",
+      "knownWeightedHundredths": "3300",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-26",
+      "characterId": "anuire-regent-051",
+      "seasonIndex": 1,
+      "originalScore": "95",
+      "currentScore": "95",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "2",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-045"]
+        },
+        {
+          "kind": "law",
+          "levels": "2",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-195"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 8.25,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 6,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "16",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-196", "anuire-holding-414", "anuire-holding-426"]
+        }
+      ],
+      "qualifiedRP": "1",
+      "collectibleRP": "1",
+      "knownWeightedHundredths": "120",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-27",
+      "characterId": "anuire-regent-053",
+      "seasonIndex": 1,
+      "originalScore": "24",
+      "currentScore": "24",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "21",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-001",
+            "anuire-province-002",
+            "anuire-province-003",
+            "anuire-province-004",
+            "anuire-province-005",
+            "anuire-province-006",
+            "anuire-province-007"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "9",
+          "rating": 5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-001",
+            "anuire-holding-009",
+            "anuire-holding-014",
+            "anuire-holding-020",
+            "anuire-holding-024",
+            "anuire-holding-028",
+            "anuire-holding-032"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 3.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "4",
+      "collectibleRP": "4",
+      "knownWeightedHundredths": "420",
+      "conditionalUpperRP": "0",
+      "openingRP": "56"
+    },
+    {
+      "realmId": "anuire-realm-28",
+      "characterId": "anuire-regent-055",
+      "seasonIndex": 1,
+      "originalScore": "42",
+      "currentScore": "42",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "27",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-197",
+            "anuire-province-198",
+            "anuire-province-199",
+            "anuire-province-200",
+            "anuire-province-201",
+            "anuire-province-202",
+            "anuire-province-203",
+            "anuire-province-204",
+            "anuire-province-205"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "27",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-809",
+            "anuire-holding-811",
+            "anuire-holding-814",
+            "anuire-holding-816",
+            "anuire-holding-818",
+            "anuire-holding-820",
+            "anuire-holding-822",
+            "anuire-holding-825",
+            "anuire-holding-827"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 2.25,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "52",
+          "rating": 25,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-810",
+            "anuire-holding-812",
+            "anuire-holding-815",
+            "anuire-holding-817",
+            "anuire-holding-819",
+            "anuire-holding-821",
+            "anuire-holding-823",
+            "anuire-holding-826",
+            "anuire-holding-828"
+          ]
+        }
+      ],
+      "qualifiedRP": "52",
+      "collectibleRP": "42",
+      "knownWeightedHundredths": "5200",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-29",
+      "characterId": "anuire-regent-057",
+      "seasonIndex": 1,
+      "originalScore": "95",
+      "currentScore": "95",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "5",
+          "rating": 12,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-province-025"]
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 16,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-109"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 5.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 7,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "5",
+      "collectibleRP": "5",
+      "knownWeightedHundredths": "500",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-30",
+      "characterId": "anuire-regent-059",
+      "seasonIndex": 1,
+      "originalScore": "33",
+      "currentScore": "33",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "23",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-046",
+            "anuire-province-047",
+            "anuire-province-048",
+            "anuire-province-049",
+            "anuire-province-050",
+            "anuire-province-051",
+            "anuire-province-052",
+            "anuire-province-053"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "3",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-201"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "49",
+          "rating": 8.5,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-199",
+            "anuire-holding-203",
+            "anuire-holding-206",
+            "anuire-holding-208",
+            "anuire-holding-211",
+            "anuire-holding-214",
+            "anuire-holding-217",
+            "anuire-holding-222",
+            "anuire-holding-228",
+            "anuire-holding-232",
+            "anuire-holding-238",
+            "anuire-holding-243",
+            "anuire-holding-249",
+            "anuire-holding-255",
+            "anuire-holding-259",
+            "anuire-holding-264",
+            "anuire-holding-269"
+          ]
+        }
+      ],
+      "qualifiedRP": "29",
+      "collectibleRP": "29",
+      "knownWeightedHundredths": "2940",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-31",
+      "characterId": "anuire-regent-061",
+      "seasonIndex": 1,
+      "originalScore": "33",
+      "currentScore": "33",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "18",
+          "rating": 7.5,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-035",
+            "anuire-province-036",
+            "anuire-province-037",
+            "anuire-province-038",
+            "anuire-province-039",
+            "anuire-province-040",
+            "anuire-province-041"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "10",
+          "rating": 5.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-158",
+            "anuire-holding-161",
+            "anuire-holding-165",
+            "anuire-holding-169",
+            "anuire-holding-176",
+            "anuire-holding-179"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4.25,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "33",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-116",
+            "anuire-holding-122",
+            "anuire-holding-127",
+            "anuire-holding-142",
+            "anuire-holding-149",
+            "anuire-holding-153",
+            "anuire-holding-159",
+            "anuire-holding-162",
+            "anuire-holding-166",
+            "anuire-holding-170",
+            "anuire-holding-174",
+            "anuire-holding-177",
+            "anuire-holding-180"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "32",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": [
+            "anuire-holding-160",
+            "anuire-holding-163",
+            "anuire-holding-167",
+            "anuire-holding-172",
+            "anuire-holding-175",
+            "anuire-holding-178",
+            "anuire-holding-181",
+            "anuire-holding-697",
+            "anuire-holding-700",
+            "anuire-holding-705"
+          ]
+        }
+      ],
+      "qualifiedRP": "7",
+      "collectibleRP": "7",
+      "knownWeightedHundredths": "720",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-32",
+      "characterId": "anuire-regent-063",
+      "seasonIndex": 1,
+      "originalScore": "24",
+      "currentScore": "24",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "18",
+          "rating": 9,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-164",
+            "anuire-province-165",
+            "anuire-province-166",
+            "anuire-province-167",
+            "anuire-province-168",
+            "anuire-province-169"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "14",
+          "rating": 12,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-694",
+            "anuire-holding-698",
+            "anuire-holding-702",
+            "anuire-holding-707",
+            "anuire-holding-713",
+            "anuire-holding-719"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 3.25,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 10.5,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "28",
+      "collectibleRP": "24",
+      "knownWeightedHundredths": "2840",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-33",
+      "characterId": "anuire-regent-065",
+      "seasonIndex": 1,
+      "originalScore": "55",
+      "currentScore": "55",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "22",
+          "rating": 7,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-138",
+            "anuire-province-139",
+            "anuire-province-140",
+            "anuire-province-141",
+            "anuire-province-142",
+            "anuire-province-143",
+            "anuire-province-144"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "13",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-601",
+            "anuire-holding-604",
+            "anuire-holding-609",
+            "anuire-holding-614",
+            "anuire-holding-620",
+            "anuire-holding-622",
+            "anuire-holding-624"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "7",
+          "rating": 3.25,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-606",
+            "anuire-holding-611",
+            "anuire-holding-618",
+            "anuire-holding-621"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "29",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-603",
+            "anuire-holding-607",
+            "anuire-holding-612",
+            "anuire-holding-619",
+            "anuire-holding-623",
+            "anuire-holding-625"
+          ]
+        }
+      ],
+      "qualifiedRP": "8",
+      "collectibleRP": "8",
+      "knownWeightedHundredths": "880",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-34",
+      "characterId": "anuire-regent-067",
+      "seasonIndex": 1,
+      "originalScore": "35",
+      "currentScore": "35",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "23",
+          "rating": 7,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-province-083",
+            "anuire-province-084",
+            "anuire-province-085",
+            "anuire-province-086",
+            "anuire-province-087",
+            "anuire-province-088",
+            "anuire-province-089",
+            "anuire-province-090"
+          ]
+        },
+        {
+          "kind": "law",
+          "levels": "9",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-385",
+            "anuire-holding-391",
+            "anuire-holding-396",
+            "anuire-holding-400",
+            "anuire-holding-409",
+            "anuire-holding-416",
+            "anuire-holding-422",
+            "anuire-holding-428"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "2",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-405"]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 5,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "9",
+      "collectibleRP": "9",
+      "knownWeightedHundredths": "960",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-35",
+      "characterId": "anuire-regent-069",
+      "seasonIndex": 1,
+      "originalScore": "17",
+      "currentScore": "17",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "2",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-521",
+            "anuire-holding-538",
+            "anuire-holding-544",
+            "anuire-holding-708"
+          ]
+        },
+        {
+          "kind": "guild",
+          "levels": "16",
+          "rating": 9.75,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-522",
+            "anuire-holding-540",
+            "anuire-holding-546",
+            "anuire-holding-557",
+            "anuire-holding-610",
+            "anuire-holding-616",
+            "anuire-holding-695",
+            "anuire-holding-703",
+            "anuire-holding-710",
+            "anuire-holding-716"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "12",
+      "collectibleRP": "12",
+      "knownWeightedHundredths": "1280",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-36",
+      "characterId": "anuire-regent-081",
+      "seasonIndex": 1,
+      "originalScore": "27",
+      "currentScore": "27",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 11.5,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 8.5,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "25",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-002",
+            "anuire-holding-010",
+            "anuire-holding-015",
+            "anuire-holding-021",
+            "anuire-holding-025",
+            "anuire-holding-029",
+            "anuire-holding-033",
+            "anuire-holding-088",
+            "anuire-holding-095",
+            "anuire-holding-787",
+            "anuire-holding-792",
+            "anuire-holding-797"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "5",
+      "collectibleRP": "5",
+      "knownWeightedHundredths": "500",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-37",
+      "characterId": "anuire-regent-086",
+      "seasonIndex": 1,
+      "originalScore": "8",
+      "currentScore": "8",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "13",
+          "rating": 9.25,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-003",
+            "anuire-holding-011",
+            "anuire-holding-018",
+            "anuire-holding-030",
+            "anuire-holding-075",
+            "anuire-holding-081",
+            "anuire-holding-101"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "4",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": ["anuire-holding-062", "anuire-holding-097"]
+        }
+      ],
+      "qualifiedRP": "10",
+      "collectibleRP": "8",
+      "knownWeightedHundredths": "1040",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-38",
+      "characterId": "anuire-regent-070",
+      "seasonIndex": 1,
+      "originalScore": "36",
+      "currentScore": "36",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 1.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "26",
+          "rating": 22,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-005",
+            "anuire-holding-012",
+            "anuire-holding-027",
+            "anuire-holding-031",
+            "anuire-holding-034",
+            "anuire-holding-037",
+            "anuire-holding-041",
+            "anuire-holding-044",
+            "anuire-holding-046",
+            "anuire-holding-048",
+            "anuire-holding-051",
+            "anuire-holding-054"
+          ]
+        }
+      ],
+      "qualifiedRP": "26",
+      "collectibleRP": "26",
+      "knownWeightedHundredths": "2600",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-39",
+      "characterId": "anuire-regent-074",
+      "seasonIndex": 1,
+      "originalScore": "10",
+      "currentScore": "10",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "25",
+          "rating": 9.25,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-004",
+            "anuire-holding-017",
+            "anuire-holding-022",
+            "anuire-holding-026",
+            "anuire-holding-060",
+            "anuire-holding-066",
+            "anuire-holding-071",
+            "anuire-holding-089",
+            "anuire-holding-094"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "20",
+      "collectibleRP": "10",
+      "knownWeightedHundredths": "2000",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-40",
+      "characterId": "anuire-regent-083",
+      "seasonIndex": 1,
+      "originalScore": "20",
+      "currentScore": "20",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 8.5,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "23",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-058",
+            "anuire-holding-065",
+            "anuire-holding-069",
+            "anuire-holding-074",
+            "anuire-holding-079",
+            "anuire-holding-083"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "0",
+      "collectibleRP": "0",
+      "knownWeightedHundredths": "0",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-41",
+      "characterId": "anuire-regent-080",
+      "seasonIndex": 1,
+      "originalScore": "24",
+      "currentScore": "24",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 3.25,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "13",
+          "rating": 14,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-061",
+            "anuire-holding-067",
+            "anuire-holding-076",
+            "anuire-holding-085",
+            "anuire-holding-102",
+            "anuire-holding-107"
+          ]
+        }
+      ],
+      "qualifiedRP": "13",
+      "collectibleRP": "13",
+      "knownWeightedHundredths": "1300",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-42",
+      "characterId": "anuire-regent-091",
+      "seasonIndex": 1,
+      "originalScore": "18",
+      "currentScore": "18",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "28",
+          "rating": 8,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-225",
+            "anuire-holding-234",
+            "anuire-holding-241",
+            "anuire-holding-246",
+            "anuire-holding-251",
+            "anuire-holding-434",
+            "anuire-holding-444",
+            "anuire-holding-448",
+            "anuire-holding-456",
+            "anuire-holding-461",
+            "anuire-holding-476",
+            "anuire-holding-512"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "16",
+      "collectibleRP": "16",
+      "knownWeightedHundredths": "1680",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-43",
+      "characterId": "anuire-regent-084",
+      "seasonIndex": 1,
+      "originalScore": "23",
+      "currentScore": "23",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 7,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 9,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "20",
+          "rating": 16,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-112",
+            "anuire-holding-117",
+            "anuire-holding-121",
+            "anuire-holding-131",
+            "anuire-holding-136",
+            "anuire-holding-148",
+            "anuire-holding-154",
+            "anuire-holding-649",
+            "anuire-holding-709",
+            "anuire-holding-715"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "20",
+      "collectibleRP": "20",
+      "knownWeightedHundredths": "2000",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-44",
+      "characterId": "anuire-regent-078",
+      "seasonIndex": 1,
+      "originalScore": "12",
+      "currentScore": "12",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "4",
+          "rating": 2,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-524", "anuire-holding-548", "anuire-holding-714"]
+        },
+        {
+          "kind": "guild",
+          "levels": "21",
+          "rating": 9.5,
+          "percent": 80,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-123",
+            "anuire-holding-132",
+            "anuire-holding-138",
+            "anuire-holding-144",
+            "anuire-holding-339",
+            "anuire-holding-344",
+            "anuire-holding-378",
+            "anuire-holding-382",
+            "anuire-holding-525",
+            "anuire-holding-550",
+            "anuire-holding-699",
+            "anuire-holding-711",
+            "anuire-holding-717",
+            "anuire-holding-720"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "16",
+      "collectibleRP": "12",
+      "knownWeightedHundredths": "1680",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-45",
+      "characterId": "anuire-regent-071",
+      "seasonIndex": 1,
+      "originalScore": "18",
+      "currentScore": "18",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "3",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": ["anuire-holding-483", "anuire-holding-781"]
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 3.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "32",
+          "rating": 11,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-271",
+            "anuire-holding-278",
+            "anuire-holding-284",
+            "anuire-holding-295",
+            "anuire-holding-300",
+            "anuire-holding-309",
+            "anuire-holding-319",
+            "anuire-holding-336",
+            "anuire-holding-342",
+            "anuire-holding-348",
+            "anuire-holding-360",
+            "anuire-holding-364",
+            "anuire-holding-370",
+            "anuire-holding-381",
+            "anuire-holding-487",
+            "anuire-holding-495",
+            "anuire-holding-628",
+            "anuire-holding-633",
+            "anuire-holding-764"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "32",
+      "collectibleRP": "18",
+      "knownWeightedHundredths": "3200",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-46",
+      "characterId": "anuire-regent-077",
+      "seasonIndex": 1,
+      "originalScore": "17",
+      "currentScore": "17",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 0.875,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "44",
+          "rating": 7,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-277",
+            "anuire-holding-283",
+            "anuire-holding-290",
+            "anuire-holding-294",
+            "anuire-holding-301",
+            "anuire-holding-310",
+            "anuire-holding-320",
+            "anuire-holding-326",
+            "anuire-holding-331",
+            "anuire-holding-337",
+            "anuire-holding-349",
+            "anuire-holding-359",
+            "anuire-holding-369",
+            "anuire-holding-387",
+            "anuire-holding-392",
+            "anuire-holding-397",
+            "anuire-holding-402",
+            "anuire-holding-412",
+            "anuire-holding-418",
+            "anuire-holding-424",
+            "anuire-holding-475"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "17",
+      "collectibleRP": "17",
+      "knownWeightedHundredths": "1760",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-47",
+      "characterId": "anuire-regent-075",
+      "seasonIndex": 1,
+      "originalScore": "25",
+      "currentScore": "25",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "21",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-485",
+            "anuire-holding-488",
+            "anuire-holding-492",
+            "anuire-holding-496",
+            "anuire-holding-501",
+            "anuire-holding-505",
+            "anuire-holding-509",
+            "anuire-holding-778"
+          ]
+        },
+        {
+          "kind": "temple",
+          "levels": "6",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": ["anuire-holding-724", "anuire-holding-728", "anuire-holding-783"]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "4",
+      "collectibleRP": "4",
+      "knownWeightedHundredths": "420",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-48",
+      "characterId": "anuire-regent-090",
+      "seasonIndex": 1,
+      "originalScore": "15",
+      "currentScore": "15",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 1.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "28",
+          "rating": 20,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-493",
+            "anuire-holding-497",
+            "anuire-holding-510",
+            "anuire-holding-762",
+            "anuire-holding-794",
+            "anuire-holding-796",
+            "anuire-holding-799",
+            "anuire-holding-804",
+            "anuire-holding-808"
+          ]
+        }
+      ],
+      "qualifiedRP": "28",
+      "collectibleRP": "15",
+      "knownWeightedHundredths": "2800",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-49",
+      "characterId": "anuire-regent-082",
+      "seasonIndex": 1,
+      "originalScore": "32",
+      "currentScore": "32",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 7.5,
+          "percent": 40,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 5.5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 5.75,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "22",
+          "rating": 5,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-530",
+            "anuire-holding-539",
+            "anuire-holding-545",
+            "anuire-holding-555",
+            "anuire-holding-561",
+            "anuire-holding-627",
+            "anuire-holding-632",
+            "anuire-holding-638"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 1,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "0",
+      "collectibleRP": "0",
+      "knownWeightedHundredths": "0",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-50",
+      "characterId": "anuire-regent-076",
+      "seasonIndex": 1,
+      "originalScore": "35",
+      "currentScore": "35",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 3,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 0,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 4,
+          "percent": 0,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        },
+        {
+          "kind": "source",
+          "levels": "18",
+          "rating": 16,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-635",
+            "anuire-holding-641",
+            "anuire-holding-642",
+            "anuire-holding-644",
+            "anuire-holding-645",
+            "anuire-holding-646",
+            "anuire-holding-648",
+            "anuire-holding-650",
+            "anuire-holding-651",
+            "anuire-holding-696",
+            "anuire-holding-704",
+            "anuire-holding-712",
+            "anuire-holding-718",
+            "anuire-holding-721"
+          ]
+        }
+      ],
+      "qualifiedRP": "18",
+      "collectibleRP": "18",
+      "knownWeightedHundredths": "1800",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    },
+    {
+      "realmId": "anuire-realm-51",
+      "characterId": "anuire-regent-089",
+      "seasonIndex": 1,
+      "originalScore": "41",
+      "currentScore": "41",
+      "reviewedRuler": true,
+      "status": "eligible",
+      "reason": "qualified",
+      "categories": [
+        {
+          "kind": "province",
+          "levels": "0",
+          "rating": 11.5,
+          "percent": 100,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "law",
+          "levels": "0",
+          "rating": 8.5,
+          "percent": 60,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "guild",
+          "levels": "0",
+          "rating": 6.5,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": []
+        },
+        {
+          "kind": "temple",
+          "levels": "24",
+          "rating": 6,
+          "percent": 20,
+          "eligible": true,
+          "reason": "qualified",
+          "sourceIds": [
+            "anuire-holding-685",
+            "anuire-holding-691",
+            "anuire-holding-723",
+            "anuire-holding-727",
+            "anuire-holding-731",
+            "anuire-holding-734",
+            "anuire-holding-738"
+          ]
+        },
+        {
+          "kind": "source",
+          "levels": "0",
+          "rating": 2,
+          "percent": 0,
+          "eligible": false,
+          "reason": "spellcasting-gate",
+          "sourceIds": []
+        }
+      ],
+      "qualifiedRP": "4",
+      "collectibleRP": "4",
+      "knownWeightedHundredths": "480",
+      "conditionalUpperRP": "0",
+      "openingRP": "50"
+    }
+  ],
+  "representative": {
+    "endierProvinceRule": {
+      "seasonIndex": 1,
+      "round": 1,
+      "realmId": "anuire-realm-14",
+      "characterId": "anuire-regent-027",
+      "standard": true,
+      "courtSlots": [],
+      "personal": true,
+      "targets": [
+        {
+          "provinceId": "anuire-province-108",
+          "holdingId": null,
+          "holdingType": null,
+          "groupKey": null,
+          "level": 6,
+          "dc": 16,
+          "personalBonus": 0,
+          "gold": "720",
+          "bid": "0",
+          "responders": []
+        }
+      ],
+      "gold": "720",
+      "rp": "0",
+      "skill": "administrate",
+      "funded": true
+    },
+    "endierHoldingRule": {
+      "seasonIndex": 1,
+      "round": 1,
+      "realmId": "anuire-realm-14",
+      "characterId": "anuire-regent-027",
+      "standard": true,
+      "courtSlots": [],
+      "personal": true,
+      "targets": [
+        {
+          "provinceId": "anuire-province-094",
+          "holdingId": "anuire-holding-447",
+          "holdingType": "law",
+          "groupKey": "[\"anuire-realm-14\",\"anuire-province-094\",\"law\"]",
+          "level": 0,
+          "dc": 10,
+          "personalBonus": 0,
+          "gold": "120",
+          "bid": "0",
+          "responders": ["anuire-realm-02", "anuire-realm-14", "anuire-realm-16", "anuire-realm-42"]
+        }
+      ],
+      "gold": "120",
+      "rp": "0",
+      "skill": "administrate",
+      "funded": true
+    },
+    "holdingOnlySeat": {
+      "realmId": "anuire-realm-35",
+      "provinceId": "anuire-province-110",
+      "hostRealmId": "anuire-realm-11",
+      "result": "No owned seat or real positive holding with host consent"
+    }
+  },
+  "limits": [
+    "Quotes only; no original campaign or saved game mutated.",
+    "Explicit action-phase checkpoint required; general gameplay remains guarded.",
+    "Realm magic/trade, politics and full Maintenance/mode workflows remain Increments6-8.",
+    "The17 documented legacy fixture failures were not rerun or rewritten."
+  ]
+}

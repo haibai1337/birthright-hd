@@ -2,13 +2,15 @@
 
 ## Purpose and evidence boundary
 
-This contract specifies how to restore the original player-facing sequence without placing economy formulas in the UI or settling a season twice. It is architecture/specification only; no gameplay or interface behavior is implemented here.
+This contract records the design and current implementation of the restored player-facing sequence without placing economy formulas in the UI or settling a season twice. The [current implementation status](#current-implementation-status-2026-10-24) below supersedes the pre-implementation baseline and unimplemented parts of the proposal. M1B remains partial under the [roadmap completion matrix](ROADMAP.md#m1b-completion-contract).
 
 The original CD help confirms **Council → Realm Management → Collect Taxes → Domain Actions**. The source-supported Council dismissal, random-event/NPC order and original Maintenance controls are detailed in [the Maintenance audit](./ORIGINAL_MAINTENANCE_AUDIT.md) and [Council flow investigation](./ORIGINAL_COUNCIL_UI_FLOW.md). The original screens are not proof that current HD settlement already has the same interaction/timing.
 
-## 1. Current and target processing sequences
+## 1. Pre-implementation baseline and proposed processing sequences
 
-### Current Birthright HD PC-strategy flow
+Sections 1–9 retain the original design, evidence questions and implementation plan. They do not assert that every proposed field, reserved bloodline purchase or boundary relocation was implemented. In particular, the proposal moves the turn increment to Council dismissal and other boundary work after finalization; current code still performs those operations in `finishSeason` before Council. Use the current status summary for actual behavior and roadmap M1B-3.4/6.4 for outstanding timing verification.
+
+### Pre-Maintenance Birthright HD PC-strategy flow
 
 ```text
 Domain action rounds 1–3
@@ -33,7 +35,7 @@ Domain action rounds 1–3
 
 Relevant implementations: [`applyCommand` / `advanceDomainSchedule` / `finishSeason`](../packages/core/engine.ts#L618), [`settleEconomy`](../packages/core/engine.ts#L527), [`settlePCEconomy`](../packages/core/economy.ts#L417), [`income`](../packages/core/economy.ts#L233), [`economicForecast`](../packages/core/economy.ts#L404), and [`initializeDomainTurn`](../packages/core/domain-turn.ts#L6). The current App opens Council after a turn increment and closes it without sending a simulation command; see [`issue`, `start` and Council callbacks](../apps/game/src/App.tsx#L245).
 
-### Recommended restored flow
+### Original proposed restored flow
 
 ```text
 Three Domain Action rounds
@@ -221,14 +223,16 @@ Do not persist purely visual report-page selection, scroll position, map camera 
 5. **UI wiring (separate authorized implementation task)** — make automatic Council Done dispatch `CompleteCouncil`, render Maintenance from core phase, expose shared forecasts and existing strategic map/context actions, and dispatch decisions/Collect Taxes/Select Actions as commands. Manual Council in Actions remains presentation-only. Reconstruct the parchment/table/map screen only under its separately approved UI scope.
 6. **Roadmap update and end-to-end review** — update Maintenance status only after the relevant core phase and player-facing UI are actually implemented and verified. Until then it remains planned, regardless of the presence of this contract.
 
-## Implementation status
+## Current implementation status (2026-10-24)
 
 Implemented for PC domain-action campaigns:
 
 - `seasonFlow` is persisted. New campaigns start in Council; legacy saves without it load in Actions with their stored resources and existing action schedule intact.
 - `CompleteCouncil`, `CollectTaxes` and `SelectActions` are validated, journaled one-time transitions. End of round three enters Council; Council dismissal runs the event/NPC pass once; collection saves actual income and tribute; finalization consumes that ledger, applies expenses/RP/loyalty and writes reports once before starting action round one.
+- Actual boundary placement differs from the earlier proposal: `finishSeason` performs construction, siege/occupation processing, seasonal diplomacy, treaty/effect expiry, the turn increment and treasury incidents before Council. Initial Council skips the standard event/NPC pass; later `CompleteCouncil` runs it before collection. Select Actions finalizes economy and initializes the schedule; it does not perform a second siege/construction/turn increment. The retail calendar remains awaiting evidence, not an approved timing exception.
 - The previous PC economy is split into `collectPCEconomy` and `finalizePCEconomy`; the legacy `settlePCEconomy` wrapper and non-PC settlement path remain available. RNG is consumed only by actual collection, seasonal events and action-order initialization, not by forecasts or screen navigation.
 - Per-province tax and law-claim controls, per-unit payroll selections, individual fortification support, court controls and core-derived financial projections are connected to validated commands. Unit payroll defaults to the prior automatic GB→RP→unpaid policy. Castle-support decisions reset after settlement; aggregate legacy forts remain unselectable.
 - The parchment-left / interactive-map-right interface has Taxation, Occupation, Payroll, Maintenance, Reports and Collect Taxes/Select Actions controls. Council Reports reopen the existing Council; dismissing a manual Council returns to the same Maintenance phase.
 - Own-province occupation and Maintenance pillage remain unavailable; existing occupation state and immediate `PillageProvince` behavior are not repurposed. Original Basic/Advanced/Expert automation and unresolved retail formulas are not claimed as implemented.
+- The proposed reserved bloodline purchase is not implemented. Core validation permits the existing immediate `IncreaseBloodline` command during Maintenance, but `MaintenanceScreen.tsx` has no dedicated control/reservation; its verified original interaction and commit timing remain open under roadmap M1B-4.6.
 - New campaigns carry settlement version 2; saves without a version are treated as version 1. Legacy replay uses the pre-phase settlement path. Full original icon-state and 1366×768 visual review remain manual follow-up work; the broader Strategic Interface milestone is still incomplete.

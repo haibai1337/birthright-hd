@@ -1,4 +1,16 @@
 import { z } from 'zod';
+import { regencyState15Codec } from './regency-state15';
+import { courtEvent15Codec, courtProjection15Codec } from './court-actions-state15';
+import {
+  birthright15DomainRulesSchema,
+  LEGACY_DOMAIN_RULES,
+  legacyDomainRulesSchema,
+} from './domain-rules';
+import {
+  goldQuantityCodec,
+  nonnegativeGoldQuantityCodec,
+  regencyQuantityCodec,
+} from './quantities';
 
 export const idSchema = z
   .string()
@@ -588,6 +600,7 @@ export const historySchema = z.object({
   source: z.enum(['player', 'ai']),
 });
 export const campaignSchema = z.object({
+  domainRules: legacyDomainRulesSchema.default(() => ({ ...LEGACY_DOMAIN_RULES })),
   settlementVersion: integer.max(2).optional(),
   unrestrictedDiplomacy: z.boolean().default(false),
   difficulty: campaignDifficultySchema.default('medium'),
@@ -695,13 +708,117 @@ export const campaignSchema = z.object({
   victoryTarget: z.union([z.literal(300), z.literal(400), z.literal(500)]).optional(),
   crowned: z.boolean().optional(),
 });
-export const saveSchema = z.object({
+export const legacySaveSchema = z.object({
   format: z.literal('birthright-hd'),
   version: z.literal(1),
   campaign: campaignSchema,
 });
+
+// Same campaign entities and persistence envelope; only the versioned quantity boundaries differ.
+export const birthright15RealmStateCodec = realmStateSchema.extend({
+  court: z.number().int().safe().nonnegative().optional(),
+  treasury: nonnegativeGoldQuantityCodec,
+  surplusIncome: nonnegativeGoldQuantityCodec.optional(),
+  regency: regencyQuantityCodec,
+});
+export const birthright15ReportCodec = reportSchema.extend({
+  taxes: nonnegativeGoldQuantityCodec,
+  holdings: nonnegativeGoldQuantityCodec,
+  trade: nonnegativeGoldQuantityCodec,
+  maintenance: nonnegativeGoldQuantityCodec,
+  military: nonnegativeGoldQuantityCodec,
+  regency: regencyQuantityCodec,
+  net: goldQuantityCodec,
+  lawClaims: goldQuantityCodec.optional(),
+  tributeIn: nonnegativeGoldQuantityCodec.optional(),
+  tributeOut: nonnegativeGoldQuantityCodec.optional(),
+  administration: nonnegativeGoldQuantityCodec.optional(),
+  forts: nonnegativeGoldQuantityCodec.optional(),
+  occupation: nonnegativeGoldQuantityCodec.optional(),
+  court: nonnegativeGoldQuantityCodec.optional(),
+  opening: nonnegativeGoldQuantityCodec.optional(),
+  closing: nonnegativeGoldQuantityCodec.optional(),
+  unpaid: nonnegativeGoldQuantityCodec.optional(),
+  regencyUpkeep: regencyQuantityCodec.optional(),
+  regencyTributeIn: regencyQuantityCodec.optional(),
+  regencyTributeOut: regencyQuantityCodec.optional(),
+  lieutenantSalaries: nonnegativeGoldQuantityCodec.optional(),
+  incidents: nonnegativeGoldQuantityCodec.optional(),
+});
+export const courtActions15Codec = z.strictObject({
+  version: z.literal(1),
+  opening: z.strictObject({
+    seasonIndex: integer.positive(),
+    rng: integer.max(4294967295),
+    nextId: integer,
+    domainTurn: campaignSchema.shape.domainTurn.unwrap(),
+    realms: z.array(
+      realmStateSchema
+        .pick({
+          id: true,
+          regentId: true,
+          actions: true,
+          eliminated: true,
+          controller: true,
+          lieutenantOf: true,
+        })
+        .extend({ court: z.number().int().safe().nonnegative().optional() }),
+    ),
+    provinces: z.array(provinceStateSchema),
+    holdings: z.array(holdingSchema),
+    characters: z
+      .array(characterDeploymentSchema.extend({ salary: nonnegativeGoldQuantityCodec.optional() }))
+      .optional(),
+  }),
+  events: z.array(courtEvent15Codec),
+  state: courtProjection15Codec,
+});
+export type CourtActionsState15 = z.output<typeof courtActions15Codec>;
+export const birthright15CampaignCodec = campaignSchema.extend({
+  courtActions15: courtActions15Codec.optional(),
+  regency15: regencyState15Codec.optional(),
+  domainRules: birthright15DomainRulesSchema,
+  realms: z.array(birthright15RealmStateCodec),
+  treaties: z.array(treatySchema.extend({ regencyPledge: regencyQuantityCodec.optional() })),
+  tributes: z.array(tributeSchema.extend({ amount: nonnegativeGoldQuantityCodec })).optional(),
+  characters: z
+    .array(characterDeploymentSchema.extend({ salary: nonnegativeGoldQuantityCodec.optional() }))
+    .optional(),
+  effects: z.array(effectSchema.extend({ regencyCost: regencyQuantityCodec.optional() })),
+  reports: z.array(birthright15ReportCodec),
+  seasonFlow: campaignSchema.shape.seasonFlow
+    .unwrap()
+    .extend({
+      maintenance: campaignSchema.shape.seasonFlow
+        .unwrap()
+        .shape.maintenance.unwrap()
+        .extend({
+          actualIncome: z.array(birthright15ReportCodec).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  pendingDomainAction: campaignSchema.shape.pendingDomainAction
+    .unwrap()
+    .extend({
+      opposition: z.array(z.object({ realmId: idSchema, regency: regencyQuantityCodec })),
+      extraRegency: regencyQuantityCodec,
+    })
+    .optional(),
+});
+export const birthright15SaveCodec = z.object({
+  format: z.literal('birthright-hd'),
+  version: z.literal(2),
+  campaign: birthright15CampaignCodec,
+});
+export const saveSchema = z.discriminatedUnion('version', [
+  legacySaveSchema,
+  birthright15SaveCodec,
+]);
 export type Scenario = z.infer<typeof scenarioSchema>;
 export type Campaign = z.infer<typeof campaignSchema>;
+export type Birthright15Campaign = z.output<typeof birthright15CampaignCodec>;
+export type StoredCampaign = Campaign | Birthright15Campaign;
 export type Command = z.infer<typeof commandSchema>;
 export type Realm = z.infer<typeof realmStateSchema>;
 export type Province = z.infer<typeof provinceStateSchema>;

@@ -4,6 +4,7 @@ import { RULESETS } from './rules';
 import { fortLevel, taxableBy } from './domains';
 import { economicForecast } from './economy';
 import { characterClasses } from './bloodlines';
+import { assertLegacyDomainRules } from './domain-rules';
 export function domainFocus(state: Campaign, realmId = state.playerRealm): string {
   return (
     state.provinces.find((p) => p.owner === realmId && p.fort > 0)?.id ??
@@ -15,7 +16,11 @@ export function domainFocus(state: Campaign, realmId = state.playerRealm): strin
     ''
   );
 }
-export function relation(state: Campaign, a: string, b: string) {
+export function relation<T extends { a: string; b: string }>(
+  state: { treaties: readonly T[] },
+  a: string,
+  b: string,
+) {
   return state.treaties.find((t) => (t.a === a && t.b === b) || (t.a === b && t.b === a));
 }
 export function armyPower(army: Army, scenario: Scenario): number {
@@ -90,6 +95,7 @@ export function domainPower(state: Campaign, scenario: Scenario, realmId: string
   return provinces + holdings;
 }
 export function forecast(state: Campaign, scenario: Scenario, realmId: string): Report {
+  assertLegacyDomainRules(state);
   if (scenario.policy?.domainActions === 'pc') return economicForecast(state, scenario, realmId);
   const rules = RULESETS[state.ruleset];
   const owned = state.provinces.filter((p) => p.owner === realmId);

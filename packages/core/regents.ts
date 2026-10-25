@@ -13,7 +13,7 @@ export function realmRegentCandidates(scenario: Scenario, realmId: string) {
 export function rulingRegent(
   scenario: Scenario,
   realmId: string,
-  state?: Pick<Campaign, 'realms'>,
+  state?: { realms: ReadonlyArray<Pick<Campaign['realms'][number], 'id' | 'regentId'>> },
 ) {
   const realm = scenario.realms.find((realm) => realm.id === realmId);
   const id = state?.realms.find((realm) => realm.id === realmId)?.regentId;

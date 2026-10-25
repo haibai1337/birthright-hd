@@ -1,4 +1,4 @@
-import type { Campaign, Scenario, Report } from './schema';
+import type { Campaign, Scenario, Report, StoredCampaign } from './schema';
 import { randomInt } from './random';
 import { taxableBy, provinceController, fortLevel } from './domains';
 import { domainPower } from './selectors';
@@ -8,8 +8,10 @@ import { bloodlineStrength, characterClasses } from './bloodlines';
 import { hasMagicEffect } from './realm-magic';
 import { goldBars } from './military';
 import { settleFealtyRegency, playerControls } from './fealty';
+import { assertLegacyDomainRules } from './domain-rules';
 
-function nativeNPC(state: Campaign, scenario: Scenario, realmId: string) {
+type PayrollControl = Pick<StoredCampaign, 'realms' | 'playerRealm' | 'treaties'>;
+function nativeNPC(state: PayrollControl, scenario: Scenario, realmId: string) {
   const index = Number(scenario.realms.find((r) => r.id === realmId)?.original?.index);
   return (
     state.realms.some((r) => r.id === realmId && r.controller === 'ai') &&
@@ -19,7 +21,7 @@ function nativeNPC(state: Campaign, scenario: Scenario, realmId: string) {
     index < 35
   );
 }
-function npcPayrollExempt(state: Campaign, scenario: Scenario, realmId: string) {
+export function npcPayrollExempt(state: PayrollControl, scenario: Scenario, realmId: string) {
   return (
     nativeNPC(state, scenario, realmId) &&
     [17, 19, 23, 24, 26, 29].includes(
@@ -29,6 +31,7 @@ function npcPayrollExempt(state: Campaign, scenario: Scenario, realmId: string) 
 }
 /** DoNPCAdmin reserve conversions and tiny cash floor; never controlled by random-event switches. */
 export function npcTreasuryFallback(state: Campaign, scenario: Scenario, realmId: string) {
+  assertLegacyDomainRules(state);
   if (!nativeNPC(state, scenario, realmId)) return;
   const r = state.realms.find((r) => r.id === realmId)!;
   const convert = (reserve: number) => {
@@ -440,6 +443,7 @@ function finishReport(state: Campaign, scenario: Scenario, r: Report) {
     r.military;
 }
 export function economicForecast(state: Campaign, scenario: Scenario, realmId: string): Report {
+  assertLegacyDomainRules(state);
   const r = Object.assign(
     expenseReport(state, scenario, realmId),
     income(state, scenario, false).get(realmId),
@@ -453,6 +457,7 @@ export function economicForecast(state: Campaign, scenario: Scenario, realmId: s
 }
 /** Resolves actual seasonal receipts once; the returned ledger is persisted before expenses. */
 export function collectPCEconomy(state: Campaign, scenario: Scenario): Report[] {
+  assertLegacyDomainRules(state);
   refreshTradeRoutes(state, scenario);
   const collected = income(state, scenario, true);
   const active = [...state.realms]
@@ -490,6 +495,7 @@ export function collectPCEconomy(state: Campaign, scenario: Scenario): Report[] 
 }
 /** Applies expenses and seasonal consequences from a previously persisted receipt ledger. */
 export function finalizePCEconomy(state: Campaign, scenario: Scenario, actualIncome: Report[]) {
+  assertLegacyDomainRules(state);
   const receipts = new Map(actualIncome.map((report) => [report.realmId, report]));
   const reports = new Map<string, Report>();
   const active = [...state.realms]
@@ -671,5 +677,6 @@ export function finalizePCEconomy(state: Campaign, scenario: Scenario, actualInc
 }
 /** Compatibility wrapper for callers that still request a complete one-call settlement. */
 export function settlePCEconomy(state: Campaign, scenario: Scenario) {
+  assertLegacyDomainRules(state);
   finalizePCEconomy(state, scenario, collectPCEconomy(state, scenario));
 }

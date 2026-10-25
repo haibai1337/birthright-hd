@@ -1,0 +1,86 @@
+{
+  "purpose": "Targeted finalization, not a rerun or replacement of the completed economic study",
+  "input": "reference/research-cache/birthright15/anuire-validation/calculation.json",
+  "inputSha256": "146908f24c710636a008c5c39b85709249b6ef83a61825c5c664f224e5e8a1ee",
+  "scriptSha256": "76cc407c0e86ce5b6f0a5f2af39bd2245026343503191f1de16155af959f6333",
+  "policies": {
+    "V03": "A",
+    "V04": "B",
+    "V09": "C; eligibility conditional",
+    "V13": "B; original AI context",
+    "V14": "UNLIMITED",
+    "V01": "UNAPPROVED S=A candidate"
+  },
+  "coverage": {
+    "realms": 51,
+    "standard": 49,
+    "holdingOnly": 17,
+    "excluded": [
+      {
+        "id": "anuire-realm-22",
+        "name": "Mieres",
+        "type": "inactive"
+      },
+      {
+        "id": "anuire-realm-23",
+        "name": "Chaos",
+        "type": "special"
+      }
+    ],
+    "provinces": 206,
+    "holdings": 766,
+    "aggregateHoldings": 766,
+    "duplicateGroups": [],
+    "forts": 39,
+    "fortLevels": 165,
+    "military": 234,
+    "characters": 63,
+    "ports": 19,
+    "sea": 11,
+    "river": 8,
+    "regents": 116,
+    "unknownRegents": 6,
+    "classicCandidates": 36,
+    "expandedCandidates": 63,
+    "encodedNonzeroGuildRoutes": 0,
+    "recordedTributes": 0,
+    "initialTradeRoutes": 0,
+    "initialLeyLines": 5,
+    "initialOccupations": 0,
+    "oddBloodlines": 64,
+    "regentsWithRanks": 0,
+    "developmentOpportunities": 197,
+    "tradeCandidates": 154
+  },
+  "activeTotalsGB": {
+    "fixedIncome": "8179/6",
+    "conditionalVirtual": "46",
+    "grossMilitary": "325",
+    "waivedMilitary": "54",
+    "fort": "39",
+    "court": "49",
+    "selectedExpense": "359",
+    "netWithoutVirtual": "6025/6",
+    "netIfAllVirtualEligible": "6301/6"
+  },
+  "deficitsEvenIfVirtualEligible": [
+    {
+      "realmId": "anuire-realm-41",
+      "name": "Wizard Hermedhie",
+      "netGB": "-1"
+    },
+    {
+      "realmId": "anuire-realm-50",
+      "name": "Wizard Eyeless One",
+      "netGB": "-1"
+    }
+  ],
+  "openingStockExceedsGrowthPriceDefaults": 41,
+  "limitations": [
+    "All 51 rows retained; Mieres and Chaos ordinary settlement outputs deliberately blank.",
+    "Virtual eligibility is not inferred from a class label or invented lieutenant appointment.",
+    "RP bounds retain the old provisional caster screen; unknown ranks are not set to zero.",
+    "Opening stock exceeding growth price is not a two-boundary eligibility determination.",
+    "Original study and its historical cap sensitivities remain unchanged; no application code is imported."
+  ]
+}

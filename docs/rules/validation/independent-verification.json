@@ -1,0 +1,23 @@
+{
+  "independentFractionRecalculation": "all 51 income/expense/closing ledgers match raw records",
+  "sensitivityBalanceRows": 1836,
+  "originalHoldingIds": 766,
+  "deploymentCoverage": "234 military + 63 character",
+  "csvRows": {
+    "administrate-candidates.csv": 98,
+    "growth-cases.csv": 343,
+    "mage-funding-experiment.csv": 32,
+    "opening-assets.csv": 1370,
+    "opening-domains.csv": 51,
+    "regent-rp-envelopes.csv": 240,
+    "regents.csv": 116,
+    "ruler-variants.csv": 80,
+    "sensitivity-domains.csv": 1836,
+    "sensitivity-summary.csv": 36,
+    "source-development.csv": 17,
+    "stress-cases.csv": 245,
+    "trade-candidates.csv": 154
+  },
+  "relativeLinks": "all valid",
+  "originalFourRuleDocs": "unchanged"
+}

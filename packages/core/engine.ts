@@ -9,7 +9,16 @@ import {
   DEFAULT_CAMPAIGN_EVENTS,
   type CampaignEventOptions,
   type CampaignDifficulty,
+  type Birthright15Campaign,
+  birthright15CampaignCodec,
 } from './schema';
+import { z } from 'zod';
+import {
+  birthright15DomainRulesSchema,
+  LEGACY_DOMAIN_RULES,
+  type DomainOverlays,
+} from './domain-rules';
+import { goldFromLegacyGB, regencyFromLegacy } from './quantities';
 import { RULESETS } from './rules';
 import { randomInt } from './random';
 import {
@@ -30,7 +39,7 @@ import {
   respondDomainAction,
   usesPCDomainActions,
 } from './domain-actions';
-import { initializeDomainTurn } from './domain-turn';
+import { initializeDomainTurn, nextDomainRound } from './domain-turn';
 import { collectPCEconomy, finalizePCEconomy, settlePCEconomy } from './economy';
 import { refreshTradeRoutes } from './trade';
 import { bloodlineStrength } from './bloodlines';
@@ -85,6 +94,7 @@ export function createCampaign(
   );
   if (!chosen) throw new Error('This character is not a regent candidate for the chosen realm.');
   const state: Campaign = {
+    domainRules: { ...LEGACY_DOMAIN_RULES },
     settlementVersion: 2,
     selectionMode,
     unrestrictedDiplomacy,
@@ -171,6 +181,73 @@ export function createCampaign(
   refreshLeyLines(state);
   validateStateReferences(state, scenario);
   return campaignSchema.parse(state);
+}
+
+export interface Birthright15NewGameOptions {
+  seed?: number;
+  ruleset?: RulesetId;
+  selectionMode?: 'CLASSIC' | 'UNRESTRICTED';
+  victoryTarget?: 300 | 400 | 500;
+  regentId?: string;
+  difficulty?: CampaignDifficulty;
+  eventOptions?: CampaignEventOptions;
+  unrestrictedDiplomacy?: boolean;
+  overlays?: DomainOverlays;
+}
+
+/** Explicit NEW-GAME foundation only. No save migration, new economy or playable 1.5 entry point. */
+export function createBirthright15Foundation(
+  scenario: Scenario,
+  playerRealm: string,
+  options: Birthright15NewGameOptions = {},
+): Birthright15Campaign {
+  const original = createCampaign(
+    scenario,
+    playerRealm,
+    options.seed,
+    options.ruleset,
+    options.selectionMode,
+    options.victoryTarget,
+    options.regentId,
+    options.difficulty,
+    options.eventOptions,
+    options.unrestrictedDiplomacy,
+  );
+  const state: Birthright15Campaign = {
+    ...original,
+    domainRules: birthright15DomainRulesSchema.parse({
+      id: 'birthright-1.5',
+      version: '1.1',
+      overlays: options.overlays ?? { characters: null, handlers: null },
+    }),
+    realms: original.realms.map(({ surplusIncome, ...realm }) => ({
+      ...realm,
+      treasury: goldFromLegacyGB(realm.treasury),
+      regency: regencyFromLegacy(realm.regency),
+      ...(surplusIncome !== undefined ? { surplusIncome: goldFromLegacyGB(surplusIncome) } : {}),
+    })),
+    treaties: original.treaties.map(({ regencyPledge, ...treaty }) => ({
+      ...treaty,
+      ...(regencyPledge !== undefined ? { regencyPledge: regencyFromLegacy(regencyPledge) } : {}),
+    })),
+    tributes: original.tributes?.map((tribute) => ({
+      ...tribute,
+      amount: goldFromLegacyGB(tribute.amount),
+    })),
+    characters: original.characters?.map(({ salary, ...character }) => ({
+      ...character,
+      ...(salary !== undefined ? { salary: goldFromLegacyGB(salary) } : {}),
+    })),
+    // A fresh constructor has no settled reports, effects, pending action or Maintenance receipts.
+    reports: [],
+    effects: [],
+    pendingDomainAction: undefined,
+    seasonFlow: original.seasonFlow
+      ? { ...original.seasonFlow, maintenance: undefined }
+      : undefined,
+  };
+  z.encode(birthright15CampaignCodec, state);
+  return state;
 }
 function adjustLoyalty(state: Campaign, provinceId: string, delta: number) {
   const p = state.provinces.find((p) => p.id === provinceId);
@@ -739,9 +816,7 @@ function advanceDomainSchedule(
     if (state.pendingDomainAction) return;
     const phase = state.domainTurn!;
     if (phase.cursor >= phase.order.length) {
-      if (phase.round < 3) {
-        phase.round++;
-        phase.cursor = 0;
+      if (nextDomainRound(phase)) {
         log(state, 'domain.round', state.playerRealm, { round: phase.round });
       } else {
         finishSeason(state, scenario, legacyReplay);

@@ -13,6 +13,7 @@ import { availableSource, leyLineProblem } from './ley-lines';
 import { isTrueWizard } from './bloodlines';
 import { usesPCStrategy, recruitmentProblem, monsterEncounter } from './military';
 import { diplomacyProblem } from './diplomacy';
+import { assertLegacyDomainRules } from './domain-rules';
 export interface AIPlan {
   command: Command;
   reason:
@@ -32,6 +33,7 @@ export interface AIPlan {
     | 'ley';
 }
 export function planNextAI(state: Campaign, scenario: Scenario, actor: string): AIPlan | null {
+  assertLegacyDomainRules(state);
   const candidates: AIPlan[] = [];
   const realm = state.realms.find((r) => r.id === actor);
   if (!realm || realm.eliminated || realm.controller === 'passive') return null;

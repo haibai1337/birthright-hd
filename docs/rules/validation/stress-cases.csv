@@ -1,0 +1,246 @@
+realmId,name,event,lostIncomeGB,extraRecurringGB,capitalGB,netGB,closingGB,fundingGapGB,scope
+anuire-realm-01,Aerenwe,PORT_BLOCKADE,3,0,0,19.166666666666668,34.166666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-01,Aerenwe,LARGEST_PROVINCE_LOSS,9,0,0,13.166666666666666,28.166666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-01,Aerenwe,LARGEST_HOLDING_SUPPRESSED,2,0,0,20.166666666666668,35.166666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-01,Aerenwe,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,19.166666666666668,30.166666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-01,Aerenwe,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,22.166666666666668,37.166666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-02,Alamie,PORT_BLOCKADE,1.5,0,0,6.333333333333333,21.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-02,Alamie,LARGEST_PROVINCE_LOSS,5,0,0,2.8333333333333335,17.833333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-02,Alamie,LARGEST_HOLDING_SUPPRESSED,1.3333333333333333,0,0,6.5,21.5,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-02,Alamie,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,4.833333333333333,15.833333333333334,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-02,Alamie,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,7.833333333333333,22.833333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-03,Anuire,PORT_BLOCKADE,10,0,0,0.3333333333333333,15.333333333333334,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-03,Anuire,LARGEST_PROVINCE_LOSS,20,0,0,-9.666666666666666,5.333333333333333,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-03,Anuire,LARGEST_HOLDING_SUPPRESSED,1,0,0,9.333333333333334,24.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-03,Anuire,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,7.333333333333333,18.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-03,Anuire,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-04,Avanil,PORT_BLOCKADE,0,0,0,79.66666666666667,94.66666666666667,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-04,Avanil,LARGEST_PROVINCE_LOSS,7,0,0,72.66666666666667,87.66666666666667,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-04,Avanil,LARGEST_HOLDING_SUPPRESSED,2.6666666666666665,0,0,77,92,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-04,Avanil,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,76.66666666666667,87.66666666666667,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-04,Avanil,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,79.66666666666667,94.66666666666667,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-05,Baruk-Azhik,PORT_BLOCKADE,0,0,0,23.666666666666668,38.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-05,Baruk-Azhik,LARGEST_PROVINCE_LOSS,5,0,0,18.666666666666668,33.666666666666664,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-05,Baruk-Azhik,LARGEST_HOLDING_SUPPRESSED,2,0,0,21.666666666666668,36.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-05,Baruk-Azhik,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,20.666666666666668,31.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-05,Baruk-Azhik,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,23.666666666666668,38.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-06,Boeruine,PORT_BLOCKADE,6,0,0,29.666666666666668,44.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-06,Boeruine,LARGEST_PROVINCE_LOSS,12,0,0,23.666666666666668,38.666666666666664,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-06,Boeruine,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,32.333333333333336,47.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-06,Boeruine,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,32.666666666666664,43.666666666666664,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-06,Boeruine,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,35.666666666666664,50.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-07,Brosengae,PORT_BLOCKADE,4,0,0,25.333333333333332,40.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-07,Brosengae,LARGEST_PROVINCE_LOSS,8,0,0,21.333333333333332,36.333333333333336,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-07,Brosengae,LARGEST_HOLDING_SUPPRESSED,2.6666666666666665,0,0,26.666666666666668,41.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-07,Brosengae,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,26.333333333333332,37.333333333333336,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-07,Brosengae,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,29.333333333333332,44.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-08,Cariele,PORT_BLOCKADE,0,0,0,37.166666666666664,52.166666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-08,Cariele,LARGEST_PROVINCE_LOSS,5,0,0,32.166666666666664,47.166666666666664,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-08,Cariele,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,33.833333333333336,48.833333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-08,Cariele,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,34.166666666666664,45.166666666666664,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-08,Cariele,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,37.166666666666664,52.166666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-09,Chimaeron,PORT_BLOCKADE,2,0,0,17.5,32.5,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-09,Chimaeron,LARGEST_PROVINCE_LOSS,4,0,0,15.5,30.5,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-09,Chimaeron,LARGEST_HOLDING_SUPPRESSED,2,0,0,17.5,32.5,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-09,Chimaeron,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,16.5,27.5,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-09,Chimaeron,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,19.5,34.5,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-10,Coeranys,PORT_BLOCKADE,2,0,0,36.666666666666664,51.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-10,Coeranys,LARGEST_PROVINCE_LOSS,6,0,0,32.666666666666664,47.666666666666664,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-10,Coeranys,LARGEST_HOLDING_SUPPRESSED,2,0,0,36.666666666666664,51.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-10,Coeranys,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,35.666666666666664,46.666666666666664,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-10,Coeranys,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,38.666666666666664,53.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-11,Dhoesone,PORT_BLOCKADE,3,0,0,12.666666666666666,27.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-11,Dhoesone,LARGEST_PROVINCE_LOSS,6,0,0,9.666666666666666,24.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-11,Dhoesone,LARGEST_HOLDING_SUPPRESSED,1.3333333333333333,0,0,14.333333333333334,29.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-11,Dhoesone,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,12.666666666666666,23.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-11,Dhoesone,SOURCE_CASH_REGENT_WIZARD_GATE,4,0,0,11.666666666666666,26.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-12,Diemed,PORT_BLOCKADE,4,0,0,15.333333333333334,30.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-12,Diemed,LARGEST_PROVINCE_LOSS,8,0,0,11.333333333333334,26.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-12,Diemed,LARGEST_HOLDING_SUPPRESSED,1.3333333333333333,0,0,18,33,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-12,Diemed,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,16.333333333333332,27.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-12,Diemed,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,19.333333333333332,34.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-13,Elinie,PORT_BLOCKADE,0,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-13,Elinie,LARGEST_PROVINCE_LOSS,5,0,0,5.333333333333333,20.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-13,Elinie,LARGEST_HOLDING_SUPPRESSED,1,0,0,9.333333333333334,24.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-13,Elinie,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,7.333333333333333,18.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-13,Elinie,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-14,Endier,PORT_BLOCKADE,3,0,0,27.333333333333332,42.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-14,Endier,LARGEST_PROVINCE_LOSS,9,0,0,21.333333333333332,36.333333333333336,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-14,Endier,LARGEST_HOLDING_SUPPRESSED,4,0,0,26.333333333333332,41.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-14,Endier,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,27.333333333333332,38.333333333333336,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-14,Endier,SOURCE_CASH_REGENT_WIZARD_GATE,2.6666666666666665,0,0,27.666666666666668,42.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-15,Five Peaks,PORT_BLOCKADE,0,0,0,17.333333333333332,32.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-15,Five Peaks,LARGEST_PROVINCE_LOSS,3,0,0,14.333333333333334,29.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-15,Five Peaks,LARGEST_HOLDING_SUPPRESSED,0,0,0,17.333333333333332,32.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-15,Five Peaks,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,14.333333333333334,25.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-15,Five Peaks,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,17.333333333333332,32.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-16,Ghoere,PORT_BLOCKADE,2.5,0,0,44.333333333333336,59.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-16,Ghoere,LARGEST_PROVINCE_LOSS,7.5,0,0,39.333333333333336,54.333333333333336,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-16,Ghoere,LARGEST_HOLDING_SUPPRESSED,2.6666666666666665,0,0,44.166666666666664,59.166666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-16,Ghoere,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,43.833333333333336,54.833333333333336,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-16,Ghoere,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,46.833333333333336,61.833333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-17,Gorgon's Crown,PORT_BLOCKADE,3,0,0,21,36,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-17,Gorgon's Crown,LARGEST_PROVINCE_LOSS,6,0,0,18,33,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-17,Gorgon's Crown,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,20.666666666666668,35.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-17,Gorgon's Crown,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,21,32,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-17,Gorgon's Crown,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,24,39,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-18,Ilien,PORT_BLOCKADE,7,0,0,1.6666666666666667,16.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-18,Ilien,LARGEST_PROVINCE_LOSS,14,0,0,-5.333333333333333,9.666666666666666,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-18,Ilien,LARGEST_HOLDING_SUPPRESSED,2.3333333333333335,0,0,6.333333333333333,21.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-18,Ilien,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,5.666666666666667,16.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-18,Ilien,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,8.666666666666666,23.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-19,Markazor,PORT_BLOCKADE,0,0,0,20.666666666666668,35.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-19,Markazor,LARGEST_PROVINCE_LOSS,4,0,0,16.666666666666668,31.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-19,Markazor,LARGEST_HOLDING_SUPPRESSED,0.6666666666666666,0,0,20,35,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-19,Markazor,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,17.666666666666668,28.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-19,Markazor,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,20.666666666666668,35.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-20,Medoere,PORT_BLOCKADE,3,0,0,9,24,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-20,Medoere,LARGEST_PROVINCE_LOSS,6,0,0,6,21,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-20,Medoere,LARGEST_HOLDING_SUPPRESSED,2.6666666666666665,0,0,9.333333333333334,24.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-20,Medoere,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,9,20,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-20,Medoere,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,12,27,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-21,Mhoried,PORT_BLOCKADE,1.5,0,0,27.666666666666668,42.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-21,Mhoried,LARGEST_PROVINCE_LOSS,6,0,0,23.166666666666668,38.166666666666664,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-21,Mhoried,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,25.833333333333332,40.833333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-21,Mhoried,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,26.166666666666668,37.166666666666664,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-21,Mhoried,SOURCE_CASH_REGENT_WIZARD_GATE,1.3333333333333333,0,0,27.833333333333332,42.833333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-24,Mur-Kilad,PORT_BLOCKADE,0,0,0,2.6666666666666665,17.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-24,Mur-Kilad,LARGEST_PROVINCE_LOSS,5,0,0,-2.3333333333333335,12.666666666666666,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-24,Mur-Kilad,LARGEST_HOLDING_SUPPRESSED,0.6666666666666666,0,0,2,17,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-24,Mur-Kilad,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-0.3333333333333333,10.666666666666666,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-24,Mur-Kilad,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,2.6666666666666665,17.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-25,Osoerde,PORT_BLOCKADE,0,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-25,Osoerde,LARGEST_PROVINCE_LOSS,4,0,0,11.666666666666666,26.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-25,Osoerde,LARGEST_HOLDING_SUPPRESSED,1,0,0,14.666666666666666,29.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-25,Osoerde,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,12.666666666666666,23.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-25,Osoerde,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-26,Rhuobhe,PORT_BLOCKADE,0,0,0,-9,6,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-26,Rhuobhe,LARGEST_PROVINCE_LOSS,2,0,0,-11,4,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-26,Rhuobhe,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,-12.333333333333334,2.6666666666666665,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-26,Rhuobhe,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-12,-1,1,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-26,Rhuobhe,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,-9,6,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-27,Roesone,PORT_BLOCKADE,3,0,0,10,25,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-27,Roesone,LARGEST_PROVINCE_LOSS,6,0,0,7,22,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-27,Roesone,LARGEST_HOLDING_SUPPRESSED,0.6666666666666666,0,0,12.333333333333334,27.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-27,Roesone,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,10,21,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-27,Roesone,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,13,28,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-28,Sielwode,PORT_BLOCKADE,0,0,0,23,38,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-28,Sielwode,LARGEST_PROVINCE_LOSS,6,0,0,17,32,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-28,Sielwode,LARGEST_HOLDING_SUPPRESSED,2,0,0,21,36,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-28,Sielwode,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,20,31,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-28,Sielwode,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,23,38,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-29,Spiderfell,PORT_BLOCKADE,0,0,0,-9.166666666666666,5.833333333333333,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-29,Spiderfell,LARGEST_PROVINCE_LOSS,5,0,0,-14.166666666666666,0.8333333333333334,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-29,Spiderfell,LARGEST_HOLDING_SUPPRESSED,0,0,0,-9.166666666666666,5.833333333333333,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-29,Spiderfell,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-12.166666666666666,-1.1666666666666667,1.1666666666666667,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-29,Spiderfell,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,-9.166666666666666,5.833333333333333,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-30,Taeghas,PORT_BLOCKADE,3,0,0,22,37,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-30,Taeghas,LARGEST_PROVINCE_LOSS,6,0,0,19,34,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-30,Taeghas,LARGEST_HOLDING_SUPPRESSED,1.3333333333333333,0,0,23.666666666666668,38.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-30,Taeghas,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,22,33,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-30,Taeghas,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,25,40,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-31,Talinie,PORT_BLOCKADE,1.5,0,0,34.333333333333336,49.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-31,Talinie,LARGEST_PROVINCE_LOSS,5,0,0,30.833333333333332,45.833333333333336,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-31,Talinie,LARGEST_HOLDING_SUPPRESSED,4,0,0,31.833333333333332,46.833333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-31,Talinie,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,32.833333333333336,43.833333333333336,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-31,Talinie,SOURCE_CASH_REGENT_WIZARD_GATE,2,0,0,33.833333333333336,48.833333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-32,Thurazor,PORT_BLOCKADE,0,0,0,13.833333333333334,28.833333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-32,Thurazor,LARGEST_PROVINCE_LOSS,4,0,0,9.833333333333334,24.833333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-32,Thurazor,LARGEST_HOLDING_SUPPRESSED,1,0,0,12.833333333333334,27.833333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-32,Thurazor,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,10.833333333333334,21.833333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-32,Thurazor,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,13.833333333333334,28.833333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-33,Tuarhievel,PORT_BLOCKADE,0,0,0,3.3333333333333335,18.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-33,Tuarhievel,LARGEST_PROVINCE_LOSS,6,0,0,-2.6666666666666665,12.333333333333334,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-33,Tuarhievel,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,0,15,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-33,Tuarhievel,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,0.3333333333333333,11.333333333333334,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-33,Tuarhievel,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,3.3333333333333335,18.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-34,Tuornen,PORT_BLOCKADE,2.5,0,0,15,30,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-34,Tuornen,LARGEST_PROVINCE_LOSS,7.5,0,0,10,25,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-34,Tuornen,LARGEST_HOLDING_SUPPRESSED,1.3333333333333333,0,0,16.166666666666668,31.166666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-34,Tuornen,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,14.5,25.5,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-34,Tuornen,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,17.5,32.5,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-35,N. Import and Export,PORT_BLOCKADE,0,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-35,N. Import and Export,LARGEST_PROVINCE_LOSS,0,0,0,10.333333333333334,25.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-35,N. Import and Export,LARGEST_HOLDING_SUPPRESSED,2,0,0,8.333333333333334,23.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-35,N. Import and Export,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,7.333333333333333,18.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-35,N. Import and Export,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-36,Impregnable Heart,PORT_BLOCKADE,0,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-36,Impregnable Heart,LARGEST_PROVINCE_LOSS,0,0,0,15.666666666666666,30.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-36,Impregnable Heart,LARGEST_HOLDING_SUPPRESSED,2.6666666666666665,0,0,13,28,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-36,Impregnable Heart,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,12.666666666666666,23.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-36,Impregnable Heart,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-37,S. Anuire Shipping,PORT_BLOCKADE,0,0,0,7.666666666666667,22.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-37,S. Anuire Shipping,LARGEST_PROVINCE_LOSS,0,0,0,7.666666666666667,22.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-37,S. Anuire Shipping,LARGEST_HOLDING_SUPPRESSED,2,0,0,5.666666666666667,20.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-37,S. Anuire Shipping,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,4.666666666666667,15.666666666666666,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-37,S. Anuire Shipping,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,7.666666666666667,22.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-38,High Mage Aelies,PORT_BLOCKADE,0,0,0,0.3333333333333333,15.333333333333334,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-38,High Mage Aelies,LARGEST_PROVINCE_LOSS,0,0,0,0.3333333333333333,15.333333333333334,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-38,High Mage Aelies,LARGEST_HOLDING_SUPPRESSED,0.6666666666666666,0,0,-0.3333333333333333,14.666666666666666,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-38,High Mage Aelies,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-2.6666666666666665,8.333333333333334,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-38,High Mage Aelies,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,0.3333333333333333,15.333333333333334,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-39,Port of Call Exchg.,PORT_BLOCKADE,0,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-39,Port of Call Exchg.,LARGEST_PROVINCE_LOSS,0,0,0,15.666666666666666,30.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-39,Port of Call Exchg.,LARGEST_HOLDING_SUPPRESSED,4.666666666666667,0,0,11,26,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-39,Port of Call Exchg.,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,12.666666666666666,23.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-39,Port of Call Exchg.,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-40,Orth. Imp. Temple,PORT_BLOCKADE,0,0,0,14.333333333333334,29.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-40,Orth. Imp. Temple,LARGEST_PROVINCE_LOSS,0,0,0,14.333333333333334,29.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-40,Orth. Imp. Temple,LARGEST_HOLDING_SUPPRESSED,4,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-40,Orth. Imp. Temple,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,11.333333333333334,22.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-40,Orth. Imp. Temple,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,14.333333333333334,29.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-41,Wizard Hermedhie,PORT_BLOCKADE,0,0,0,-1,14,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-41,Wizard Hermedhie,LARGEST_PROVINCE_LOSS,0,0,0,-1,14,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-41,Wizard Hermedhie,LARGEST_HOLDING_SUPPRESSED,0,0,0,-1,14,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-41,Wizard Hermedhie,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-4,7,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-41,Wizard Hermedhie,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,-1,14,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-42,Jewel of Sarimie,PORT_BLOCKADE,0,0,0,17.666666666666668,32.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-42,Jewel of Sarimie,LARGEST_PROVINCE_LOSS,0,0,0,17.666666666666668,32.666666666666664,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-42,Jewel of Sarimie,LARGEST_HOLDING_SUPPRESSED,2,0,0,15.666666666666666,30.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-42,Jewel of Sarimie,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,14.666666666666666,25.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-42,Jewel of Sarimie,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,17.666666666666668,32.666666666666664,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-43,Temple of Cuiraecen,PORT_BLOCKADE,0,0,0,12.333333333333334,27.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-43,Temple of Cuiraecen,LARGEST_PROVINCE_LOSS,0,0,0,12.333333333333334,27.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-43,Temple of Cuiraecen,LARGEST_HOLDING_SUPPRESSED,2,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-43,Temple of Cuiraecen,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,9.333333333333334,20.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-43,Temple of Cuiraecen,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,12.333333333333334,27.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-44,Upper Anuire Traders,PORT_BLOCKADE,0,0,0,14.333333333333334,29.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-44,Upper Anuire Traders,LARGEST_PROVINCE_LOSS,0,0,0,14.333333333333334,29.333333333333332,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-44,Upper Anuire Traders,LARGEST_HOLDING_SUPPRESSED,2,0,0,12.333333333333334,27.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-44,Upper Anuire Traders,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,11.333333333333334,22.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-44,Upper Anuire Traders,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,14.333333333333334,29.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-45,Haelyn's Aegis,PORT_BLOCKADE,0,0,0,21.333333333333332,36.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-45,Haelyn's Aegis,LARGEST_PROVINCE_LOSS,0,0,0,21.333333333333332,36.333333333333336,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-45,Haelyn's Aegis,LARGEST_HOLDING_SUPPRESSED,2,0,0,19.333333333333332,34.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-45,Haelyn's Aegis,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,18.333333333333332,29.333333333333332,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-45,Haelyn's Aegis,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,21.333333333333332,36.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-46,Militant Order,PORT_BLOCKADE,0,0,0,28.333333333333332,43.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-46,Militant Order,LARGEST_PROVINCE_LOSS,0,0,0,28.333333333333332,43.333333333333336,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-46,Militant Order,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,25,40,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-46,Militant Order,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,25.333333333333332,36.333333333333336,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-46,Militant Order,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,28.333333333333332,43.333333333333336,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-47,Points East Trading,PORT_BLOCKADE,0,0,0,17,32,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-47,Points East Trading,LARGEST_PROVINCE_LOSS,0,0,0,17,32,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-47,Points East Trading,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,13.666666666666666,28.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-47,Points East Trading,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,14,25,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-47,Points East Trading,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,17,32,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-48,Second Swamp Mage,PORT_BLOCKADE,0,0,0,1,16,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-48,Second Swamp Mage,LARGEST_PROVINCE_LOSS,0,0,0,1,16,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-48,Second Swamp Mage,LARGEST_HOLDING_SUPPRESSED,1.3333333333333333,0,0,-0.3333333333333333,14.666666666666666,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-48,Second Swamp Mage,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-2,9,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-48,Second Swamp Mage,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,1,16,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-49,N. Reformed Church,PORT_BLOCKADE,0,0,0,13.666666666666666,28.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-49,N. Reformed Church,LARGEST_PROVINCE_LOSS,0,0,0,13.666666666666666,28.666666666666668,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-49,N. Reformed Church,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,10.333333333333334,25.333333333333332,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-49,N. Reformed Church,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,10.666666666666666,21.666666666666668,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-49,N. Reformed Church,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,13.666666666666666,28.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-50,Wizard Eyeless One,PORT_BLOCKADE,0,0,0,-1,14,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-50,Wizard Eyeless One,LARGEST_PROVINCE_LOSS,0,0,0,-1,14,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-50,Wizard Eyeless One,LARGEST_HOLDING_SUPPRESSED,0,0,0,-1,14,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-50,Wizard Eyeless One,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,-4,7,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-50,Wizard Eyeless One,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,-1,14,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-51,Ruarch Rockhammer,PORT_BLOCKADE,0,0,0,15,30,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-51,Ruarch Rockhammer,LARGEST_PROVINCE_LOSS,0,0,0,15,30,0,Victim loses provincial taxes and own port income; other institutions survive. Occupier side not fabricated.
+anuire-realm-51,Ruarch Rockhammer,LARGEST_HOLDING_SUPPRESSED,3.3333333333333335,0,0,11.666666666666666,26.666666666666668,0,Hypothetical income loss; no other institutional ownership change.
+anuire-realm-51,Ruarch Rockhammer,TWO_EXTRA_INFANTRY_AND_ONE_OCCUPATION,0,3,4,12,23,0,"Hypothetical 2 Sierra Infantry musters at 2 GB, active upkeep total 2 GB and 1 GB occupation; troop/ownership outcomes not simulated."
+anuire-realm-51,Ruarch Rockhammer,SOURCE_CASH_REGENT_WIZARD_GATE,0,0,0,15,30,0,Hypothetical income loss; no other institutional ownership change.
